@@ -110,7 +110,16 @@ namespace WebApplication1.Models
         public virtual Book Book { get; set; }
     }
 
-    public class OrderStatus
+    public enum OrderStatus
+    {
+        Pending,
+        Processing,
+        Shipped,
+        Delivered,
+        Cancelled
+    }
+
+    public class OrderStatusConstants
     {
         public const string Pending = "Pending";
         public const string Processing = "Processing";

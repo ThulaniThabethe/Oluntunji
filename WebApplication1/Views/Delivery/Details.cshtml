@@ -1,0 +1,245 @@
+@model WebApplication1.ViewModels.DeliveryViewModel
+@{
+    ViewBag.Title = "Delivery Details - " + Model.OrderNumber;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>@ViewBag.Title</h2>
+            
+            <!-- Navigation -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">@Html.ActionLink("Delivery Management", "Index")</li>
+                    <li class="breadcrumb-item active">@Model.OrderNumber</li>
+                </ol>
+            </nav>
+
+            <!-- Success/Error Messages -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            <!-- Order Information Card -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Order Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Order Number:</dt>
+                                <dd class="col-sm-8">@Model.OrderNumber</dd>
+                                
+                                <dt class="col-sm-4">Order Date:</dt>
+                                <dd class="col-sm-8">@Model.OrderDate.ToString("MMMM dd, yyyy")</dd>
+                                
+                                <dt class="col-sm-4">Total Amount:</dt>
+                                <dd class="col-sm-8">@Model.TotalAmount.ToString("C")</dd>
+                                
+                                <dt class="col-sm-4">Order Status:</dt>
+                                <dd class="col-sm-8">
+                                    @switch (Model.OrderStatus)
+                                    {
+                                        case "Shipped":
+                                            <span class="badge badge-info">Shipped</span>
+                                            break;
+                                        case "Delivered":
+                                            <span class="badge badge-success">Delivered</span>
+                                            break;
+                                        default:
+                                            <span class="badge badge-secondary">@Model.OrderStatus</span>
+                                            break;
+                                    }
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Tracking Number:</dt>
+                                <dd class="col-sm-8">
+                                    @if (!string.IsNullOrEmpty(Model.TrackingNumber))
+                                    {
+                                        @Model.TrackingNumber
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Not assigned</span>
+                                    }
+                                </dd>
+                                
+                                <dt class="col-sm-4">Shipped Date:</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.ShippedDate.HasValue)
+                                    {
+                                        @Model.ShippedDate.Value.ToString("MMMM dd, yyyy")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Not shipped</span>
+                                    }
+                                </dd>
+                                
+                                <dt class="col-sm-4">Delivered Date:</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.DeliveredDate.HasValue)
+                                    {
+                                        @Model.DeliveredDate.Value.ToString("MMMM dd, yyyy")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Not delivered</span>
+                                    }
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Information Card -->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Customer Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Customer Name:</dt>
+                                <dd class="col-sm-8">@Model.CustomerName</dd>
+                                
+                                <dt class="col-sm-4">Email:</dt>
+                                <dd class="col-sm-8">@Model.CustomerEmail</dd>
+                                
+                                <dt class="col-sm-4">Phone:</dt>
+                                <dd class="col-sm-8">@Model.CustomerPhone</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Shipping Address:</dt>
+                                <dd class="col-sm-8">
+                                    @Model.ShippingAddress<br />
+                                    @Model.ShippingCity, @Model.ShippingProvince @Model.ShippingPostalCode
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Items Card -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Order Items</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Book Title</th>
+                                    <th>Author</th>
+                                    <th>Seller</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td>@item.BookTitle</td>
+                                        <td>@item.BookAuthor</td>
+                                        <td>@item.SellerName</td>
+                                        <td>@item.Quantity</td>
+                                        <td>@item.UnitPrice.ToString("C")</td>
+                                        <td>@(item.Quantity * item.UnitPrice).ToString("C")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr class="font-weight-bold">
+                                    <td colspan="5" class="text-right">Total:</td>
+                                    <td>@Model.TotalAmount.ToString("C")</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="btn-group" role="group">
+                        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
+                        @Html.ActionLink("Update Delivery", "Update", new { id = Model.OrderId }, new { @class = "btn btn-warning" })
+                        
+                        @if (Model.OrderStatus == "Processing")
+                        {
+                            using (Html.BeginForm("MarkAsShipped", "Delivery", FormMethod.Post, new { @class = "d-inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("orderId", Model.OrderId)
+                                <button type="submit" class="btn btn-info">Mark as Shipped</button>
+                            }
+                        }
+                        else if (Model.OrderStatus == "Shipped")
+                        {
+                            using (Html.BeginForm("MarkAsDelivered", "Delivery", FormMethod.Post, new { @class = "d-inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("orderId", Model.OrderId)
+                                <button type="submit" class="btn btn-success">Mark as Delivered</button>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        border: 1px solid rgba(0, 0, 0, 0.125);
+    }
+    
+    .card-header {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    
+    dt {
+        font-weight: 600;
+        color: #495057;
+    }
+    
+    dd {
+        margin-bottom: 0.5rem;
+    }
+    
+    .badge {
+        font-size: 0.875rem;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .btn-group .btn {
+        margin-right: 5px;
+    }
+</style>

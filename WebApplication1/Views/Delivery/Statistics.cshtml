@@ -1,0 +1,233 @@
+@model WebApplication1.ViewModels.DeliveryStatisticsViewModel
+@{
+    ViewBag.Title = "Delivery Statistics";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>@ViewBag.Title</h2>
+            
+            <!-- Navigation -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">@Html.ActionLink("Delivery Management", "Index")</li>
+                    <li class="breadcrumb-item active">Statistics</li>
+                </ol>
+            </nav>
+
+            <!-- Statistics Overview Cards -->
+            <div class="row mt-4">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card text-white bg-primary h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Total Deliveries</h6>
+                                    <h3 class="display-4">@Model.TotalDeliveries</h3>
+                                </div>
+                                <div class="text-white-50">
+                                    <i class="fas fa-shipping-fast fa-3x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card text-white bg-warning h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Pending Shipments</h6>
+                                    <h3 class="display-4">@Model.PendingShipments</h3>
+                                </div>
+                                <div class="text-white-50">
+                                    <i class="fas fa-clock fa-3x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card text-white bg-info h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">In Transit</h6>
+                                    <h3 class="display-4">@Model.InTransit</h3>
+                                </div>
+                                <div class="text-white-50">
+                                    <i class="fas fa-truck fa-3x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card text-white bg-success h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Delivered</h6>
+                                    <h3 class="display-4">@Model.Delivered</h3>
+                                </div>
+                                <div class="text-white-50">
+                                    <i class="fas fa-check-circle fa-3x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card text-white bg-danger h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Failed Deliveries</h6>
+                                    <h3 class="display-4">@Model.FailedDeliveries</h3>
+                                </div>
+                                <div class="text-white-50">
+                                    <i class="fas fa-times-circle fa-3x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card text-white bg-dark h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Average Delivery Time</h6>
+                                    <h3 class="display-4">@Model.AverageDeliveryTime.ToString("F1")</h3>
+                                    <p class="mb-0">days</p>
+                                </div>
+                                <div class="text-white-50">
+                                    <i class="fas fa-calendar-alt fa-3x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Card -->
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-muted">Total Delivery Revenue</h5>
+                            <h2 class="display-3 text-success">@Model.TotalDeliveryRevenue.ToString("C")</h2>
+                            <p class="text-muted">Revenue from successfully delivered orders</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delivery Performance Chart Placeholder -->
+            <div class="row">
+                <div class="col-lg-8 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Delivery Performance Overview</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-chart-line fa-4x mb-3"></i>
+                                <h6>Delivery Performance Chart</h6>
+                                <p>Chart visualization would be implemented here with a charting library like Chart.js</p>
+                                <small class="text-muted">This would show delivery trends over time</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Delivery Status Distribution</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-chart-pie fa-4x mb-3"></i>
+                                <h6>Status Distribution Chart</h6>
+                                <p>Pie chart showing the distribution of delivery statuses</p>
+                                <small class="text-muted">Pending, In Transit, Delivered, Failed</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-2">
+                                    @Html.ActionLink("View All Deliveries", "Index", null, new { @class = "btn btn-primary btn-block" })
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    @Html.ActionLink("Pending Shipments", "Index", new { status = "Processing" }, new { @class = "btn btn-warning btn-block" })
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    @Html.ActionLink("In Transit", "Index", new { status = "Shipped" }, new { @class = "btn btn-info btn-block" })
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    @Html.ActionLink("Delivered Orders", "Index", new { status = "Delivered" }, new { @class = "btn btn-success btn-block" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+}
+
+<style>
+    .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        transition: transform 0.2s ease-in-out;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    
+    .display-4 {
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+    
+    .btn-block {
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    
+    .text-white-50 {
+        opacity: 0.7;
+    }
+    
+    .breadcrumb {
+        background-color: transparent;
+        padding: 0.75rem 0;
+    }
+</style>

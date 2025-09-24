@@ -108,4 +108,77 @@ namespace WebApplication1.ViewModels
         public int BooksSold { get; set; }
         public List<OrderListViewModel> RecentOrders { get; set; }
     }
+
+    public class DeliveryViewModel
+    {
+        public int OrderId { get; set; }
+        public string OrderNumber { get; set; }
+        public string CustomerName { get; set; }
+        public string CustomerEmail { get; set; }
+        public string CustomerPhone { get; set; }
+        public string ShippingAddress { get; set; }
+        public string ShippingCity { get; set; }
+        public string ShippingProvince { get; set; }
+        public string ShippingPostalCode { get; set; }
+        public string TrackingNumber { get; set; }
+        public string OrderStatus { get; set; }
+        public DateTime OrderDate { get; set; }
+        public DateTime? ShippedDate { get; set; }
+        public DateTime? DeliveredDate { get; set; }
+        public decimal TotalAmount { get; set; }
+        public List<DeliveryItemViewModel> Items { get; set; }
+    }
+
+    public class DeliveryItemViewModel
+    {
+        public string BookTitle { get; set; }
+        public string BookAuthor { get; set; }
+        public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
+        public string SellerName { get; set; }
+    }
+
+    public class DeliveryUpdateViewModel
+    {
+        [Required]
+        public int OrderId { get; set; }
+
+        [Required]
+        public string TrackingNumber { get; set; }
+
+        [Required]
+        public DateTime ShippedDate { get; set; }
+
+        public DateTime? DeliveredDate { get; set; }
+
+        [StringLength(1000)]
+        public string DeliveryNotes { get; set; }
+
+        public bool MarkAsDelivered { get; set; }
+    }
+
+    public class DeliveryListViewModel
+    {
+        public int OrderId { get; set; }
+        public string OrderNumber { get; set; }
+        public string CustomerName { get; set; }
+        public string ShippingAddress { get; set; }
+        public string OrderStatus { get; set; }
+        public string TrackingNumber { get; set; }
+        public DateTime OrderDate { get; set; }
+        public DateTime? ShippedDate { get; set; }
+        public DateTime? DeliveredDate { get; set; }
+        public decimal TotalAmount { get; set; }
+    }
+
+    public class DeliveryStatisticsViewModel
+    {
+        public int TotalDeliveries { get; set; }
+        public int PendingShipments { get; set; }
+        public int InTransit { get; set; }
+        public int Delivered { get; set; }
+        public int FailedDeliveries { get; set; }
+        public decimal TotalDeliveryRevenue { get; set; }
+        public double AverageDeliveryTime { get; set; } // in days
+    }
 }

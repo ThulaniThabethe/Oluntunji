@@ -120,7 +120,7 @@ namespace WebApplication1.Controllers
             var categoryRevenue = Db.OrderItems
                 .Include(oi => oi.Book)
                 .Include(oi => oi.Order)
-                .Where(oi => oi.Order.OrderDate >= start && oi.Order.OrderDate <= end && oi.Order.OrderStatus == OrderStatus.Delivered)
+                .Where(oi => oi.Order.OrderDate >= start && oi.Order.OrderDate <= end && oi.Order.OrderStatus == OrderStatus.Delivered.ToString())
                 .GroupBy(oi => oi.Book.Category)
                 .Select(g => new CategoryRevenueData
                 {
@@ -154,7 +154,7 @@ namespace WebApplication1.Controllers
                 .Include(oi => oi.Book)
                 .Include(oi => oi.Book.Seller)
                 .Include(oi => oi.Order)
-                .Where(oi => oi.Order.OrderDate >= start && oi.Order.OrderDate <= end && oi.Order.OrderStatus == OrderStatus.Delivered)
+                .Where(oi => oi.Order.OrderDate >= start && oi.Order.OrderDate <= end && oi.Order.OrderStatus == OrderStatus.Delivered.ToString())
                 .GroupBy(oi => new { oi.Book.SellerId, oi.Book.Seller.FirstName, oi.Book.Seller.LastName })
                 .Select(g => new SellerRevenueData
                 {
@@ -248,7 +248,7 @@ namespace WebApplication1.Controllers
             return Db.OrderItems
                 .Include(oi => oi.Book)
                 .Include(oi => oi.Order)
-                .Where(oi => oi.Order.OrderDate >= thirtyDaysAgo && oi.Order.OrderStatus == OrderStatus.Delivered)
+                .Where(oi => oi.Order.OrderDate >= thirtyDaysAgo && oi.Order.OrderStatus == OrderStatus.Delivered.ToString())
                 .GroupBy(oi => oi.Book.Category)
                 .Select(g => new CategoryRevenueData
                 {
@@ -268,7 +268,7 @@ namespace WebApplication1.Controllers
                 .Include(oi => oi.Book)
                 .Include(oi => oi.Book.Seller)
                 .Include(oi => oi.Order)
-                .Where(oi => oi.Order.OrderDate >= thirtyDaysAgo && oi.Order.OrderStatus == OrderStatus.Delivered)
+                .Where(oi => oi.Order.OrderDate >= thirtyDaysAgo && oi.Order.OrderStatus == OrderStatus.Delivered.ToString())
                 .GroupBy(oi => new { oi.Book.SellerId, oi.Book.Seller.FirstName, oi.Book.Seller.LastName })
                 .Select(g => new SellerRevenueData
                 {
@@ -292,12 +292,12 @@ namespace WebApplication1.Controllers
             return new OrderStatisticsViewModel
             {
                 TotalOrders = orders.Count,
-                PendingOrders = orders.Count(o => o.OrderStatus == OrderStatus.Pending),
-                ShippedOrders = orders.Count(o => o.OrderStatus == OrderStatus.Shipped),
-                CompletedOrders = orders.Count(o => o.OrderStatus == OrderStatus.Delivered),
-                CancelledOrders = orders.Count(o => o.OrderStatus == OrderStatus.Cancelled),
-                TotalRevenue = orders.Where(o => o.OrderStatus == OrderStatus.Delivered).Sum(o => o.TotalAmount),
-                PendingRevenue = orders.Where(o => o.OrderStatus == OrderStatus.Pending).Sum(o => o.TotalAmount),
+                PendingOrders = orders.Count(o => o.OrderStatus == OrderStatus.Pending.ToString()),
+                ShippedOrders = orders.Count(o => o.OrderStatus == OrderStatus.Shipped.ToString()),
+                CompletedOrders = orders.Count(o => o.OrderStatus == OrderStatus.Delivered.ToString()),
+                CancelledOrders = orders.Count(o => o.OrderStatus == OrderStatus.Cancelled.ToString()),
+                TotalRevenue = orders.Where(o => o.OrderStatus == OrderStatus.Delivered.ToString()).Sum(o => o.TotalAmount),
+                PendingRevenue = orders.Where(o => o.OrderStatus == OrderStatus.Pending.ToString()).Sum(o => o.TotalAmount),
                 AverageOrderValue = orders.Any() ? orders.Average(o => o.TotalAmount) : 0,
                 TotalBooksSold = Db.OrderItems.Where(oi => orders.Select(o => o.OrderId).Contains(oi.OrderId)).Sum(oi => oi.Quantity)
             };
@@ -331,7 +331,7 @@ namespace WebApplication1.Controllers
 
             var dailyOrders = Db.Orders
                 .Include(o => o.OrderItems)
-                .Where(o => o.OrderDate >= startDate && o.OrderDate < endDate && o.OrderStatus == OrderStatus.Delivered)
+                .Where(o => o.OrderDate >= startDate && o.OrderDate < endDate && o.OrderStatus == OrderStatus.Delivered.ToString())
                 .ToList();
 
             var totalRevenue = dailyOrders.Sum(o => o.TotalAmount);
@@ -373,7 +373,7 @@ namespace WebApplication1.Controllers
 
             var monthlyOrders = Db.Orders
                 .Include(o => o.OrderItems)
-                .Where(o => o.OrderDate >= startDate && o.OrderDate < endDate && o.OrderStatus == OrderStatus.Delivered)
+                .Where(o => o.OrderDate >= startDate && o.OrderDate < endDate && o.OrderStatus == OrderStatus.Delivered.ToString())
                 .ToList();
 
             var totalRevenue = monthlyOrders.Sum(o => o.TotalAmount);
@@ -415,7 +415,7 @@ namespace WebApplication1.Controllers
 
             var yearlyOrders = Db.Orders
                 .Include(o => o.OrderItems)
-                .Where(o => o.OrderDate >= startDate && o.OrderDate < endDate && o.OrderStatus == OrderStatus.Delivered)
+                .Where(o => o.OrderDate >= startDate && o.OrderDate < endDate && o.OrderStatus == OrderStatus.Delivered.ToString())
                 .ToList();
 
             var totalRevenue = yearlyOrders.Sum(o => o.TotalAmount);
