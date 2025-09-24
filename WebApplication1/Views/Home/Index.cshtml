@@ -1,33 +1,148 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+@{
+    ViewBag.Title = "Oluntunji Books - Your South African Bookstore";
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
-
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1 class="hero-title">Welcome to Oluntunji Books</h1>
+                    <p class="hero-subtitle">Discover South Africa's finest collection of books, from local authors to international bestsellers</p>
+                    <div class="hero-buttons">
+                        <a href="@Url.Action("Browse", "Book")" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-book"></i> Browse Books
+                        </a>
+                        <a href="@Url.Action("Index", "Category")" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-tags"></i> Shop by Category
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image">
+                    <img src="/Content/Images/hero-books.jpg" alt="South African Books" class="img-fluid rounded-3 shadow-lg">
+                </div>
+            </div>
+        </div>
     </div>
-</main>
+</section>
+
+<!-- Featured Books -->
+<section class="featured-section py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">Featured Books</h2>
+            <p class="section-subtitle">Handpicked selections from our collection</p>
+        </div>
+        
+        <div class="row" id="featured-books">
+            @foreach (var book in ViewBag.FeaturedBooks)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="book-card">
+                        <div class="book-cover">
+                            <img src="@book.ImageUrl" alt="@book.Title" class="img-fluid">
+                            <div class="book-overlay">
+                                <a href="@Url.Action("Details", "Book", new { id = book.BookId })" class="btn btn-primary btn-sm">View Details</a>
+                            </div>
+                        </div>
+                        <div class="book-info">
+                            <h5 class="book-title">@book.Title</h5>
+                            <p class="book-author">by @book.Author</p>
+                            <div class="book-price">
+                                <span class="price">R @book.Price.ToString("0.00")</span>
+                                @if (book.OriginalPrice > book.Price)
+                                {
+                                    <span class="original-price">R @book.OriginalPrice.ToString("0.00")</span>
+                                }
+                            </div>
+                            <div class="book-actions">
+                                <button class="btn btn-primary btn-sm add-to-cart" data-book-id="@book.BookId">
+                                    <i class="fas fa-cart-plus"></i> Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Best Sellers -->
+<section class="bestsellers-section py-5 bg-light">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">Best Sellers</h2>
+            <p class="section-subtitle">Our most popular books this month</p>
+        </div>
+        
+        <div class="row" id="bestsellers">
+            @foreach (var book in ViewBag.BestSellers)
+            {
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
+                    <div class="book-card compact">
+                        <div class="book-cover">
+                            <img src="@book.ImageUrl" alt="@book.Title" class="img-fluid">
+                            <div class="bestseller-badge">
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="book-info">
+                            <h6 class="book-title">@book.Title</h6>
+                            <p class="book-author">@book.Author</p>
+                            <div class="book-price">R @book.Price.ToString("0.00")</div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Categories -->
+<section class="categories-section py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="section-title">Browse by Category</h2>
+            <p class="section-subtitle">Find your next favorite book</p>
+        </div>
+        
+        <div class="row">
+            @foreach (var category in ViewBag.Categories)
+            {
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
+                    <div class="category-card">
+                        <a href="@Url.Action("Browse", "Book", new { category = category.Name })">
+                            <div class="category-icon">
+                                <i class="@category.Icon"></i>
+                            </div>
+                            <h5 class="category-name">@category.Name</h5>
+                            <p class="category-count">@category.BookCount books</p>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="newsletter-section py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h3>Stay Updated with New Arrivals</h3>
+                <p>Subscribe to our newsletter and get exclusive offers on South African literature</p>
+            </div>
+            <div class="col-lg-4">
+                <form id="newsletter-form" class="d-flex">
+                    <input type="email" class="form-control me-2" placeholder="Enter your email" required>
+                    <button type="submit" class="btn btn-light">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

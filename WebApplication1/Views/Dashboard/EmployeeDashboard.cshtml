@@ -1,0 +1,572 @@
+@model WebApplication1.ViewModels.EmployeeDashboardViewModel
+
+@{
+    ViewData["Title"] = "Employee Dashboard";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-6 fw-bold text-primary">
+                        <i class="fas fa-user-tie me-2"></i>Employee Dashboard
+                    </h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                            <li class="breadcrumb-item active">Employee Dashboard</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="text-end">
+                    <div class="btn-group">
+                        <a href="@Url.Action("CreateBook", "Book")" class="btn btn-success">
+                            <i class="fas fa-plus me-1"></i>Add New Book
+                        </a>
+                        <button class="btn btn-outline-primary" onclick="generateDailyReport()">
+                            <i class="fas fa-download me-1"></i>Daily Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Message -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <div>
+                        <strong>Welcome, @Model.EmployeeName!</strong> Here's your daily overview and tasks.
+                        <small class="d-block mt-1">Last login: @Model.LastLoginDate.ToString("MMM dd, yyyy HH:mm")</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">@Model.TotalBooks</h4>
+                            <p class="mb-0">Books Managed</p>
+                        </div>
+                        <div class="text-white-50">
+                            <i class="fas fa-book fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-primary-dark">
+                    <small>
+                        <a href="@Url.Action("Index", "Book")" class="text-white text-decoration-none">
+                            Manage Books <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">@Model.PendingOrders</h4>
+                            <p class="mb-0">Pending Orders</p>
+                        </div>
+                        <div class="text-white-50">
+                            <i class="fas fa-clock fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-success-dark">
+                    <small>
+                        <a href="@Url.Action("Orders", "Employee")" class="text-white text-decoration-none">
+                            Process Orders <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">@Model.OrdersProcessedToday</h4>
+                            <p class="mb-0">Orders Today</p>
+                        </div>
+                        <div class="text-white-50">
+                            <i class="fas fa-shopping-bag fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-info-dark">
+                    <small>Today's performance</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">@Model.LowStockBooks</h4>
+                            <p class="mb-0">Low Stock Books</p>
+                        </div>
+                        <div class="text-white-50">
+                            <i class="fas fa-exclamation-triangle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-warning-dark">
+                    <small>
+                        <a href="@Url.Action("LowStock", "Book")" class="text-white text-decoration-none">
+                            Restock Books <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Pending Tasks -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tasks me-2"></i>Pending Tasks
+                    </h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="refreshTasks()">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Order Processing Tasks -->
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted mb-3">
+                                <i class="fas fa-shopping-cart me-1"></i>Order Processing
+                            </h6>
+                            @if (Model.PendingOrders > 0)
+                            {
+                                <div class="alert alert-warning">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <div>
+                                            <strong>@Model.PendingOrders orders</strong> need processing
+                                            <br />
+                                            <small class="text-muted">Priority: High</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-success">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <div>
+                                            <strong>All orders processed</strong>
+                                            <br />
+                                            <small class="text-muted">Great job!</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Inventory Tasks -->
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted mb-3">
+                                <i class="fas fa-boxes me-1"></i>Inventory Management
+                            </h6>
+                            @if (Model.LowStockBooks > 0)
+                            {
+                                <div class="alert alert-warning">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <div>
+                                            <strong>@Model.LowStockBooks books</strong> need restocking
+                                            <br />
+                                            <small class="text-muted">Priority: Medium</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-success">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <div>
+                                            <strong>Inventory levels good</strong>
+                                            <br />
+                                            <small class="text-muted">No action needed</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Customer Service Tasks -->
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted mb-3">
+                                <i class="fas fa-headset me-1"></i>Customer Service
+                            </h6>
+                            @if (Model.PendingSupportTickets > 0)
+                            {
+                                <div class="alert alert-info">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-ticket-alt me-2"></i>
+                                        <div>
+                                            <strong>@Model.PendingSupportTickets tickets</strong> need attention
+                                            <br />
+                                            <small class="text-muted">Priority: Medium</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-success">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <div>
+                                            <strong>No pending tickets</strong>
+                                            <br />
+                                            <small class="text-muted">All caught up!</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Book Management Tasks -->
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted mb-3">
+                                <i class="fas fa-book me-1"></i>Book Management
+                            </h6>
+                            @if (Model.BooksNeedingApproval > 0)
+                            {
+                                <div class="alert alert-info">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-clipboard-check me-2"></i>
+                                        <div>
+                                            <strong>@Model.BooksNeedingApproval books</strong> need approval
+                                            <br />
+                                            <small class="text-muted">Priority: Low</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-success">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <div>
+                                            <strong>All books approved</strong>
+                                            <br />
+                                            <small class="text-muted">Up to date</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="@Url.Action("Orders", "Employee")" class="btn btn-primary">
+                            <i class="fas fa-shopping-cart me-2"></i>Process Orders
+                        </a>
+                        <a href="@Url.Action("CreateBook", "Book")" class="btn btn-success">
+                            <i class="fas fa-plus me-2"></i>Add New Book
+                        </a>
+                        <a href="@Url.Action("LowStock", "Book")" class="btn btn-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Manage Low Stock
+                        </a>
+                        <a href="@Url.Action("SupportTickets", "Employee")" class="btn btn-info">
+                            <i class="fas fa-headset me-2"></i>Support Tickets
+                        </a>
+                        <a href="@Url.Action("PendingBooks", "Employee")" class="btn btn-outline-primary">
+                            <i class="fas fa-clipboard-check me-2"></i>Approve Books
+                        </a>
+                        <a href="@Url.Action("CustomerInquiries", "Employee")" class="btn btn-outline-secondary">
+                            <i class="fas fa-comments me-2"></i>Customer Inquiries
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Orders -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>Recent Orders
+                    </h5>
+                    <a href="@Url.Action("Orders", "Employee")" class="btn btn-sm btn-outline-primary">
+                        View All <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentOrders != null && Model.RecentOrders.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Order #</th>
+                                        <th>Date</th>
+                                        <th>Customer</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model.RecentOrders.Take(5))
+                                    {
+                                        <tr>
+                                            <td><strong>@order.OrderNumber</strong></td>
+                                            <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
+                                            <td>@order.Customer.FirstName @order.Customer.LastName</td>
+                                            <td><strong>R @order.TotalAmount.ToString("F2")</strong></td>
+                                            <td>
+                                                <span class="badge bg-@GetStatusBadgeClass(order.OrderStatus)">@order.OrderStatus</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="@Url.Action("OrderDetails", "Orders", new { id = order.OrderId })" class="btn btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    @if (order.OrderStatus == "Pending")
+                                                    {
+                                                        <button class="btn btn-outline-success" onclick="processOrder(@order.OrderId)">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Recent Orders</h5>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Summary -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Performance Summary
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="text-center">
+                                <div class="bg-success text-white rounded-circle p-3 mx-auto mb-2" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-percentage fa-2x"></i>
+                                </div>
+                                <h6 class="mb-0">Efficiency</h6>
+                                <small class="text-success">@Model.EfficiencyRate%</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center">
+                                <div class="bg-primary text-white rounded-circle p-3 mx-auto mb-2" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-clock fa-2x"></i>
+                                </div>
+                                <h6 class="mb-0">Avg Time</h6>
+                                <small class="text-primary">@Model.AverageProcessingTime min</small>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="d-grid">
+                        <button class="btn btn-outline-primary btn-sm" onclick="generateDailyReport()">
+                            <i class="fas fa-chart-line me-1"></i>Daily Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .bg-primary-dark {
+            background-color: #0056b3 !important;
+        }
+
+        .bg-success-dark {
+            background-color: #218838 !important;
+        }
+
+        .bg-info-dark {
+            background-color: #138496 !important;
+        }
+
+        .bg-warning-dark {
+            background-color: #e0a800 !important;
+        }
+
+        .btn-group-sm > .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .alert-dismissible .btn-close {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 2;
+            padding: 0.75rem 1.25rem;
+            background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+            border: 0;
+            border-radius: 0.25rem;
+            opacity: 0.5;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function processOrder(orderId) {
+            if (confirm('Are you sure you want to process this order?')) {
+                $.ajax({
+                    url: '@Url.Action("ProcessOrder", "Employee")',
+                    type: 'POST',
+                    data: { orderId: orderId },
+                    success: function (response) {
+                        if (response.success) {
+                            toastr.success('Order processed successfully');
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            toastr.error(response.message || 'Failed to process order');
+                        }
+                    },
+                    error: function () {
+                        toastr.error('An error occurred while processing the order');
+                    }
+                });
+            }
+        }
+
+        function refreshTasks() {
+            // Show loading spinner
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Refreshing...';
+            button.disabled = true;
+
+            setTimeout(function() {
+                location.reload();
+            }, 1000);
+        }
+
+        function generateDailyReport() {
+            // Show loading spinner
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Generating...';
+            button.disabled = true;
+
+            $.ajax({
+                url: '@Url.Action("GenerateDailyReport", "Employee")',
+                type: 'POST',
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success('Daily report generated successfully');
+                        // Trigger download
+                        window.open(response.downloadUrl, '_blank');
+                    } else {
+                        toastr.error(response.message || 'Failed to generate report');
+                    }
+                },
+                error: function () {
+                    toastr.error('An error occurred while generating the report');
+                },
+                complete: function () {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }
+            });
+        }
+
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            $('.alert-dismissible').fadeOut('slow');
+        }, 5000);
+
+        // Add fade-in animation to cards
+        $(document).ready(function() {
+            $('.card').each(function(index) {
+                $(this).hide().fadeIn(300 + (index * 100));
+            });
+        });
+    </script>
+}
+
+@functions {
+    private string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Pending" => "warning",
+            "Processing" => "info",
+            "Shipped" => "primary",
+            "Delivered" => "success",
+            "Cancelled" => "danger",
+            _ => "secondary"
+        };
+    }
+}

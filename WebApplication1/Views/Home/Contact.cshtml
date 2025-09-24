@@ -1,19 +1,121 @@
-﻿@{
-    ViewBag.Title = "Contact";
+@{
+    ViewBag.Title = "Contact Oluntunji Books";
 }
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
 
-    <address>
-        One Microsoft Way<br />
-        Redmond, WA 98052-6399<br />
-        <abbr title="Phone">P:</abbr>
-        425.555.0100
-    </address>
+<div class="contact-page">
+    <!-- Page Header -->
+    <div class="page-header bg-primary text-white py-5">
+        <div class="container text-center">
+            <h1 class="display-4">Contact Us</h1>
+            <p class="lead">We're here to help with all your book-related needs</p>
+        </div>
+    </div>
 
-    <address>
-        <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-        <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-    </address>
-</main>
+    <!-- Contact Content -->
+    <div class="container py-5">
+        <div class="row">
+            <!-- Contact Information -->
+            <div class="col-lg-4">
+                <div class="contact-info">
+                    <h3>Get in Touch</h3>
+                    <p>We'd love to hear from you. Whether you have a question about our books, need help with an order, or just want to chat about South African literature, we're here for you.</p>
+                    
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt text-primary"></i>
+                            <div>
+                                <h5>Our Location</h5>
+                                <p>123 Long Street<br>Cape Town, 8001<br>South Africa</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-phone text-primary"></i>
+                            <div>
+                                <h5>Phone</h5>
+                                <p>+27 (021) 555-0123<br>Mon-Fri: 8:00 AM - 6:00 PM</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-envelope text-primary"></i>
+                            <div>
+                                <h5>Email</h5>
+                                <p>info@oluntunjibooks.co.za<br>support@oluntunjibooks.co.za</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="col-lg-8">
+                <div class="contact-form">
+                    <h3>Send us a Message</h3>
+                    
+                    @if (ViewBag.MessageSent != null && ViewBag.MessageSent)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Thank you!</strong> Your message has been sent successfully. We'll get back to you within 24 hours.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @using (Html.BeginForm("Contact", "Home", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="FirstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="FirstName" name="FirstName" required>
+                                <div class="invalid-feedback">Please enter your first name.</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="LastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="LastName" name="LastName" required>
+                                <div class="invalid-feedback">Please enter your last name.</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="Email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="Email" name="Email" required>
+                            <div class="invalid-feedback">Please enter a valid email address.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="Subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="Subject" name="Subject" required>
+                            <div class="invalid-feedback">Please enter a subject.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="Message" class="form-label">Message</label>
+                            <textarea class="form-control" id="Message" name="Message" rows="5" required></textarea>
+                            <div class="invalid-feedback">Please enter your message.</div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="map-container">
+                    <h3>Find Us</h3>
+                    <div class="map-placeholder bg-light rounded p-5 text-center">
+                        <i class="fas fa-map fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Interactive map would be displayed here</p>
+                        <small class="text-muted">Cape Town, South Africa</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

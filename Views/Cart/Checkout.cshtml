@@ -1,0 +1,378 @@
+@model WebApplication1.ViewModels.CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/Cart">Cart</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-map-marker-alt me-2"></i>Shipping Information
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="checkoutForm" method="post">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ShippingAddress" class="form-label"></label>
+                                <input asp-for="ShippingAddress" class="form-control" placeholder="Enter your street address" />
+                                <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ShippingCity" class="form-label"></label>
+                                <input asp-for="ShippingCity" class="form-control" placeholder="Enter your city" />
+                                <span asp-validation-for="ShippingCity" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ShippingProvince" class="form-label"></label>
+                                <select asp-for="ShippingProvince" class="form-select">
+                                    <option value="">Select Province</option>
+                                    <option value="EC">Eastern Cape</option>
+                                    <option value="FS">Free State</option>
+                                    <option value="GP">Gauteng</option>
+                                    <option value="KZN">KwaZulu-Natal</option>
+                                    <option value="LP">Limpopo</option>
+                                    <option value="MP">Mpumalanga</option>
+                                    <option value="NC">Northern Cape</option>
+                                    <option value="NW">North West</option>
+                                    <option value="WC">Western Cape</option>
+                                </select>
+                                <span asp-validation-for="ShippingProvince" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ShippingPostalCode" class="form-label"></label>
+                                <input asp-for="ShippingPostalCode" class="form-control" placeholder="Enter postal code" />
+                                <span asp-validation-for="ShippingPostalCode" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Notes" class="form-label"></label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Any special instructions for delivery?"></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-credit-card me-2"></i>Payment Method
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="PaymentMethod" id="creditCard" value="CreditCard" checked>
+                                <label class="form-check-label" for="creditCard">
+                                    <i class="fas fa-credit-card me-2"></i>Credit Card
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="PaymentMethod" id="debitCard" value="DebitCard">
+                                <label class="form-check-label" for="debitCard">
+                                    <i class="fas fa-credit-card me-2"></i>Debit Card
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="PaymentMethod" id="paypal" value="PayPal">
+                                <label class="form-check-label" for="paypal">
+                                    <i class="fab fa-paypal me-2"></i>PayPal
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="PaymentMethod" id="bankTransfer" value="BankTransfer">
+                                <label class="form-check-label" for="bankTransfer">
+                                    <i class="fas fa-university me-2"></i>Bank Transfer
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Credit Card Details Form -->
+                    <div id="cardDetails" class="mt-4">
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <label for="cardNumber" class="form-label">Card Number</label>
+                                <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="expiryDate" class="form-label">Expiry Date</label>
+                                <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="cvv" class="form-label">CVV</label>
+                                <input type="text" class="form-control" id="cvv" placeholder="123" maxlength="3">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cardholderName" class="form-label">Cardholder Name</label>
+                            <input type="text" class="form-control" id="cardholderName" placeholder="John Doe">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-shopping-cart me-2"></i>Order Summary
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal (@Model.CartItems.Count items):</span>
+                        <strong>R @Model.TotalAmount.ToString("F2")</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Shipping:</span>
+                        <strong id="shippingCost">R 50.00</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tax (15%):</span>
+                        <strong id="taxAmount">R @((Model.TotalAmount * 0.15m).ToString("F2"))</strong>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <h6 class="mb-0">Total:</h6>
+                        <h6 class="mb-0" id="totalAmount">R @((Model.TotalAmount + 50 + Model.TotalAmount * 0.15m).ToString("F2"))</h6>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" form="checkoutForm" class="btn btn-success btn-lg">
+                            <i class="fas fa-lock me-2"></i>Place Order
+                        </button>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-shield-alt me-1"></i>Secure checkout powered by SSL encryption
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Saved Cards Section -->
+            <div class="card shadow-sm mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-credit-card me-2"></i>Saved Cards
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="savedCard" id="savedCard1">
+                        <label class="form-check-label" for="savedCard1">
+                            <small>•••• •••• •••• 1234</small>
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="savedCard" id="savedCard2">
+                        <label class="form-check-label" for="savedCard2">
+                            <small>•••• •••• •••• 5678</small>
+                        </label>
+                    </div>
+                    <a href="/SavedCards" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="fas fa-plus me-1"></i>Manage Cards
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            border: none;
+            border-radius: 12px;
+        }
+        
+        .card-header {
+            border-radius: 12px 12px 0 0 !important;
+            padding: 1.25rem;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding: 0.75rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #218838, #1e7e34);
+        }
+        
+        .form-check-input:checked {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        
+        .sticky-top {
+            position: sticky;
+            top: 20px;
+        }
+        
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+        }
+        
+        .breadcrumb-item a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+        
+        #cardDetails {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+    </style>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        $(document).ready(function() {
+            // Format card number input
+            $('#cardNumber').on('input', function() {
+                let value = $(this).val().replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                $(this).val(formattedValue);
+            });
+
+            // Format expiry date input
+            $('#expiryDate').on('input', function() {
+                let value = $(this).val().replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                }
+                $(this).val(value);
+            });
+
+            // Only allow numbers for CVV
+            $('#cvv').on('input', function() {
+                $(this).val($(this).val().replace(/\D/g, ''));
+            });
+
+            // Handle payment method selection
+            $('input[name="PaymentMethod"]').change(function() {
+                const selectedMethod = $(this).val();
+                if (selectedMethod === 'CreditCard' || selectedMethod === 'DebitCard') {
+                    $('#cardDetails').show();
+                } else {
+                    $('#cardDetails').hide();
+                }
+            });
+
+            // Handle saved card selection
+            $('input[name="savedCard"]').change(function() {
+                if ($(this).is(':checked')) {
+                    // Auto-fill card details (in a real app, this would be secure)
+                    $('#cardNumber').val('**** **** **** 1234');
+                    $('#cardholderName').val('John Doe');
+                }
+            });
+
+            // Handle form submission
+            $('#checkoutForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                // Get selected payment method
+                const paymentMethod = $('input[name="PaymentMethod"]:checked').val();
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'PaymentMethod',
+                    value: paymentMethod
+                }).appendTo('#checkoutForm');
+
+                // Show loading spinner
+                const submitBtn = $(this).find('button[type="submit"]');
+                const originalText = submitBtn.html();
+                submitBtn.html('<i class="fas fa-spinner fa-spin me-2"></i>Processing...').prop('disabled', true);
+
+                // Simulate processing delay
+                setTimeout(function() {
+                    // In a real app, this would submit to the server
+                    alert('Order placed successfully! Redirecting to payment confirmation...');
+                    window.location.href = '/Cart/PaymentConfirmation';
+                }, 2000);
+            });
+
+            // Calculate shipping based on location
+            $('#ShippingProvince').change(function() {
+                const province = $(this).val();
+                let shippingCost = 50.00; // Default
+                
+                // Different shipping costs for different provinces (example)
+                if (province === 'GP' || province === 'WC') {
+                    shippingCost = 35.00; // Major cities
+                } else if (province === 'EC' || province === 'KZN') {
+                    shippingCost = 45.00;
+                } else {
+                    shippingCost = 60.00; // Remote areas
+                }
+
+                updateOrderSummary(shippingCost);
+            });
+
+            function updateOrderSummary(shippingCost) {
+                const subtotal = parseFloat('@Model.TotalAmount');
+                const tax = subtotal * 0.15;
+                const total = subtotal + shippingCost + tax;
+
+                $('#shippingCost').text('R ' + shippingCost.toFixed(2));
+                $('#taxAmount').text('R ' + tax.toFixed(2));
+                $('#totalAmount').text('R ' + total.toFixed(2));
+            }
+        });
+    </script>
+}

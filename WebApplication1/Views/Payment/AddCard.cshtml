@@ -1,0 +1,316 @@
+@model WebApplication1.ViewModels.AddCardViewModel
+
+@{
+    ViewData["Title"] = "Add New Card";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h2 class="mb-0">
+                        <i class="fas fa-credit-card me-3"></i>Add New Card
+                    </h2>
+                    <p class="mb-0 mt-2">Securely save your payment information</p>
+                </div>
+                <div class="card-body p-5">
+                    @using (Html.BeginForm("AddCard", "Payment", FormMethod.Post, new { @class = "needs-validation", novalidate = "true", id = "addCardForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong><i class="fas fa-exclamation-triangle me-2"></i>Please correct the following errors:</strong>
+                                @Html.ValidationSummary(false, "", new { @class = "mt-2 mb-0" })
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        }
+
+                        <!-- Card Preview -->
+                        <div class="mb-4">
+                            <div class="card-preview" id="cardPreview">
+                                <div class="card-preview-inner">
+                                    <div class="card-logo">
+                                        <i class="fas fa-credit-card fa-3x text-white"></i>
+                                    </div>
+                                    <div class="card-number" id="previewCardNumber">•••• •••• •••• ••••</div>
+                                    <div class="card-details">
+                                        <div class="card-holder">
+                                            <small>CARDHOLDER NAME</small>
+                                            <div id="previewCardHolder">YOUR NAME</div>
+                                        </div>
+                                        <div class="card-expiry">
+                                            <small>EXPIRY</small>
+                                            <div id="previewCardExpiry">MM/YY</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cardholder Name -->
+                        <div class="mb-4">
+                            @Html.LabelFor(m => m.CardholderName, new { @class = "form-label fw-bold" })
+                            @Html.TextBoxFor(m => m.CardholderName, new { @class = "form-control form-control-lg", placeholder = "Enter cardholder name as it appears on card", id = "cardholderName" })
+                            @Html.ValidationMessageFor(m => m.CardholderName, "", new { @class = "text-danger" })
+                            <div class="form-text">Enter the name exactly as it appears on your card</div>
+                        </div>
+
+                        <!-- Card Number -->
+                        <div class="mb-4">
+                            @Html.LabelFor(m => m.CardNumber, new { @class = "form-label fw-bold" })
+                            <div class="input-group input-group-lg">
+                                @Html.TextBoxFor(m => m.CardNumber, new { @class = "form-control", placeholder = "1234 5678 9012 3456", id = "cardNumber", maxlength = "19" })
+                                <span class="input-group-text">
+                                    <i class="fab fa-cc-visa text-primary" id="cardIcon"></i>
+                                </span>
+                            </div>
+                            @Html.ValidationMessageFor(m => m.CardNumber, "", new { @class = "text-danger" })
+                            <div class="form-text">We accept Visa, Mastercard, and American Express</div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Expiry Month -->
+                            <div class="col-md-6 mb-4">
+                                @Html.LabelFor(m => m.ExpiryMonth, new { @class = "form-label fw-bold" })
+                                @Html.DropDownListFor(m => m.ExpiryMonth, new SelectList(Enumerable.Range(1, 12).Select(i => new { Value = i, Text = i.ToString("D2") }), "Value", "Text"), "Select Month", new { @class = "form-select form-select-lg", id = "expiryMonth" })
+                                @Html.ValidationMessageFor(m => m.ExpiryMonth, "", new { @class = "text-danger" })
+                            </div>
+
+                            <!-- Expiry Year -->
+                            <div class="col-md-6 mb-4">
+                                @Html.LabelFor(m => m.ExpiryYear, new { @class = "form-label fw-bold" })
+                                @Html.DropDownListFor(m => m.ExpiryYear, new SelectList(Enumerable.Range(DateTime.Now.Year, 10).Select(i => new { Value = i, Text = i.ToString() }), "Value", "Text"), "Select Year", new { @class = "form-select form-select-lg", id = "expiryYear" })
+                                @Html.ValidationMessageFor(m => m.ExpiryYear, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <!-- CVV -->
+                        <div class="mb-4">
+                            @Html.LabelFor(m => m.CVV, new { @class = "form-label fw-bold" })
+                            <div class="input-group input-group-lg">
+                                @Html.TextBoxFor(m => m.CVV, new { @class = "form-control", placeholder = "123", id = "cvv", maxlength = "4" })
+                                <span class="input-group-text">
+                                    <i class="fas fa-question-circle text-muted" data-bs-toggle="tooltip" title="The 3-digit code on the back of your card (4 digits for American Express)"></i>
+                                </span>
+                            </div>
+                            @Html.ValidationMessageFor(m => m.CVV, "", new { @class = "text-danger" })
+                            <div class="form-text">3 digits on back of card, 4 digits for American Express</div>
+                        </div>
+
+                        <!-- Set as Default -->
+                        <div class="mb-4">
+                            <div class="form-check form-switch form-switch-lg">
+                                @Html.CheckBoxFor(m => m.SetAsDefault, new { @class = "form-check-input", id = "setAsDefault" })
+                                @Html.LabelFor(m => m.SetAsDefault, new { @class = "form-check-label fw-bold" })
+                            </div>
+                            <div class="form-text">Set this card as your default payment method</div>
+                        </div>
+
+                        <!-- Security Notice -->
+                        <div class="alert alert-info mb-4">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-shield-alt fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h6 class="alert-heading mb-1">Your Information is Secure</h6>
+                                    <p class="mb-0 small">Your card details are encrypted and stored securely. We never store your full card number or CVV.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <a href="@Url.Action("SavedCards", "Payment")" class="btn btn-outline-secondary btn-lg w-100">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-save me-2"></i>Save Card
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-preview {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .card-preview-inner {
+        color: white;
+        position: relative;
+    }
+
+    .card-logo {
+        text-align: right;
+        margin-bottom: 20px;
+    }
+
+    .card-number {
+        font-size: 1.5rem;
+        font-weight: 600;
+        letter-spacing: 2px;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .card-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    .card-holder small, .card-expiry small {
+        font-size: 0.7rem;
+        opacity: 0.8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .card-holder div, .card-expiry div {
+        font-size: 1rem;
+        font-weight: 500;
+        margin-top: 5px;
+    }
+
+    .form-control-lg, .form-select-lg {
+        font-size: 1.1rem;
+    }
+
+    .form-switch-lg .form-check-input {
+        width: 3rem;
+        height: 1.5rem;
+        margin-top: 0.1rem;
+    }
+
+    .form-switch-lg .form-check-input:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+    .input-group-lg .form-control {
+        font-size: 1.1rem;
+    }
+
+    .input-group-lg .input-group-text {
+        font-size: 1.1rem;
+    }
+
+    .needs-validation .form-control:focus,
+    .needs-validation .form-select:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    .needs-validation .form-control.is-invalid,
+    .needs-validation .form-select.is-invalid {
+        border-color: #dc3545;
+    }
+
+    .needs-validation .form-control.is-valid,
+    .needs-validation .form-select.is-valid {
+        border-color: #198754;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Card number formatting
+            $('#cardNumber').on('input', function() {
+                var value = $(this).val().replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                var formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                $(this).val(formattedValue);
+                
+                // Update preview
+                updateCardPreview();
+                
+                // Detect card type
+                detectCardType(value);
+            });
+
+            // Cardholder name formatting
+            $('#cardholderName').on('input', function() {
+                updateCardPreview();
+            });
+
+            // Expiry date formatting
+            $('#expiryMonth, #expiryYear').on('change', function() {
+                updateCardPreview();
+            });
+
+            // CVV formatting
+            $('#cvv').on('input', function() {
+                var value = $(this).val().replace(/[^0-9]/g, '');
+                $(this).val(value);
+            });
+
+            // Form validation
+            $('#addCardForm').on('submit', function(e) {
+                if (!this.checkValidity()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                $(this).addClass('was-validated');
+            });
+
+            function updateCardPreview() {
+                var cardNumber = $('#cardNumber').val() || '•••• •••• •••• ••••';
+                var cardholderName = $('#cardholderName').val() || 'YOUR NAME';
+                var expiryMonth = $('#expiryMonth').val();
+                var expiryYear = $('#expiryYear').val();
+                
+                $('#previewCardNumber').text(cardNumber);
+                $('#previewCardHolder').text(cardholderName.toUpperCase());
+                
+                if (expiryMonth && expiryYear) {
+                    $('#previewCardExpiry').text(expiryMonth + '/' + expiryYear.toString().substr(2));
+                } else {
+                    $('#previewCardExpiry').text('MM/YY');
+                }
+            }
+
+            function detectCardType(cardNumber) {
+                var cardIcon = $('#cardIcon');
+                cardIcon.removeClass('fa-cc-visa fa-cc-mastercard fa-cc-amex text-primary text-warning text-info');
+                
+                if (cardNumber.startsWith('4')) {
+                    cardIcon.addClass('fa-cc-visa text-primary');
+                } else if (cardNumber.startsWith('5')) {
+                    cardIcon.addClass('fa-cc-mastercard text-warning');
+                } else if (cardNumber.startsWith('3')) {
+                    cardIcon.addClass('fa-cc-amex text-info');
+                } else {
+                    cardIcon.addClass('fa-credit-card text-secondary');
+                }
+            }
+
+            // Initialize preview
+            updateCardPreview();
+        });
+    </script>
+}

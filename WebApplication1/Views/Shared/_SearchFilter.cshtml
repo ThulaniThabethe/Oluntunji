@@ -1,0 +1,113 @@
+@{
+    string searchTerm = ViewBag.SearchTerm ?? "";
+    string placeholder = ViewBag.SearchPlaceholder ?? "Search...";
+    string buttonText = ViewBag.SearchButtonText ?? "Search";
+    string searchIcon = ViewBag.SearchIcon ?? "bi-search";
+    string clearIcon = ViewBag.ClearIcon ?? "bi-x";
+    string formAction = ViewBag.FormAction ?? ViewContext.RouteData.Values["action"].ToString();
+    string formController = ViewBag.FormController ?? ViewContext.RouteData.Values["controller"].ToString();
+}
+
+<div class="search-filter mb-3">
+    @using (Html.BeginForm(formAction, formController, FormMethod.Get, new { @class = "d-flex gap-2", id = "searchForm" }))
+    {
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="bi @searchIcon"></i>
+            </span>
+            <input type="text" 
+                   name="searchTerm" 
+                   value="@searchTerm" 
+                   class="form-control" 
+                   placeholder="@placeholder"
+                   id="searchInput"
+                   autocomplete="off">
+            @if (!string.IsNullOrEmpty(searchTerm))
+            {
+                <button type="button" 
+                        class="btn btn-outline-secondary" 
+                        id="clearSearch"
+                        title="Clear search">
+                    <i class="bi @clearIcon"></i>
+                </button>
+            }
+        </div>
+        
+        @if (ViewBag.SortBy != null || ViewBag.FilterBy != null)
+        {
+            @Html.Hidden("sortBy", ViewBag.SortBy)
+            @Html.Hidden("filterBy", ViewBag.FilterBy)
+        }
+        
+        <button type="submit" class="btn btn-primary">
+            <i class="bi @searchIcon"></i> @buttonText
+        </button>
+    }
+    
+    @if (!string.IsNullOrEmpty(searchTerm))
+    {
+        <div class="mt-2">
+            <small class="text-muted">
+                Showing results for: <strong>@searchTerm</strong>
+                <a href="@Url.Action(formAction, formController, new { sortBy = ViewBag.SortBy, filterBy = ViewBag.FilterBy })" 
+                   class="ms-2 text-decoration-none">
+                    <i class="bi @clearIcon"></i> Clear
+                </a>
+            </small>
+        </div>
+    }
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var clearButton = document.getElementById('clearSearch');
+        var searchInput = document.getElementById('searchInput');
+        var searchForm = document.getElementById('searchForm');
+        
+        if (clearButton) {
+            clearButton.addEventListener('click', function() {
+                if (searchInput) {
+                    searchInput.value = '';
+                    searchForm.submit();
+                }
+            });
+        }
+        
+        // Add keyboard shortcut for search
+        if (searchInput) {
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === '/') {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+            });
+        }
+    });
+</script>
+
+<style>
+    .search-filter .input-group-text {
+        background-color: transparent;
+        border-right: none;
+    }
+    
+    .search-filter .form-control {
+        border-left: none;
+        border-right: none;
+    }
+    
+    .search-filter .form-control:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    
+    .search-filter .btn-outline-secondary {
+        border-left: none;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+    
+    .search-filter .btn-primary {
+        white-space: nowrap;
+    }
+</style>

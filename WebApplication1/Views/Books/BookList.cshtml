@@ -1,0 +1,603 @@
+@model WebApplication1.ViewModels.BookListViewModel
+
+@{
+    ViewBag.Title = "Book Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="bi bi-book"></i> Book Management
+                </h2>
+                <div class="d-flex gap-2">
+                    <a href="@Url.Action("Create", "Books")" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Add New Book
+                    </a>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#importModal">
+                        <i class="bi bi-upload"></i> Import Books
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" id="bulkDeleteBtn" style="display: none;">
+                        <i class="bi bi-trash"></i> Delete Selected
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="row mb-4">
+        <div class="col-12">
+            @{
+                ViewBag.SearchPlaceholder = "Search by title, author, or ISBN...";
+                ViewBag.SearchTerm = Model.SearchTerm;
+                ViewBag.SearchAction = "Index";
+                ViewBag.SearchController = "Books";
+            }
+            @Html.Partial("_SearchFilter")
+            
+            <div class="card shadow-sm mt-3">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <select class="form-select" id="categoryFilter">
+                                <option value="">All Categories</option>
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <option value="@category.Value" @(category.Selected ? "selected" : "")>@category.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="genreFilter">
+                                <option value="">All Genres</option>
+                                @foreach (var genre in Model.Genres)
+                                {
+                                    <option value="@genre.Value" @(genre.Selected ? "selected" : "")>@genre.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="stockFilter">
+                                <option value="">All Stock Levels</option>
+                                <option value="in-stock" @(Model.StockFilter == "in-stock" ? "selected" : "")>In Stock</option>
+                                <option value="low-stock" @(Model.StockFilter == "low-stock" ? "selected" : "")>Low Stock</option>
+                                <option value="out-of-stock" @(Model.StockFilter == "out-of-stock" ? "selected" : "")>Out of Stock</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-outline-primary w-100" id="filterBtn">
+                                <i class="bi bi-funnel"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            @{
+                ViewBag.StatsIcon = "bi-book";
+                ViewBag.StatsTitle = "Total Books";
+                ViewBag.StatsValue = Model.TotalBooks.ToString();
+                ViewBag.StatsColor = "primary";
+            }
+            @Html.Partial("_StatsCard")
+        </div>
+        <div class="col-md-3">
+            @{
+                ViewBag.StatsIcon = "bi-check-circle";
+                ViewBag.StatsTitle = "In Stock";
+                ViewBag.StatsValue = Model.InStockBooks.ToString();
+                ViewBag.StatsColor = "success";
+            }
+            @Html.Partial("_StatsCard")
+        </div>
+        <div class="col-md-3">
+            @{
+                ViewBag.StatsIcon = "bi-exclamation-triangle";
+                ViewBag.StatsTitle = "Low Stock";
+                ViewBag.StatsValue = Model.LowStockBooks.ToString();
+                ViewBag.StatsColor = "warning";
+            }
+            @Html.Partial("_StatsCard")
+        </div>
+        <div class="col-md-3">
+            @{
+                ViewBag.StatsIcon = "bi-x-circle";
+                ViewBag.StatsTitle = "Out of Stock";
+                ViewBag.StatsValue = Model.OutOfStockBooks.ToString();
+                ViewBag.StatsColor = "danger";
+            }
+            @Html.Partial("_StatsCard")
+        </div>
+    </div>
+
+    <!-- Books Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Books List</h5>
+                        <div class="d-flex align-items-center">
+                            <span class="text-muted me-3">Showing @Model.Books.Count() of @Model.TotalBooks books</span>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-sort-down"></i> Sort by
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" data-sort="title">Title</a></li>
+                                    <li><a class="dropdown-item" href="#" data-sort="author">Author</a></li>
+                                    <li><a class="dropdown-item" href="#" data-sort="price">Price</a></li>
+                                    <li><a class="dropdown-item" href="#" data-sort="stock">Stock</a></li>
+                                    <li><a class="dropdown-item" href="#" data-sort="date">Date Added</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="booksTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="30">
+                                        <input type="checkbox" id="selectAll" class="form-check-input">
+                                    </th>
+                                    <th width="80">Image</th>
+                                    <th>Title</th>
+                                    <th>Author</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var book in Model.Books)
+                                {
+                                    <tr data-book-id="@book.Id">
+                                        <td>
+                                            <input type="checkbox" class="form-check-input book-checkbox" value="@book.Id">
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(book.ImageUrl))
+                                            {
+                                                <img src="@book.ImageUrl" alt="@book.Title" class="img-thumbnail" style="width: 60px; height: 80px; object-fit: cover;">
+                                            }
+                                            else
+                                            {
+                                                <div class="bg-light d-flex align-items-center justify-content-center rounded" style="width: 60px; height: 80px;">
+                                                    <i class="bi bi-book text-muted" style="font-size: 1.5rem;"></i>
+                                                </div>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold">@book.Title</div>
+                                            <small class="text-muted">ISBN: @book.ISBN</small>
+                                        </td>
+                                        <td>
+                                            <div>@book.Author</div>
+                                            <small class="text-muted">@book.Publisher</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary">@book.Category</span>
+                                            <div class="small text-muted">@book.Genre</div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold text-primary">R @book.Price.ToString("F2")</div>
+                                            @if (book.Discount > 0)
+                                            {
+                                                <small class="text-success">@book.Discount% off</small>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                @if (book.StockQuantity > 0)
+                                                {
+                                                    <span class="badge bg-success me-2">@book.StockQuantity</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger me-2">0</span>
+                                                }
+                                            </div>
+                                            <small class="text-muted">Min: @book.MinStock</small>
+                                        </td>
+                                        <td>
+                                            @if (book.IsActive)
+                                            {
+                                                <span class="badge bg-success">Active</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Inactive</span>
+                                            }
+                                            @if (book.IsFeatured)
+                                            {
+                                                <span class="badge bg-warning text-dark">Featured</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <a class="dropdown-item" href="@Url.Action("Details", "Books", new { id = book.Id })">
+                                                            <i class="bi bi-eye"></i> View Details
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="@Url.Action("Edit", "Books", new { id = book.Id })">
+                                                            <i class="bi bi-pencil"></i> Edit
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="@Url.Action("Duplicate", "Books", new { id = book.Id })">
+                                                            <i class="bi bi-copy"></i> Duplicate
+                                                        </a>
+                                                    </li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li>
+                                                        <button class="dropdown-item text-danger delete-book" data-book-id="@book.Id" data-book-title="@book.Title">
+                                                            <i class="bi bi-trash"></i> Delete
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    @{
+                        ViewBag.CurrentPage = Model.CurrentPage;
+                        ViewBag.TotalPages = Model.TotalPages;
+                        ViewBag.ActionName = "Index";
+                        ViewBag.ControllerName = "Books";
+                        ViewBag.RouteValues = new { searchTerm = Model.SearchTerm, category = Model.SelectedCategory, genre = Model.SelectedGenre, stockFilter = Model.StockFilter };
+                    }
+                    @Html.Partial("_Pagination")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Import Modal -->
+@{
+    ViewBag.ModalId = "importModal";
+    ViewBag.ModalTitle = "Import Books";
+    ViewBag.ModalSize = "";
+    ViewBag.ModalBody = @"
+        <form id='importForm' enctype='multipart/form-data'>
+            <div class='mb-3'>
+                <label for='importFile' class='form-label'>Select CSV or Excel file</label>
+                <input type='file' class='form-control' id='importFile' accept='.csv,.xlsx,.xls' required>
+                <div class='form-text'>Supported formats: CSV, XLSX, XLS</div>
+            </div>
+            <div class='alert alert-info'>
+                <strong>Note:</strong> The file should contain columns for Title, Author, ISBN, Category, Price, and Stock Quantity.
+            </div>
+        </form>
+    ";
+    ViewBag.ModalSaveButtonText = "Import";
+    ViewBag.ModalSaveButtonId = "importBtn";
+    ViewBag.ModalCloseButtonText = "Cancel";
+}
+@Html.Partial("_Modal")
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select All functionality
+            const selectAll = document.getElementById('selectAll');
+            const bookCheckboxes = document.querySelectorAll('.book-checkbox');
+            const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+
+            selectAll.addEventListener('change', function() {
+                bookCheckboxes.forEach(checkbox => {
+                    checkbox.checked = selectAll.checked;
+                });
+                updateBulkDeleteButton();
+            });
+
+            bookCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateBulkDeleteButton();
+                    selectAll.checked = Array.from(bookCheckboxes).every(cb => cb.checked);
+                });
+            });
+
+            function updateBulkDeleteButton() {
+                const selectedCount = Array.from(bookCheckboxes).filter(cb => cb.checked).length;
+                bulkDeleteBtn.style.display = selectedCount > 0 ? 'block' : 'none';
+                bulkDeleteBtn.innerHTML = `<i class="bi bi-trash"></i> Delete Selected (${selectedCount})`;
+            }
+
+            // Bulk Delete
+            bulkDeleteBtn.addEventListener('click', function() {
+                const selectedIds = Array.from(bookCheckboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
+
+                if (selectedIds.length === 0) return;
+
+                if (confirm(`Are you sure you want to delete ${selectedIds.length} book(s)? This action cannot be undone.`)) {
+                    // Implement bulk delete logic
+                    console.log('Deleting books:', selectedIds);
+                    // Add AJAX call to delete books
+                }
+            });
+
+            // Individual Delete
+            document.querySelectorAll('.delete-book').forEach(button => {
+                button.addEventListener('click', function() {
+                    const bookId = this.dataset.bookId;
+                    const bookTitle = this.dataset.bookTitle;
+
+                    if (confirm(`Are you sure you want to delete "${bookTitle}"? This action cannot be undone.`)) {
+                        // Implement delete logic
+                        console.log('Deleting book:', bookId);
+                        // Add AJAX call to delete book
+                    }
+                });
+            });
+
+            // Filter functionality
+            document.getElementById('filterBtn').addEventListener('click', function() {
+                const searchTerm = document.getElementById('searchInput').value;
+                const category = document.getElementById('categoryFilter').value;
+                const genre = document.getElementById('genreFilter').value;
+                const stockFilter = document.getElementById('stockFilter').value;
+
+                const url = new URL(window.location.href);
+                url.searchParams.set('searchTerm', searchTerm);
+                url.searchParams.set('category', category);
+                url.searchParams.set('genre', genre);
+                url.searchParams.set('stockFilter', stockFilter);
+                url.searchParams.set('page', '1'); // Reset to first page
+
+                window.location.href = url.toString();
+            });
+
+            // Sort functionality
+            document.querySelectorAll('[data-sort]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const sortBy = this.dataset.sort;
+                    
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('sortBy', sortBy);
+                    url.searchParams.set('page', '1'); // Reset to first page
+
+                    window.location.href = url.toString();
+                });
+            });
+
+            // Import functionality
+            document.getElementById('importBtn').addEventListener('click', function() {
+                const fileInput = document.getElementById('importFile');
+                const file = fileInput.files[0];
+
+                if (!file) {
+                    alert('Please select a file to import.');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                // Implement import logic
+                console.log('Importing file:', file.name);
+                // Add AJAX call to import books
+            });
+
+            // Search on Enter key
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('filterBtn').click();
+                }
+            });
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .card {
+            border: none;
+            border-radius: 12px;
+            transition: transform 0.2s ease-in-out;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            border-radius: 12px 12px 0 0 !important;
+            font-weight: 600;
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+        
+        .img-thumbnail {
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+            padding: 2px;
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.4em 0.8em;
+        }
+        
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+        
+        .input-group-text {
+            border-radius: 8px 0 0 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+        
+        .form-control {
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .pagination {
+            margin-bottom: 0;
+        }
+        
+        .page-link {
+            border-radius: 8px;
+            margin: 0 2px;
+            border: none;
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+        
+        .page-link:hover {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        
+        .page-item.active .page-link {
+            background-color: #0d6efd;
+            color: white;
+        }
+        
+        .dropdown-menu {
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dropdown-item {
+            border-radius: 6px;
+            margin: 2px;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .text-primary {
+            color: #0d6efd !important;
+            font-weight: 600;
+        }
+        
+        .text-success {
+            color: #198754 !important;
+        }
+        
+        .text-danger {
+            color: #dc3545 !important;
+        }
+        
+        .text-warning {
+            color: #ffc107 !important;
+        }
+        
+        .bg-primary {
+            background-color: #0d6efd !important;
+        }
+        
+        .bg-success {
+            background-color: #198754 !important;
+        }
+        
+        .bg-warning {
+            background-color: #ffc107 !important;
+        }
+        
+        .bg-danger {
+            background-color: #dc3545 !important;
+        }
+        
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        
+        .form-check-input:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+        
+        .modal-content {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modal-header {
+            border-radius: 12px 12px 0 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .modal-footer {
+            border-radius: 0 0 12px 12px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .alert {
+            border-radius: 8px;
+            border: none;
+        }
+        
+        .table-light th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .small.text-muted {
+            font-size: 0.75rem;
+        }
+        
+        .fw-bold {
+            font-weight: 600 !important;
+        }
+    </style>
+}

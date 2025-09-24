@@ -1,0 +1,66 @@
+@{
+    string modalId = ViewBag.ModalId ?? "modal";
+    string modalTitle = ViewBag.ModalTitle ?? "Modal Title";
+    string modalSize = ViewBag.ModalSize ?? ""; // modal-lg, modal-xl, modal-sm
+    bool showFooter = ViewBag.ShowFooter != false;
+    string footerContent = ViewBag.FooterContent ?? "";
+    string saveButtonText = ViewBag.SaveButtonText ?? "Save Changes";
+    string closeButtonText = ViewBag.CloseButtonText ?? "Close";
+    string saveButtonClass = ViewBag.SaveButtonClass ?? "btn-primary";
+    string closeButtonClass = ViewBag.CloseButtonClass ?? "btn-secondary";
+}
+
+<div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="@modalId-Label" aria-hidden="true">
+    <div class="modal-dialog @modalSize">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="@modalId-Label">@modalTitle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @RenderBody()
+            </div>
+            @if (showFooter)
+            {
+                <div class="modal-footer">
+                    @if (!string.IsNullOrEmpty(footerContent))
+                    {
+                        @Html.Raw(footerContent)
+                    }
+                    else
+                    {
+                        <button type="button" class="btn @closeButtonClass" data-bs-dismiss="modal">@closeButtonText</button>
+                        <button type="button" class="btn @saveButtonClass" id="@modalId-save">@saveButtonText</button>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var modal = document.getElementById('@modalId');
+        if (modal) {
+            modal.addEventListener('shown.bs.modal', function () {
+                // Focus first input or button
+                var firstInput = modal.querySelector('input, textarea, select, button:not([data-bs-dismiss])');
+                if (firstInput) {
+                    firstInput.focus();
+                }
+            });
+            
+            // Handle save button click
+            var saveButton = modal.querySelector('#@modalId-save');
+            if (saveButton) {
+                saveButton.addEventListener('click', function() {
+                    // Trigger custom event for save action
+                    var event = new CustomEvent('modalSave', {
+                        detail: { modalId: '@modalId' }
+                    });
+                    document.dispatchEvent(event);
+                });
+            }
+        }
+    });
+</script>

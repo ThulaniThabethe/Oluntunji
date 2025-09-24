@@ -1,4 +1,28 @@
-﻿/* Set padding to keep content from hitting the edges */
+/* South African Bookstore Custom Styles */
+
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #0dcaf0;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --south-african-green: #007a4d;
+    --south-african-gold: #ffb81c;
+    --south-african-red: #de3831;
+    --south-african-blue: #002395;
+}
+
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--dark-color);
+}
+
+/* Set padding to keep content from hitting the edges */
 .body-content {
     margin-top: 15px;
     padding-left: 15px;
@@ -17,4 +41,289 @@ input,
 select,
 textarea {
     max-width: 280px;
+}
+
+/* Navigation Enhancements */
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.navbar-nav .nav-link {
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--south-african-gold) !important;
+}
+
+/* Card Enhancements */
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--south-african-green));
+    color: white;
+    border-bottom: none;
+}
+
+/* Button Enhancements */
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--south-african-blue));
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--south-african-blue), var(--primary-color));
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success-color), var(--south-african-green));
+    border: none;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--danger-color), var(--south-african-red));
+    border: none;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--warning-color), #ff8f00);
+    border: none;
+}
+
+/* Form Enhancements */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+/* Table Enhancements */
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table thead th {
+    background: linear-gradient(135deg, var(--primary-color), var(--south-african-green));
+    color: white;
+    border: none;
+    font-weight: 600;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Alert Enhancements */
+.alert {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.alert-success {
+    background: linear-gradient(135deg, var(--success-color), var(--south-african-green));
+    color: white;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, var(--danger-color), var(--south-african-red));
+    color: white;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, var(--warning-color), #ff8f00);
+    color: white;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, var(--info-color), #0097a7);
+    color: white;
+}
+
+/* Book Card Styles */
+.book-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.book-card .card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.book-card .card-text {
+    flex-grow: 1;
+}
+
+.book-cover {
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px 8px 0 0;
+}
+
+/* Price Styles */
+.price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--success-color);
+}
+
+.price-original {
+    text-decoration: line-through;
+    color: var(--secondary-color);
+    font-size: 1rem;
+    margin-right: 0.5rem;
+}
+
+/* Rating Stars */
+.rating {
+    color: var(--warning-color);
+}
+
+.rating .bi-star-fill {
+    font-size: 1rem;
+}
+
+/* Dashboard Styles */
+.dashboard-card {
+    background: linear-gradient(135deg, var(--light-color), #ffffff);
+    border-left: 4px solid var(--primary-color);
+}
+
+.dashboard-card .card-title {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.dashboard-card .display-4 {
+    color: var(--dark-color);
+    font-weight: 700;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    background: linear-gradient(135deg, var(--light-color), #ffffff);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar .nav-link {
+    color: var(--dark-color);
+    font-weight: 500;
+    border-radius: 8px;
+    margin-bottom: 0.25rem;
+    transition: all 0.3s ease;
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: var(--primary-color);
+}
+
+.sidebar .nav-link.active {
+    background: linear-gradient(135deg, var(--primary-color), var(--south-african-green));
+    color: white;
+}
+
+/* South African Flag Inspired Elements */
+.south-african-flag {
+    background: linear-gradient(to right, 
+        var(--south-african-red) 0%, 
+        var(--south-african-red) 33%, 
+        var(--south-african-green) 33%, 
+        var(--south-african-green) 66%, 
+        var(--south-african-blue) 66%, 
+        var(--south-african-blue) 100%);
+    height: 4px;
+    border-radius: 2px;
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.5s ease-out;
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.slide-in-right {
+    animation: slideInRight 0.5s ease-out;
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+    
+    .btn {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
 }

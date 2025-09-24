@@ -1,0 +1,397 @@
+@model WebApplication1.ViewModels.EditProfileViewModel
+
+@{
+    ViewBag.Title = "Edit Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Page Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold text-primary">
+                    <i class="bi bi-person-gear"></i> Edit Profile
+                </h1>
+                <p class="text-muted">Update your personal information and preferences</p>
+            </div>
+
+            <!-- Profile Image Section -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center">
+                    <div class="position-relative d-inline-block">
+                        <img src="@(!string.IsNullOrEmpty(Model.ProfileImageUrl) ? Model.ProfileImageUrl : "/Content/Images/default-avatar.png")" 
+                             alt="Profile Image" 
+                             class="rounded-circle img-thumbnail mb-3" 
+                             style="width: 150px; height: 150px; object-fit: cover;">
+                        <button type="button" class="btn btn-primary btn-sm position-absolute bottom-0 end-0 rounded-circle" 
+                                onclick="document.getElementById('ProfileImage').click()" 
+                                title="Change Profile Picture">
+                            <i class="bi bi-camera"></i>
+                        </button>
+                    </div>
+                    <h5 class="mb-1">@Model.FirstName @Model.LastName</h5>
+                    <p class="text-muted mb-0">@Model.Email</p>
+                    <span class="badge bg-primary">@Model.Role</span>
+                </div>
+            </div>
+
+            <!-- Edit Profile Form -->
+            @using (Html.BeginForm("Edit", "Profile", FormMethod.Post, new { enctype = "multipart/form-data", @class = "needs-validation", novalidate = "novalidate", id = "editProfileForm" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger alert-dismissible fade show" })
+                @Html.HiddenFor(m => m.UserId)
+
+                <!-- Hidden file input for profile image -->
+                <input type="file" id="ProfileImage" name="ProfileImage" accept="image/*" style="display: none;" onchange="previewNewImage(this)">
+
+                <!-- Personal Information -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-person"></i> Personal Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.FirstName, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = "Enter your first name" })
+                                @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.LastName, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", placeholder = "Enter your last name" })
+                                @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.Email, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Enter your email address" })
+                                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.PhoneNumber, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "+27 11 123 4567" })
+                                @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Bio, new { @class = "form-label" })
+                            @Html.TextAreaFor(m => m.Bio, new { @class = "form-control", rows = "4", placeholder = "Tell us a bit about yourself..." })
+                            @Html.ValidationMessageFor(m => m.Bio, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address Information -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-geo-alt"></i> Address Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.AddressLine1, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.AddressLine1, new { @class = "form-control", placeholder = "Street address" })
+                                @Html.ValidationMessageFor(m => m.AddressLine1, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.AddressLine2, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.AddressLine2, new { @class = "form-control", placeholder = "Apartment, suite, etc. (optional)" })
+                                @Html.ValidationMessageFor(m => m.AddressLine2, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                @Html.LabelFor(m => m.City, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.City, new { @class = "form-control", placeholder = "City" })
+                                @Html.ValidationMessageFor(m => m.City, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                @Html.LabelFor(m => m.Province, new { @class = "form-label" })
+                                @Html.DropDownListFor(m => m.Province, new SelectList(new[] {
+                                    new { Value = "", Text = "Select Province" },
+                                    new { Value = "EC", Text = "Eastern Cape" },
+                                    new { Value = "FS", Text = "Free State" },
+                                    new { Value = "GP", Text = "Gauteng" },
+                                    new { Value = "KZN", Text = "KwaZulu-Natal" },
+                                    new { Value = "LP", Text = "Limpopo" },
+                                    new { Value = "MP", Text = "Mpumalanga" },
+                                    new { Value = "NC", Text = "Northern Cape" },
+                                    new { Value = "NW", Text = "North West" },
+                                    new { Value = "WC", Text = "Western Cape" }
+                                }, "Value", "Text", Model.Province), new { @class = "form-select" })
+                                @Html.ValidationMessageFor(m => m.Province, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                @Html.LabelFor(m => m.PostalCode, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.PostalCode, new { @class = "form-control", placeholder = "0000" })
+                                @Html.ValidationMessageFor(m => m.PostalCode, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role-Specific Information -->
+                @if (Model.Role == "Seller")
+                {
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-shop"></i> Seller Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                @Html.LabelFor(m => m.SellerBusinessName, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.SellerBusinessName, new { @class = "form-control", placeholder = "Your business name" })
+                                @Html.ValidationMessageFor(m => m.SellerBusinessName, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(m => m.SellerDescription, new { @class = "form-label" })
+                                @Html.TextAreaFor(m => m.SellerDescription, new { @class = "form-control", rows = "3", placeholder = "Tell us about your bookstore business" })
+                                @Html.ValidationMessageFor(m => m.SellerDescription, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(m => m.SellerWebsite, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.SellerWebsite, new { @class = "form-control", placeholder = "https://yourwebsite.com (optional)" })
+                                @Html.ValidationMessageFor(m => m.SellerWebsite, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Role == "Employee")
+                {
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-person-badge"></i> Employee Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    @Html.LabelFor(m => m.EmployeeDepartment, new { @class = "form-label" })
+                                    @Html.DropDownListFor(m => m.EmployeeDepartment, new SelectList(new[] {
+                                        new { Value = "", Text = "Select Department" },
+                                        new { Value = "Sales", Text = "Sales" },
+                                        new { Value = "Marketing", Text = "Marketing" },
+                                        new { Value = "Operations", Text = "Operations" },
+                                        new { Value = "Customer Service", Text = "Customer Service" },
+                                        new { Value = "IT", Text = "IT" },
+                                        new { Value = "Management", Text = "Management" }
+                                    }, "Value", "Text", Model.EmployeeDepartment), new { @class = "form-select" })
+                                    @Html.ValidationMessageFor(m => m.EmployeeDepartment, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    @Html.LabelFor(m => m.EmployeePosition, new { @class = "form-label" })
+                                    @Html.TextBoxFor(m => m.EmployeePosition, new { @class = "form-control", placeholder = "Your position/title" })
+                                    @Html.ValidationMessageFor(m => m.EmployeePosition, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Preferences -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-gear"></i> Preferences
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.PreferredLanguage, new { @class = "form-label" })
+                                @Html.DropDownListFor(m => m.PreferredLanguage, new SelectList(new[] {
+                                    new { Value = "en", Text = "English" },
+                                    new { Value = "af", Text = "Afrikaans" },
+                                    new { Value = "zu", Text = "Zulu" },
+                                    new { Value = "xh", Text = "Xhosa" }
+                                }, "Value", "Text", Model.PreferredLanguage), new { @class = "form-select" })
+                                @Html.ValidationMessageFor(m => m.PreferredLanguage, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.TimeZone, new { @class = "form-label" })
+                                @Html.DropDownListFor(m => m.TimeZone, new SelectList(new[] {
+                                    new { Value = "Africa/Johannesburg", Text = "South Africa (Johannesburg)" },
+                                    new { Value = "Africa/Cape_Town", Text = "South Africa (Cape Town)" },
+                                    new { Value = "Africa/Durban", Text = "South Africa (Durban)" }
+                                }, "Value", "Text", Model.TimeZone), new { @class = "form-select" })
+                                @Html.ValidationMessageFor(m => m.TimeZone, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                @Html.CheckBoxFor(m => m.EmailNotifications, new { @class = "form-check-input" })
+                                @Html.LabelFor(m => m.EmailNotifications, new { @class = "form-check-label" })
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                @Html.CheckBoxFor(m => m.SmsNotifications, new { @class = "form-check-input" })
+                                @Html.LabelFor(m => m.SmsNotifications, new { @class = "form-check-label" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-between">
+                    <a href="@Url.Action("Index", "Profile")" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Cancel
+                    </a>
+                    <div>
+                        <a href="@Url.Action("ChangePassword", "Profile")" class="btn btn-outline-warning me-2">
+                            <i class="bi bi-key"></i> Change Password
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check"></i> Save Changes
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function previewNewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const profileImg = document.querySelector('.rounded-circle');
+                    profileImg.src = e.target.result;
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Initialize form validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('editProfileForm');
+            
+            // Add validation classes on blur
+            form.querySelectorAll('input, select, textarea').forEach(field => {
+                field.addEventListener('blur', function() {
+                    if (this.hasAttribute('required') && !this.value.trim()) {
+                        this.classList.add('is-invalid');
+                    } else {
+                        this.classList.remove('is-invalid');
+                        if (this.value.trim()) {
+                            this.classList.add('is-valid');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .card {
+            border: none;
+            border-radius: 12px;
+            transition: transform 0.2s ease-in-out;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            border-radius: 12px 12px 0 0 !important;
+            font-weight: 600;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+        
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .position-relative .btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .display-5 {
+            font-weight: 700;
+        }
+        
+        .text-primary {
+            color: #0d6efd !important;
+        }
+        
+        .bg-primary {
+            background-color: #0d6efd !important;
+        }
+        
+        .alert {
+            border-radius: 8px;
+            border: none;
+        }
+        
+        .img-thumbnail {
+            border-radius: 50%;
+            border: 3px solid #dee2e6;
+            padding: 3px;
+        }
+        
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        
+        .form-check-input:focus {
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+        
+        .is-invalid {
+            border-color: #dc3545;
+        }
+        
+        .is-valid {
+            border-color: #198754;
+        }
+        
+        .text-danger {
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.5em 1em;
+        }
+    </style>
+}

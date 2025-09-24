@@ -1,0 +1,324 @@
+@model WebApplication1.ViewModels.SavedCardsListViewModel
+
+@{
+    ViewData["Title"] = "Saved Cards";
+}
+
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="display-6 mb-2">
+                        <i class="fas fa-credit-card me-3"></i>Saved Cards
+                    </h2>
+                    <p class="text-muted mb-0">Manage your saved payment methods</p>
+                </div>
+                <a href="@Url.Action("AddCard", "Payment")" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add New Card
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <div class="stats-icon bg-primary">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-primary mb-1">@Model.TotalCards</h3>
+                    <p class="text-muted mb-0">Total Cards</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <div class="stats-icon bg-success">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-success mb-1">@(Model.HasDefaultCard ? "Yes" : "No")</h3>
+                    <p class="text-muted mb-0">Default Card Set</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <div class="stats-icon bg-info">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-info mb-1">100%</h3>
+                    <p class="text-muted mb-0">Secure Storage</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Saved Cards List -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="fas fa-list me-2"></i>Your Saved Cards
+            </h5>
+            @if (Model.SavedCards?.Any() == true)
+            {
+                <span class="badge bg-primary rounded-pill">@Model.SavedCards.Count</span>
+            }
+        </div>
+        <div class="card-body p-0">
+            @if (Model.SavedCards == null || !Model.SavedCards.Any())
+            {
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-credit-card fa-3x text-muted"></i>
+                        </div>
+                    </div>
+                    <h5 class="text-muted mb-2">No Saved Cards</h5>
+                    <p class="text-muted mb-4">You haven't saved any payment cards yet.</p>
+                    <a href="@Url.Action("AddCard", "Payment")" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Add Your First Card
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="border-0">Card</th>
+                                <th class="border-0">Type</th>
+                                <th class="border-0">Expires</th>
+                                <th class="border-0">Status</th>
+                                <th class="border-0">Added</th>
+                                <th class="border-0 text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var card in Model.SavedCards)
+                            {
+                                <tr class="fade-in">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="card-icon me-3">
+                                                @if (card.CardType.Contains("Visa"))
+                                                {
+                                                    <i class="fab fa-cc-visa text-primary fa-2x"></i>
+                                                }
+                                                else if (card.CardType.Contains("Mastercard"))
+                                                {
+                                                    <i class="fab fa-cc-mastercard text-warning fa-2x"></i>
+                                                }
+                                                else if (card.CardType.Contains("American Express"))
+                                                {
+                                                    <i class="fab fa-cc-amex text-info fa-2x"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fas fa-credit-card text-secondary fa-2x"></i>
+                                                }
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">@card.MaskedCardNumber</div>
+                                                <small class="text-muted">@card.CardholderName</small>
+                                                @if (card.IsDefault)
+                                                {
+                                                    <span class="badge bg-success ms-2">Default</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">@card.CardType</span>
+                                    </td>
+                                    <td>
+                                        <span class="@(card.IsExpired ? "text-danger" : "text-body")">
+                                            @card.ExpiryMonth/@card.ExpiryYear.ToString().Substring(2)
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (card.IsExpired)
+                                        {
+                                            <span class="badge bg-danger">Expired</span>
+                                        }
+                                        else if (card.IsDefault)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Saved</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">@card.DateAdded.ToString("MMM dd, yyyy")</small>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="btn-group" role="group">
+                                            @if (!card.IsDefault && !card.IsExpired)
+                                            {
+                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="setDefaultCard(@card.CardId)" title="Set as Default">
+                                                    <i class="fas fa-star"></i>
+                                                </button>
+                                            }
+                                            <a href="@Url.Action("EditCard", "Payment", new { id = card.CardId })" class="btn btn-sm btn-outline-secondary" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteCard(@card.CardId, '@card.MaskedCardNumber')" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Security Notice -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-light">
+            <h6 class="mb-0">
+                <i class="fas fa-shield-alt me-2"></i>Security Information
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6><i class="fas fa-lock text-success me-2"></i>Secure Storage</h6>
+                    <p class="text-muted small mb-3">Your card information is encrypted and stored securely using industry-standard security protocols.</p>
+                </div>
+                <div class="col-md-6">
+                    <h6><i class="fas fa-eye-slash text-info me-2"></i>Privacy Protected</h6>
+                    <p class="text-muted small mb-3">We only store the last 4 digits of your card number for identification purposes.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .stats-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .card-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .empty-state-icon {
+        opacity: 0.3;
+    }
+
+    .fade-in {
+        animation: fadeIn 0.5s ease-in;
+    }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-group .btn {
+        border-radius: 0;
+    }
+
+    .btn-group .btn:first-child {
+        border-top-left-radius: 0.25rem;
+        border-bottom-left-radius: 0.25rem;
+    }
+
+    .btn-group .btn:last-child {
+        border-top-right-radius: 0.25rem;
+        border-bottom-right-radius: 0.25rem;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function setDefaultCard(cardId) {
+            if (confirm('Are you sure you want to set this card as your default payment method?')) {
+                $.ajax({
+                    url: '@Url.Action("SetDefaultCard", "Payment")',
+                    type: 'POST',
+                    data: { id: cardId },
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message || 'An error occurred while setting the default card.');
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while processing your request.');
+                    }
+                });
+            }
+        }
+
+        function deleteCard(cardId, maskedNumber) {
+            if (confirm(`Are you sure you want to delete the card ending in ${maskedNumber}? This action cannot be undone.`)) {
+                $.ajax({
+                    url: '@Url.Action("DeleteCard", "Payment")',
+                    type: 'POST',
+                    data: { id: cardId },
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message || 'An error occurred while deleting the card.');
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while processing your request.');
+                    }
+                });
+            }
+        }
+
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+    </script>
+}

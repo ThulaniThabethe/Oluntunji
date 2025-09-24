@@ -1,0 +1,62 @@
+@model dynamic
+
+@{
+    string title = ViewBag.CardTitle ?? "Card";
+    string subtitle = ViewBag.CardSubtitle ?? "";
+    string footer = ViewBag.CardFooter ?? "";
+    string headerClass = ViewBag.CardHeaderClass ?? "";
+    string bodyClass = ViewBag.CardBodyClass ?? "";
+    string footerClass = ViewBag.CardFooterClass ?? "";
+    string cardClass = ViewBag.CardClass ?? "";
+    bool showHeader = ViewBag.ShowHeader != false;
+    bool showFooter = ViewBag.ShowFooter == true;
+}
+
+<div class="card @cardClass">
+    @if (showHeader)
+    {
+        <div class="card-header @headerClass">
+            <h5 class="card-title mb-0">@title</h5>
+            @if (!string.IsNullOrEmpty(subtitle))
+            {
+                <small class="text-muted">@subtitle</small>
+            }
+        </div>
+    }
+    
+    <div class="card-body @bodyClass">
+        @RenderBody()
+    </div>
+    
+    @if (showFooter)
+    {
+        <div class="card-footer @footerClass">
+            @footer
+        </div>
+    }
+</div>
+
+<style>
+    .card {
+        border: 1px solid rgba(0,0,0,.125);
+        border-radius: 0.5rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+        transition: box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+    }
+    
+    .card-header {
+        background-color: rgba(0,0,0,.03);
+        border-bottom: 1px solid rgba(0,0,0,.125);
+        padding: 0.75rem 1.25rem;
+    }
+    
+    .card-footer {
+        background-color: rgba(0,0,0,.03);
+        border-top: 1px solid rgba(0,0,0,.125);
+        padding: 0.75rem 1.25rem;
+    }
+</style>

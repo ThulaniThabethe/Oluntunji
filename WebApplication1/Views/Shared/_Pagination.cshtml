@@ -1,0 +1,132 @@
+@model dynamic
+
+@{
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    string action = ViewBag.Action ?? "Index";
+    string controller = ViewBag.Controller ?? ViewContext.RouteData.Values["controller"].ToString();
+    
+    int startPage = Math.Max(1, currentPage - 2);
+    int endPage = Math.Min(totalPages, currentPage + 2);
+    
+    if (endPage - startPage < 4)
+    {
+        if (startPage == 1)
+        {
+            endPage = Math.Min(totalPages, startPage + 4);
+        }
+        else if (endPage == totalPages)
+        {
+            startPage = Math.Max(1, endPage - 4);
+        }
+    }
+}
+
+@if (totalPages > 1)
+{
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            @if (currentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action(action, controller, new { page = currentPage - 1, ViewBag.SearchTerm, ViewBag.SortBy, ViewBag.FilterBy })" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&laquo;</span>
+                </li>
+            }
+            
+            @if (startPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action(action, controller, new { page = 1, ViewBag.SearchTerm, ViewBag.SortBy, ViewBag.FilterBy })">1</a>
+                </li>
+                @if (startPage > 2)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                }
+            }
+            
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    @if (i == currentPage)
+                    {
+                        <span class="page-link">@i <span class="sr-only">(current)</span></span>
+                    }
+                    else
+                    {
+                        <a class="page-link" href="@Url.Action(action, controller, new { page = i, ViewBag.SearchTerm, ViewBag.SortBy, ViewBag.FilterBy })">@i</a>
+                    }
+                </li>
+            }
+            
+            @if (endPage < totalPages)
+            {
+                @if (endPage < totalPages - 1)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                }
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action(action, controller, new { page = totalPages, ViewBag.SearchTerm, ViewBag.SortBy, ViewBag.FilterBy })">@totalPages</a>
+                </li>
+            }
+            
+            @if (currentPage < totalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action(action, controller, new { page = currentPage + 1, ViewBag.SearchTerm, ViewBag.SortBy, ViewBag.FilterBy })" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+<style>
+    .pagination {
+        margin-bottom: 0;
+    }
+    
+    .page-link {
+        color: #0d6efd;
+        border: 1px solid #dee2e6;
+        margin: 0 2px;
+        border-radius: 0.25rem;
+    }
+    
+    .page-link:hover {
+        color: #0a58ca;
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+    }
+    
+    .page-item.active .page-link {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: white;
+    }
+    
+    .page-item.disabled .page-link {
+        color: #6c757d;
+        pointer-events: none;
+        background-color: #fff;
+        border-color: #dee2e6;
+    }
+</style>

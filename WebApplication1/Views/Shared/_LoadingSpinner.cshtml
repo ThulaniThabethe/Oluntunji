@@ -1,0 +1,33 @@
+@{
+    string size = ViewBag.SpinnerSize ?? "md";
+    string color = ViewBag.SpinnerColor ?? "primary";
+    string text = ViewBag.SpinnerText ?? "Loading...";
+    
+    string sizeClass = size switch {
+        "sm" => "spinner-border-sm",
+        "lg" => "spinner-border-lg",
+        _ => ""
+    };
+}
+
+<div class="text-center loading-spinner">
+    <div class="spinner-border text-@color @sizeClass" role="status">
+        <span class="visually-hidden">@text</span>
+    </div>
+    @if (!string.IsNullOrEmpty(text) && text != "Loading...")
+    {
+        <div class="mt-2 text-muted">@text</div>
+    }
+</div>
+
+<style>
+    .loading-spinner {
+        padding: 2rem;
+    }
+    
+    .spinner-border-lg {
+        width: 3rem;
+        height: 3rem;
+        border-width: 0.3em;
+    }
+</style>

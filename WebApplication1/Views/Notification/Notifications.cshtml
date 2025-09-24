@@ -1,0 +1,540 @@
+@model WebApplication1.ViewModels.NotificationsListViewModel
+
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="display-6">
+                        <i class="fas fa-bell me-3 text-primary"></i>Notifications
+                    </h1>
+                    <p class="text-muted mb-0">Stay updated with your account activity</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="@Url.Action("NotificationSettings", "Notification")" class="btn btn-outline-primary">
+                        <i class="fas fa-cog me-2"></i>Settings
+                    </a>
+                    <button type="button" class="btn btn-outline-secondary" id="markAllReadBtn" @(Model.UnreadCount == 0 ? "disabled" : "")>
+                        <i class="fas fa-check-double me-2"></i>Mark All Read
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Statistics -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body text-center">
+                    <div class="d-flex align-items-center justify-content-center mb-3">
+                        <i class="fas fa-inbox fa-2x"></i>
+                    </div>
+                    <h3 class="mb-1">@Model.TotalNotifications</h3>
+                    <p class="mb-0">Total Notifications</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-warning text-dark h-100">
+                <div class="card-body text-center">
+                    <div class="d-flex align-items-center justify-content-center mb-3">
+                        <i class="fas fa-envelope fa-2x"></i>
+                    </div>
+                    <h3 class="mb-1">@Model.UnreadCount</h3>
+                    <p class="mb-0">Unread</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-danger text-white h-100">
+                <div class="card-body text-center">
+                    <div class="d-flex align-items-center justify-content-center mb-3">
+                        <i class="fas fa-exclamation-triangle fa-2x"></i>
+                    </div>
+                    <h3 class="mb-1">@Model.HighPriorityCount</h3>
+                    <p class="mb-0">High Priority</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body text-center">
+                    <div class="d-flex align-items-center justify-content-center mb-3">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                    <h3 class="mb-1">@(Model.TotalNotifications - Model.UnreadCount)</h3>
+                    <p class="mb-0">Read</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <ul class="nav nav-pills mb-3" id="notificationTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="all-tab" data-bs-toggle="pill" data-bs-target="#all" type="button" role="tab">
+                        <i class="fas fa-list me-2"></i>All
+                        <span class="badge bg-secondary ms-2">@Model.TotalNotifications</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="unread-tab" data-bs-toggle="pill" data-bs-target="#unread" type="button" role="tab">
+                        <i class="fas fa-envelope me-2"></i>Unread
+                        <span class="badge bg-warning ms-2">@Model.UnreadCount</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="high-priority-tab" data-bs-toggle="pill" data-bs-target="#high-priority" type="button" role="tab">
+                        <i class="fas fa-exclamation-circle me-2"></i>High Priority
+                        <span class="badge bg-danger ms-2">@Model.HighPriorityCount</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Notifications List -->
+    <div class="row">
+        <div class="col-12">
+            <div class="tab-content" id="notificationTabContent">
+                <!-- All Notifications -->
+                <div class="tab-pane fade show active" id="all" role="tabpanel">
+                    @if (Model.Notifications?.Any() == true)
+                    {
+                        <div class="list-group">
+                            @foreach (var notification in Model.Notifications)
+                            {
+                                <div class="list-group-item notification-item @(notification.IsRead ? "" : "unread")" data-notification-id="@notification.NotificationId">
+                                    <div class="d-flex align-items-start">
+                                        <div class="notification-icon me-3">
+                                            <i class="fas @GetNotificationIcon(notification.NotificationType) fa-lg"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <h6 class="mb-1">@notification.Title</h6>
+                                                    <p class="mb-1 text-muted">@notification.Message</p>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-clock me-1"></i>@GetTimeAgo(notification.CreatedDate)
+                                                    </small>
+                                                    @if (!string.IsNullOrEmpty(notification.Priority) && notification.Priority.ToLower() == "high")
+                                                    {
+                                                        <span class="badge bg-danger ms-2">High Priority</span>
+                                                    }
+                                                </div>
+                                                <div class="notification-actions">
+                                                    @if (!notification.IsRead)
+                                                    {
+                                                        <button type="button" class="btn btn-sm btn-outline-primary mark-read-btn" data-notification-id="@notification.NotificationId">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    }
+                                                    <button type="button" class="btn btn-sm btn-outline-danger delete-notification-btn" data-notification-id="@notification.NotificationId">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            @if (!string.IsNullOrEmpty(notification.RelatedLink))
+                                            {
+                                                <div class="mt-2">
+                                                    <a href="@notification.RelatedLink" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-external-link-alt me-1"></i>View Details
+                                                    </a>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-bell-slash fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">No notifications found</h5>
+                            <p class="text-muted">You're all caught up!</p>
+                        </div>
+                    }
+                </div>
+
+                <!-- Unread Notifications -->
+                <div class="tab-pane fade" id="unread" role="tabpanel">
+                    @{
+                        var unreadNotifications = Model.Notifications?.Where(n => !n.IsRead).ToList();
+                    }
+                    @if (unreadNotifications?.Any() == true)
+                    {
+                        <div class="list-group">
+                            @foreach (var notification in unreadNotifications)
+                            {
+                                <div class="list-group-item notification-item unread" data-notification-id="@notification.NotificationId">
+                                    <div class="d-flex align-items-start">
+                                        <div class="notification-icon me-3">
+                                            <i class="fas @GetNotificationIcon(notification.NotificationType) fa-lg"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <h6 class="mb-1">@notification.Title</h6>
+                                                    <p class="mb-1 text-muted">@notification.Message</p>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-clock me-1"></i>@GetTimeAgo(notification.CreatedDate)
+                                                    </small>
+                                                    @if (!string.IsNullOrEmpty(notification.Priority) && notification.Priority.ToLower() == "high")
+                                                    {
+                                                        <span class="badge bg-danger ms-2">High Priority</span>
+                                                    }
+                                                </div>
+                                                <div class="notification-actions">
+                                                    <button type="button" class="btn btn-sm btn-outline-primary mark-read-btn" data-notification-id="@notification.NotificationId">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger delete-notification-btn" data-notification-id="@notification.NotificationId">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            @if (!string.IsNullOrEmpty(notification.RelatedLink))
+                                            {
+                                                <div class="mt-2">
+                                                    <a href="@notification.RelatedLink" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-external-link-alt me-1"></i>View Details
+                                                    </a>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-envelope-open fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">No unread notifications</h5>
+                            <p class="text-muted">You're all caught up!</p>
+                        </div>
+                    }
+                </div>
+
+                <!-- High Priority Notifications -->
+                <div class="tab-pane fade" id="high-priority" role="tabpanel">
+                    @{
+                        var highPriorityNotifications = Model.Notifications?.Where(n => !string.IsNullOrEmpty(n.Priority) && n.Priority.ToLower() == "high").ToList();
+                    }
+                    @if (highPriorityNotifications?.Any() == true)
+                    {
+                        <div class="list-group">
+                            @foreach (var notification in highPriorityNotifications)
+                            {
+                                <div class="list-group-item notification-item @(notification.IsRead ? "" : "unread")" data-notification-id="@notification.NotificationId">
+                                    <div class="d-flex align-items-start">
+                                        <div class="notification-icon me-3">
+                                            <i class="fas @GetNotificationIcon(notification.NotificationType) fa-lg"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <h6 class="mb-1">@notification.Title</h6>
+                                                    <p class="mb-1 text-muted">@notification.Message</p>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-clock me-1"></i>@GetTimeAgo(notification.CreatedDate)
+                                                    </small>
+                                                    <span class="badge bg-danger ms-2">High Priority</span>
+                                                </div>
+                                                <div class="notification-actions">
+                                                    @if (!notification.IsRead)
+                                                    {
+                                                        <button type="button" class="btn btn-sm btn-outline-primary mark-read-btn" data-notification-id="@notification.NotificationId">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    }
+                                                    <button type="button" class="btn btn-sm btn-outline-danger delete-notification-btn" data-notification-id="@notification.NotificationId">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            @if (!string.IsNullOrEmpty(notification.RelatedLink))
+                                            {
+                                                <div class="mt-2">
+                                                    <a href="@notification.RelatedLink" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-external-link-alt me-1"></i>View Details
+                                                    </a>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-check-circle fa-4x text-muted mb-3"></i>
+                            <h5 class="text-muted">No high priority notifications</h5>
+                            <p class="text-muted">Great! No urgent matters require your attention.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetNotificationIcon(string type)
+    {
+        return type?.ToLower() switch
+        {
+            "order" => "fa-shopping-cart",
+            "account" => "fa-user",
+            "system" => "fa-cog",
+            "book" => "fa-book",
+            "payment" => "fa-credit-card",
+            "shipping" => "fa-shipping-fast",
+            "promotion" => "fa-tag",
+            "security" => "fa-shield-alt",
+            _ => "fa-bell"
+        };
+    }
+
+    string GetTimeAgo(DateTime date)
+    {
+        var timeSpan = DateTime.Now - date;
+        
+        if (timeSpan.TotalDays > 30)
+            return $"{timeSpan.Days / 30} month{(timeSpan.Days / 30 > 1 ? "s" : "")} ago";
+        if (timeSpan.TotalDays > 7)
+            return $"{timeSpan.Days / 7} week{(timeSpan.Days / 7 > 1 ? "s" : "")} ago";
+        if (timeSpan.TotalDays > 1)
+            return $"{timeSpan.Days} day{(timeSpan.Days > 1 ? "s" : "")} ago";
+        if (timeSpan.TotalHours > 1)
+            return $"{timeSpan.Hours} hour{(timeSpan.Hours > 1 ? "s" : "")} ago";
+        if (timeSpan.TotalMinutes > 1)
+            return $"{timeSpan.Minutes} minute{(timeSpan.Minutes > 1 ? "s" : "")} ago";
+        
+        return "Just now";
+    }
+}
+
+<style>
+    .notification-item {
+        border-left: 4px solid transparent;
+        transition: all 0.3s ease;
+        margin-bottom: 10px;
+        border-radius: 8px;
+    }
+
+    .notification-item.unread {
+        border-left-color: #007bff;
+        background-color: #f8f9fa;
+        font-weight: 500;
+    }
+
+    .notification-item:hover {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+
+    .notification-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .notification-actions {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .notification-item:hover .notification-actions {
+        opacity: 1;
+    }
+
+    .nav-pills .nav-link {
+        border-radius: 20px;
+        padding: 8px 16px;
+        margin-right: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .nav-pills .nav-link.active {
+        background-color: #007bff;
+        box-shadow: 0 2px 4px rgba(0,123,255,0.3);
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .fade-in {
+        animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Mark notification as read
+            $(document).on('click', '.mark-read-btn', function() {
+                var notificationId = $(this).data('notification-id');
+                var $notificationItem = $(this).closest('.notification-item');
+                
+                $.ajax({
+                    url: '@Url.Action("MarkAsRead", "Notification")',
+                    type: 'POST',
+                    data: { notificationId: notificationId },
+                    success: function(response) {
+                        if (response.success) {
+                            $notificationItem.removeClass('unread');
+                            $notificationItem.find('.mark-read-btn').remove();
+                            
+                            // Update unread count
+                            updateUnreadCount(response.unreadCount);
+                            
+                            // Show success message
+                            showToast('Notification marked as read', 'success');
+                        }
+                    },
+                    error: function() {
+                        showToast('Error marking notification as read', 'error');
+                    }
+                });
+            });
+
+            // Delete notification
+            $(document).on('click', '.delete-notification-btn', function() {
+                var notificationId = $(this).data('notification-id');
+                var $notificationItem = $(this).closest('.notification-item');
+                
+                if (confirm('Are you sure you want to delete this notification?')) {
+                    $.ajax({
+                        url: '@Url.Action("Delete", "Notification")',
+                        type: 'POST',
+                        data: { notificationId: notificationId },
+                        success: function(response) {
+                            if (response.success) {
+                                $notificationItem.fadeOut(300, function() {
+                                    $(this).remove();
+                                    
+                                    // Update counts
+                                    updateUnreadCount(response.unreadCount);
+                                    updateTotalCount(response.totalCount);
+                                    
+                                    // Show success message
+                                    showToast('Notification deleted successfully', 'success');
+                                });
+                            }
+                        },
+                        error: function() {
+                            showToast('Error deleting notification', 'error');
+                        }
+                    });
+                }
+            });
+
+            // Mark all as read
+            $('#markAllReadBtn').click(function() {
+                if (confirm('Mark all notifications as read?')) {
+                    $.ajax({
+                        url: '@Url.Action("MarkAllAsRead", "Notification")',
+                        type: 'POST',
+                        success: function(response) {
+                            if (response.success) {
+                                $('.notification-item').removeClass('unread');
+                                $('.mark-read-btn').remove();
+                                
+                                // Update unread count
+                                updateUnreadCount(0);
+                                
+                                // Disable mark all read button
+                                $('#markAllReadBtn').prop('disabled', true);
+                                
+                                // Show success message
+                                showToast('All notifications marked as read', 'success');
+                            }
+                        },
+                        error: function() {
+                            showToast('Error marking all notifications as read', 'error');
+                        }
+                    });
+                }
+            });
+
+            function updateUnreadCount(count) {
+                // Update badge in tabs
+                $('#unread-tab .badge').text(count);
+                
+                // Update statistics card
+                $('.card.bg-warning h3').text(count);
+                
+                // Update mark all read button
+                if (count === 0) {
+                    $('#markAllReadBtn').prop('disabled', true);
+                }
+            }
+
+            function updateTotalCount(count) {
+                // Update badge in tabs
+                $('#all-tab .badge').text(count);
+                
+                // Update statistics card
+                $('.card.bg-primary h3').text(count);
+            }
+
+            function showToast(message, type) {
+                var toastHtml = `
+                    <div class="toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0" role="alert">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                ${message}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                `;
+                
+                // Add toast container if it doesn't exist
+                if ($('.toast-container').length === 0) {
+                    $('body').append('<div class="toast-container position-fixed top-0 end-0 p-3"></div>');
+                }
+                
+                $('.toast-container').append(toastHtml);
+                var toast = new bootstrap.Toast($('.toast').last()[0]);
+                toast.show();
+            }
+
+            // Add fade-in animation to notification items
+            $('.notification-item').each(function(index) {
+                $(this).css('animation-delay', (index * 0.1) + 's').addClass('fade-in');
+            });
+        });
+    </script>
+}

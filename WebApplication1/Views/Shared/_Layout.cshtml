@@ -1,39 +1,255 @@
-﻿<!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    <title>@ViewBag.Title - South African Bookstore</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    @RenderSection("styles", required: false)
 </head>
-<body>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+<body class="d-flex flex-column min-vh-100">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container">
-            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand fw-bold" href="@Url.Action("Index", "Home")">
+                <i class="bi bi-book"></i> South African Bookstore
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index", "Home")">
+                            <i class="bi bi-house"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index", "Books")">
+                            <i class="bi bi-books"></i> Browse Books
+                        </a>
+                    </li>
+                    
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Index", "Cart")">
+                                <i class="bi bi-cart3"></i> Cart
+                                @if (Session["CartItemCount"] != null && (int)Session["CartItemCount"] > 0)
+                                {
+                                    <span class="badge bg-danger ms-1">@Session["CartItemCount"]</span>
+                                }
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("OrderHistory", "Profile")">
+                                <i class="bi bi-bag"></i> My Orders
+                            </a>
+                        </li>
+                    }
+                    
+                    @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-gear"></i> Admin
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="@Url.Action("Dashboard", "Profile")">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("ManageUsers", "Profile")">Manage Users</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Revenue")">Revenue Reports</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Manage", "Books")">Manage Books</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Orders")">Manage Orders</a></li>
+                            </ul>
+                        </li>
+                    }
+                    
+                    @if (User.IsInRole("Seller"))
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="sellerDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-shop"></i> Seller
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="@Url.Action("Dashboard", "Profile")">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("MyBooks", "Profile")">My Books</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Create", "Books")">Add New Book</a></li>
+                            </ul>
+                        </li>
+                    }
+                </ul>
+                
+                <ul class="navbar-nav">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> @User.Identity.Name
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Profile")">My Profile</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Edit", "Profile")">Edit Profile</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("ChangePassword", "Profile")">Change Password</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Dashboard", "Profile")">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("OrderHistory", "Profile")">Order History</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Reviews", "Profile")">My Reviews</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("SavedCards", "Profile")">Saved Cards</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Notifications", "Profile")">Notifications</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()">
+                                            <i class="bi bi-box-arrow-right"></i> Logout
+                                        </a>
+                                    }
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Login", "Account")">
+                                <i class="bi bi-box-arrow-in-right"></i> Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Register", "Account")">
+                                <i class="bi bi-person-plus"></i> Register
+                            </a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>
     </nav>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
-    </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
+    <!-- Main Content -->
+    <main class="flex-grow-1">
+        <!-- Alert Messages -->
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill"></i> @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i> @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        
+        @if (TempData["Warning"] != null)
+        {
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i> @TempData["Warning"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        
+        @if (TempData["Info"] != null)
+        {
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <i class="bi bi-info-circle-fill"></i> @TempData["Info"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-5 mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="bi bi-book"></i> South African Bookstore</h5>
+                    <p class="text-muted">Your premier online bookstore for South African literature and international bestsellers.</p>
+                    <div class="social-links">
+                        <a href="#" class="text-light me-3"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-light me-3"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="text-light me-3"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-light"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <h6>Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="@Url.Action("Index", "Home")" class="text-muted text-decoration-none">Home</a></li>
+                        <li><a href="@Url.Action("Index", "Books")" class="text-muted text-decoration-none">Browse Books</a></li>
+                        <li><a href="@Url.Action("Index", "Cart")" class="text-muted text-decoration-none">Shopping Cart</a></li>
+                        <li><a href="@Url.Action("OrderHistory", "Profile")" class="text-muted text-decoration-none">My Orders</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h6>Customer Service</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="@Url.Action("ContactUs", "Home")" class="text-muted text-decoration-none">Contact Us</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">FAQs</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Shipping Info</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Returns</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h6>Account</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="@Url.Action("Index", "Profile")" class="text-muted text-decoration-none">My Profile</a></li>
+                        <li><a href="@Url.Action("Register", "Account")" class="text-muted text-decoration-none">Register</a></li>
+                        <li><a href="@Url.Action("Login", "Account")" class="text-muted text-decoration-none">Login</a></li>
+                        <li><a href="@Url.Action("ChangePassword", "Profile")" class="text-muted text-decoration-none">Change Password</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h6>Contact Info</h6>
+                    <ul class="list-unstyled text-muted">
+                        <li><i class="bi bi-geo-alt"></i> Johannesburg, South Africa</li>
+                        <li><i class="bi bi-telephone"></i> +27 11 123 4567</li>
+                        <li><i class="bi bi-envelope"></i> info@southafricanbookstore.co.za</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="text-muted mb-0">&copy; 2024 South African Bookstore. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="text-muted text-decoration-none me-3">Privacy Policy</a>
+                    <a href="#" class="text-muted text-decoration-none me-3">Terms of Service</a>
+                    <a href="#" class="text-muted text-decoration-none">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- jQuery Validation -->
+    @Scripts.Render("~/bundles/jqueryval")
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="@Url.Content("~/Scripts/site.js")"></script>
+    
     @RenderSection("scripts", required: false)
 </body>
 </html>

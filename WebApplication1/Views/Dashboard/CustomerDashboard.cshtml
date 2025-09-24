@@ -1,0 +1,452 @@
+@model WebApplication1.ViewModels.CustomerOrderHistoryViewModel
+
+@{
+    ViewData["Title"] = "Customer Dashboard";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-6 fw-bold text-primary">
+                        <i class="fas fa-user-circle me-2"></i>Customer Dashboard
+                    </h1>
+                    @{
+                        var breadcrumbItems = new List<Tuple<string, string>>
+                        {
+                            new Tuple<string, string>("Dashboard", "")
+                        };
+                    }
+                    @Html.Partial("_Breadcrumb", breadcrumbItems)
+                </div>
+                <div class="text-end">
+                    <a href="@Url.Action("EditProfile", "Profile")" class="btn btn-outline-primary">
+                        <i class="fas fa-user-edit me-1"></i>Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            @{
+                ViewBag.StatIcon = "bi-bag";
+                ViewBag.StatTitle = "Total Orders";
+                ViewBag.StatValue = Model.TotalOrders.ToString();
+                ViewBag.StatColor = "primary";
+                ViewBag.StatLink = Url.Action("OrderHistory", "Orders");
+                ViewBag.StatLinkText = "View All Orders";
+            }
+            @Html.Partial("_StatsCard")
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            @{
+                ViewBag.StatIcon = "bi-wallet2";
+                ViewBag.StatTitle = "Total Spent";
+                ViewBag.StatValue = $"R {Model.TotalSpent:F2}";
+                ViewBag.StatColor = "success";
+                ViewBag.StatSubtitle = "All time purchases";
+            }
+            @Html.Partial("_StatsCard")
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            @{
+                ViewBag.StatIcon = "bi-calendar3";
+                ViewBag.StatTitle = "Last Order";
+                ViewBag.StatValue = Model.LastOrderDate.ToString("MMM dd");
+                ViewBag.StatColor = "info";
+                ViewBag.StatSubtitle = Model.LastOrderDate.ToString("yyyy");
+            }
+            @Html.Partial("_StatsCard")
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            @{
+                ViewBag.StatIcon = "bi-star";
+                ViewBag.StatTitle = "Top Category";
+                ViewBag.StatValue = Model.MostPurchasedCategory;
+                ViewBag.StatColor = "warning";
+                ViewBag.StatSubtitle = "Your favorite";
+            }
+            @Html.Partial("_StatsCard")
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Orders -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>Recent Orders
+                    </h5>
+                    <a href="@Url.Action("OrderHistory", "Orders")" class="btn btn-sm btn-outline-primary">
+                        View All <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model.Orders != null && Model.Orders.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Order #</th>
+                                        <th>Date</th>
+                                        <th>Items</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model.Orders.Take(5))
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@order.OrderNumber</strong>
+                                            </td>
+                                            <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
+                                            <td>
+                                                <span class="badge bg-secondary">@order.ItemCount</span>
+                                            </td>
+                                            <td>
+                                                <strong>R @order.TotalAmount.ToString("F2")</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-@GetStatusBadgeClass(order.OrderStatus.ToString())">@order.OrderStatus</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="@Url.Action("OrderDetails", "Orders", new { id = order.OrderId })" class="btn btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    @if (order.OrderStatus.ToString() == "Pending" || order.OrderStatus.ToString() == "Processing")
+                                                    {
+                                                        <button class="btn btn-outline-danger" onclick="cancelOrder(@order.OrderId)">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        @{
+                            ViewBag.EmptyIcon = "bi-cart-x";
+                            ViewBag.EmptyTitle = "No Recent Orders";
+                            ViewBag.EmptyMessage = "You haven't placed any orders yet.";
+                            ViewBag.EmptyActionText = "Start Shopping";
+                            ViewBag.EmptyActionUrl = Url.Action("Index", "Home");
+                            ViewBag.EmptyActionIcon = "bi-book";
+                        }
+                        @Html.Partial("_EmptyState")
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="@Url.Action("Index", "Cart")" class="btn btn-primary">
+                            <i class="fas fa-shopping-cart me-2"></i>View Cart
+                        </a>
+                        <a href="@Url.Action("Wishlist", "Profile")" class="btn btn-outline-primary">
+                            <i class="fas fa-heart me-2"></i>My Wishlist
+                        </a>
+                        <a href="@Url.Action("SavedCards", "Payment")" class="btn btn-outline-primary">
+                            <i class="fas fa-credit-card me-2"></i>Saved Cards
+                        </a>
+                        <a href="@Url.Action("Notifications", "Notification")" class="btn btn-outline-primary">
+                            <i class="fas fa-bell me-2"></i>Notifications
+                        </a>
+                        <a href="@Url.Action("ContactUs", "Home")" class="btn btn-outline-primary">
+                            <i class="fas fa-envelope me-2"></i>Contact Support
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recommended Books -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-magic me-2"></i>Recommended for You
+                    </h5>
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-sm btn-outline-primary">
+                        Browse More <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div id="recommendedBooks" class="row">
+                        <!-- Recommended books will be loaded here via AJAX -->
+                        <div class="col-12 text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading recommendations...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Summary -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user me-2"></i>Account Summary
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="text-center">
+                                <div class="bg-light rounded-circle p-3 mx-auto mb-2" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-calendar-check fa-2x text-primary"></i>
+                                </div>
+                                <h6 class="mb-0">Member Since</h6>
+                                <small class="text-muted">@DateTime.Now.AddYears(-1).ToString("MMM yyyy")</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center">
+                                <div class="bg-light rounded-circle p-3 mx-auto mb-2" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-star fa-2x text-warning"></i>
+                                </div>
+                                <h6 class="mb-0">Loyalty Points</h6>
+                                <small class="text-muted">@(Model.TotalOrders * 10) pts</small>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="d-grid">
+                        <a href="@Url.Action("EditProfile", "Profile")" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-edit me-1"></i>Update Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .bg-primary-dark {
+            background-color: #0056b3 !important;
+        }
+
+        .bg-success-dark {
+            background-color: #218838 !important;
+        }
+
+        .bg-info-dark {
+            background-color: #138496 !important;
+        }
+
+        .bg-warning-dark {
+            background-color: #e0a800 !important;
+        }
+
+        .btn-group-sm > .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e9ecef;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -8px;
+            top: 5px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #e9ecef;
+            border: 3px solid #fff;
+            box-shadow: 0 0 0 2px #e9ecef;
+        }
+
+        .timeline-item.completed .timeline-marker {
+            background: #28a745;
+            box-shadow: 0 0 0 2px #28a745;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function cancelOrder(orderId) {
+            if (confirm('Are you sure you want to cancel this order?')) {
+                $.ajax({
+                    url: '@Url.Action("CancelOrder", "Orders")',
+                    type: 'POST',
+                    data: { orderId: orderId },
+                    success: function (response) {
+                        if (response.success) {
+                            toastr.success('Order cancelled successfully');
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            toastr.error(response.message || 'Failed to cancel order');
+                        }
+                    },
+                    error: function () {
+                        toastr.error('An error occurred while cancelling the order');
+                    }
+                });
+            }
+        }
+
+        // Load recommended books
+        $(document).ready(function() {
+            loadRecommendedBooks();
+        });
+
+        function loadRecommendedBooks() {
+            $.ajax({
+                url: '@Url.Action("GetRecommendedBooks", "Home")',
+                type: 'GET',
+                success: function (response) {
+                    if (response.success && response.books && response.books.length > 0) {
+                        displayRecommendedBooks(response.books);
+                    } else {
+                        displayNoRecommendations();
+                    }
+                },
+                error: function () {
+                    displayNoRecommendations();
+                }
+            });
+        }
+
+        function displayRecommendedBooks(books) {
+            var html = '';
+            books.forEach(function(book) {
+                html += `
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card h-100">
+                            <img src="${book.coverImageUrl}" class="card-img-top" alt="${book.title}" style="height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <h6 class="card-title">${book.title}</h6>
+                                <p class="card-text">
+                                    <small class="text-muted">by ${book.author}</small><br />
+                                    <strong>R ${book.price.toFixed(2)}</strong>
+                                </p>
+                                <div class="d-flex gap-1">
+                                    <a href="/Book/Details/${book.bookId}" class="btn btn-sm btn-outline-primary flex-fill">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-primary flex-fill" onclick="addToCart(${book.bookId})">
+                                        <i class="fas fa-cart-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            $('#recommendedBooks').html(html);
+        }
+
+        function displayNoRecommendations() {
+            $('#recommendedBooks').html(`
+                <div class="col-12 text-center py-4">
+                    <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                    <h6 class="text-muted">No recommendations available</h6>
+                    <p class="text-muted">Keep shopping to get personalized recommendations!</p>
+                </div>
+            `);
+        }
+
+        function addToCart(bookId) {
+            $.ajax({
+                url: '@Url.Action("AddToCart", "Cart")',
+                type: 'POST',
+                data: { bookId: bookId, quantity: 1 },
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success('Book added to cart successfully');
+                        // Update cart count in header if needed
+                    } else {
+                        toastr.error(response.message || 'Failed to add book to cart');
+                    }
+                },
+                error: function () {
+                    toastr.error('An error occurred while adding book to cart');
+                }
+            });
+        }
+
+        // Add fade-in animation to cards
+        $(document).ready(function() {
+            $('.card').each(function(index) {
+                $(this).hide().fadeIn(300 + (index * 100));
+            });
+        });
+    </script>
+}
+
+@functions {
+    private string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Pending" => "warning",
+            "Processing" => "info",
+            "Shipped" => "primary",
+            "Delivered" => "success",
+            "Cancelled" => "danger",
+            _ => "secondary"
+        };
+    }
+}

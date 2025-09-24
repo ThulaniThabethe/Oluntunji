@@ -1,0 +1,41 @@
+@{
+    string icon = ViewBag.EmptyIcon ?? "bi-inbox";
+    string title = ViewBag.EmptyTitle ?? "No items found";
+    string message = ViewBag.EmptyMessage ?? "There are no items to display at the moment.";
+    string actionText = ViewBag.EmptyActionText ?? "";
+    string actionUrl = ViewBag.EmptyActionUrl ?? "";
+    string actionIcon = ViewBag.EmptyActionIcon ?? "bi-plus";
+}
+
+<div class="text-center empty-state py-5">
+    <div class="empty-icon mb-3">
+        <i class="bi @icon"></i>
+    </div>
+    <h5 class="text-muted mb-2">@title</h5>
+    <p class="text-muted mb-4">@message</p>
+    
+    @if (!string.IsNullOrEmpty(actionText) && !string.IsNullOrEmpty(actionUrl))
+    {
+        <a href="@actionUrl" class="btn btn-primary">
+            <i class="bi @actionIcon"></i> @actionText
+        </a>
+    }
+</div>
+
+<style>
+    .empty-state {
+        background-color: #f8f9fa;
+        border-radius: 0.5rem;
+        border: 2px dashed #dee2e6;
+    }
+    
+    .empty-icon {
+        font-size: 4rem;
+        color: #6c757d;
+        opacity: 0.5;
+    }
+    
+    .empty-state h5 {
+        font-weight: 500;
+    }
+</style>

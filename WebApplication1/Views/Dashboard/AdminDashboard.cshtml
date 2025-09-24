@@ -1,0 +1,664 @@
+@model WebApplication1.ViewModels.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid mt-4">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-6 fw-bold text-primary">
+                        <i class="fas fa-shield-alt me-2"></i>Admin Dashboard
+                    </h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                            <li class="breadcrumb-item active">Admin Dashboard</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="text-end">
+                    <div class="btn-group">
+                        <a href="@Url.Action("CreateUser", "Admin")" class="btn btn-success">
+                            <i class="fas fa-user-plus me-1"></i>Add User
+                        </a>
+                        <button class="btn btn-outline-primary" onclick="generateReport()">
+                            <i class="fas fa-download me-1"></i>Export Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Alerts -->
+    <div class="row mb-4">
+        <div class="col-12">
+            @if (Model.PendingUsers > 0)
+            {
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user-clock me-2"></i>
+                        <div>
+                            <strong>@Model.PendingUsers user(s)</strong> are pending approval.
+                            <a href="@Url.Action("PendingUsers", "Admin")" class="alert-link">Review pending users</a>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (Model.LowStockBooks > 0)
+            {
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <div>
+                            <strong>@Model.LowStockBooks book(s)</strong> are low on stock.
+                            <a href="@Url.Action("LowStockBooks", "Book")" class="alert-link">View low stock books</a>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">@Model.TotalUsers</h4>
+                            <p class="mb-0">Total Users</p>
+                        </div>
+                        <div class="text-white-50">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-primary-dark">
+                    <small>
+                        <a href="@Url.Action("Users", "Admin")" class="text-white text-decoration-none">
+                            Manage Users <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">@Model.TotalBooks</h4>
+                            <p class="mb-0">Total Books</p>
+                        </div>
+                        <div class="text-white-50">
+                            <i class="fas fa-book fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-success-dark">
+                    <small>
+                        <a href="@Url.Action("Index", "Book")" class="text-white text-decoration-none">
+                            View Books <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">@Model.TotalOrders</h4>
+                            <p class="mb-0">Total Orders</p>
+                        </div>
+                        <div class="text-white-50">
+                            <i class="fas fa-shopping-cart fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-info-dark">
+                    <small>
+                        <a href="@Url.Action("Orders", "Admin")" class="text-white text-decoration-none">
+                            View Orders <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">@Model.TotalRevenue.ToString("C")</h4>
+                            <p class="mb-0">Total Revenue</p>
+                        </div>
+                        <div class="text-white-50">
+                            <i class="fas fa-dollar-sign fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-warning-dark">
+                    <small>
+                        <a href="@Url.Action("RevenueReport", "Revenue")" class="text-white text-decoration-none">
+                            View Reports <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+            <div class="card bg-danger text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">@Model.ActiveSellers</h4>
+                            <p class="mb-0">Active Sellers</p>
+                        </div>
+                        <div class="text-white-50">
+                            <i class="fas fa-store fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-danger-dark">
+                    <small>
+                        <a href="@Url.Action("Sellers", "Admin")" class="text-white text-decoration-none">
+                            Manage Sellers <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+            <div class="card bg-secondary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">@Model.ActiveCustomers</h4>
+                            <p class="mb-0">Active Customers</p>
+                        </div>
+                        <div class="text-white-50">
+                            <i class="fas fa-user-friends fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-secondary-dark">
+                    <small>
+                        <a href="@Url.Action("Customers", "Admin")" class="text-white text-decoration-none">
+                            View Customers <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Orders -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>Recent Orders
+                    </h5>
+                    <a href="@Url.Action("Orders", "Admin")" class="btn btn-sm btn-outline-primary">
+                        View All <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentOrders != null && Model.RecentOrders.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Order #</th>
+                                        <th>Date</th>
+                                        <th>Customer</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model.RecentOrders.Take(5))
+                                    {
+                                        <tr>
+                                            <td><strong>@order.OrderNumber</strong></td>
+                                            <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
+                                            <td>@order.Customer.FirstName @order.Customer.LastName</td>
+                                            <td><strong>R @order.TotalAmount.ToString("F2")</strong></td>
+                                            <td>
+                                                <span class="badge bg-@GetStatusBadgeClass(order.OrderStatus)">@order.OrderStatus</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="@Url.Action("OrderDetails", "Orders", new { id = order.OrderId })" class="btn btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    @if (order.OrderStatus == "Pending")
+                                                    {
+                                                        <button class="btn btn-outline-success" onclick="approveOrder(@order.OrderId)">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Recent Orders</h5>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Users -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>Recent Users
+                    </h5>
+                    <a href="@Url.Action("Users", "Admin")" class="btn btn-sm btn-outline-primary">
+                        View All <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentUsers != null && Model.RecentUsers.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in Model.RecentUsers.Take(5))
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                                                        @user.FirstName.Substring(0, 1)@user.LastName.Substring(0, 1)
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold">@user.FirstName @user.LastName</div>
+                                                        <small class="text-muted">@user.CreatedDate.ToString("MMM dd, yyyy")</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@user.Email</td>
+                                            <td>
+                                                <span class="badge bg-@GetRoleBadgeClass(user.Role)">@user.Role</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-@GetStatusBadgeClass(user.Status)">@user.Status</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="@Url.Action("UserDetails", "Admin", new { id = user.UserId })" class="btn btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    @if (user.Status == "Pending")
+                                                    {
+                                                        <button class="btn btn-outline-success" onclick="approveUser(@user.UserId)">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    }
+                                                    else if (user.Status == "Active")
+                                                    {
+                                                        <button class="btn btn-outline-warning" onclick="deactivateUser(@user.UserId)">
+                                                            <i class="fas fa-pause"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Recent Users</h5>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- System Performance -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>System Performance
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="text-center">
+                                <div class="bg-success text-white rounded-circle p-3 mx-auto mb-2" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-check fa-2x"></i>
+                                </div>
+                                <h6 class="mb-0">System Status</h6>
+                                <small class="text-success">Online</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center">
+                                <div class="bg-info text-white rounded-circle p-3 mx-auto mb-2" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-clock fa-2x"></i>
+                                </div>
+                                <h6 class="mb-0">Uptime</h6>
+                                <small class="text-info">99.9%</small>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="d-grid">
+                        <button class="btn btn-outline-primary btn-sm" onclick="viewSystemLogs()">
+                            <i class="fas fa-file-alt me-1"></i>System Logs
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="@Url.Action("CreateUser", "Admin")" class="btn btn-success">
+                            <i class="fas fa-user-plus me-2"></i>Create User
+                        </a>
+                        <a href="@Url.Action("CreateBook", "Book")" class="btn btn-outline-primary">
+                            <i class="fas fa-book me-2"></i>Add Book
+                        </a>
+                        <a href="@Url.Action("PendingUsers", "Admin")" class="btn btn-outline-warning">
+                            <i class="fas fa-user-clock me-2"></i>Pending Users
+                        </a>
+                        <a href="@Url.Action("RevenueReport", "Revenue")" class="btn btn-outline-success">
+                            <i class="fas fa-chart-bar me-2"></i>Revenue Reports
+                        </a>
+                        <a href="@Url.Action("SystemSettings", "Admin")" class="btn btn-outline-secondary">
+                            <i class="fas fa-cog me-2"></i>System Settings
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Summary -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>System Summary
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>Total Revenue</span>
+                                <strong class="text-success">R @Model.TotalRevenue.ToString("F2")</strong>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>Monthly Revenue</span>
+                                <strong class="text-primary">R @Model.MonthlyRevenue.ToString("F2")</strong>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>Pending Users</span>
+                                <strong class="text-warning">@Model.PendingUsers</strong>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>Low Stock Books</span>
+                                <strong class="text-info">@Model.LowStockBooks</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .bg-primary-dark {
+            background-color: #0056b3 !important;
+        }
+
+        .bg-success-dark {
+            background-color: #218838 !important;
+        }
+
+        .bg-info-dark {
+            background-color: #138496 !important;
+        }
+
+        .bg-warning-dark {
+            background-color: #e0a800 !important;
+        }
+
+        .bg-danger-dark {
+            background-color: #c82333 !important;
+        }
+
+        .bg-secondary-dark {
+            background-color: #545b62 !important;
+        }
+
+        .btn-group-sm > .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .alert-dismissible .btn-close {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 2;
+            padding: 0.75rem 1.25rem;
+            background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+            border: 0;
+            border-radius: 0.25rem;
+            opacity: 0.5;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function approveOrder(orderId) {
+            if (confirm('Are you sure you want to approve this order?')) {
+                $.ajax({
+                    url: '@Url.Action("ApproveOrder", "Admin")',
+                    type: 'POST',
+                    data: { orderId: orderId },
+                    success: function (response) {
+                        if (response.success) {
+                            toastr.success('Order approved successfully');
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            toastr.error(response.message || 'Failed to approve order');
+                        }
+                    },
+                    error: function () {
+                        toastr.error('An error occurred while approving the order');
+                    }
+                });
+            }
+        }
+
+        function approveUser(userId) {
+            if (confirm('Are you sure you want to approve this user?')) {
+                $.ajax({
+                    url: '@Url.Action("ApproveUser", "Admin")',
+                    type: 'POST',
+                    data: { userId: userId },
+                    success: function (response) {
+                        if (response.success) {
+                            toastr.success('User approved successfully');
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            toastr.error(response.message || 'Failed to approve user');
+                        }
+                    },
+                    error: function () {
+                        toastr.error('An error occurred while approving the user');
+                    }
+                });
+            }
+        }
+
+        function deactivateUser(userId) {
+            if (confirm('Are you sure you want to deactivate this user?')) {
+                $.ajax({
+                    url: '@Url.Action("DeactivateUser", "Admin")',
+                    type: 'POST',
+                    data: { userId: userId },
+                    success: function (response) {
+                        if (response.success) {
+                            toastr.success('User deactivated successfully');
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            toastr.error(response.message || 'Failed to deactivate user');
+                        }
+                    },
+                    error: function () {
+                        toastr.error('An error occurred while deactivating the user');
+                    }
+                });
+            }
+        }
+
+        function generateReport() {
+            // Show loading spinner
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Generating...';
+            button.disabled = true;
+
+            $.ajax({
+                url: '@Url.Action("GenerateSystemReport", "Admin")',
+                type: 'POST',
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success('Report generated successfully');
+                        // Trigger download
+                        window.open(response.downloadUrl, '_blank');
+                    } else {
+                        toastr.error(response.message || 'Failed to generate report');
+                    }
+                },
+                error: function () {
+                    toastr.error('An error occurred while generating the report');
+                },
+                complete: function () {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }
+            });
+        }
+
+        function viewSystemLogs() {
+            window.open('@Url.Action("SystemLogs", "Admin")', '_blank');
+        }
+
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            $('.alert-dismissible').fadeOut('slow');
+        }, 5000);
+
+        // Add fade-in animation to cards
+        $(document).ready(function() {
+            $('.card').each(function(index) {
+                $(this).hide().fadeIn(300 + (index * 100));
+            });
+        });
+    </script>
+}
+
+@functions {
+    private string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Pending" => "warning",
+            "Processing" => "info",
+            "Shipped" => "primary",
+            "Delivered" => "success",
+            "Cancelled" => "danger",
+            "Active" => "success",
+            "Inactive" => "secondary",
+            "Suspended" => "danger",
+            "Blocked" => "dark",
+            _ => "secondary"
+        };
+    }
+
+    private string GetRoleBadgeClass(string role)
+    {
+        return role switch
+        {
+            "Admin" => "danger",
+            "Seller" => "warning",
+            "Customer" => "primary",
+            "Employee" => "info",
+            _ => "secondary"
+        };
+    }
+}

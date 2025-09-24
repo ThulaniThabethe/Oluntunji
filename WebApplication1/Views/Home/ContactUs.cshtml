@@ -1,0 +1,751 @@
+@model WebApplication1.ViewModels.ContactViewModel
+
+@{
+    ViewBag.Title = "Contact Oluntunji Books";
+    ViewBag.Description = "Get in touch with South Africa's premier online bookstore. We're here to help with orders, book recommendations, and any questions you may have.";
+}
+
+<!-- Contact Us Page -->
+<div class="contact-page">
+    <!-- Hero Section -->
+    <div class="hero-section bg-gradient-primary text-white py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3">Contact Us</h1>
+                    <p class="lead mb-4">We're here to help with all your book-related needs. Whether you have a question about our collection, need assistance with an order, or want book recommendations, our team is ready to assist you.</p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="#contact-form" class="btn btn-light btn-lg">
+                            <i class="fas fa-envelope me-2"></i>Send Message
+                        </a>
+                        <a href="tel:+27215550123" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-phone me-2"></i>Call Now
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <div class="hero-icon">
+                        <i class="fas fa-comments fa-8x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Statistics -->
+    <div class="contact-stats py-5 bg-light">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-icon text-primary mb-3">
+                            <i class="fas fa-clock fa-3x"></i>
+                        </div>
+                        <h3 class="stat-number">24/7</h3>
+                        <p class="stat-label">Email Support</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-icon text-success mb-3">
+                            <i class="fas fa-phone fa-3x"></i>
+                        </div>
+                        <h3 class="stat-number">8AM-6PM</h3>
+                        <p class="stat-label">Phone Support</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-icon text-warning mb-3">
+                            <i class="fas fa-reply fa-3x"></i>
+                        </div>
+                        <h3 class="stat-number">24hrs</h3>
+                        <p class="stat-label">Response Time</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="stat-card">
+                        <div class="stat-icon text-info mb-3">
+                            <i class="fas fa-users fa-3x"></i>
+                        </div>
+                        <h3 class="stat-number">50K+</h3>
+                        <p class="stat-label">Happy Customers</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Contact Information -->
+                <div class="col-lg-4 mb-5">
+                    <div class="contact-info-card">
+                        <div class="card-header bg-primary text-white p-4">
+                            <h3 class="mb-0">
+                                <i class="fas fa-info-circle me-2"></i>Contact Information
+                            </h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="contact-item mb-4">
+                                <div class="contact-icon">
+                                    <i class="fas fa-map-marker-alt text-primary"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h5>Physical Address</h5>
+                                    <p class="mb-1">123 Long Street</p>
+                                    <p class="mb-1">Cape Town, 8001</p>
+                                    <p class="mb-0">South Africa</p>
+                                </div>
+                            </div>
+
+                            <div class="contact-item mb-4">
+                                <div class="contact-icon">
+                                    <i class="fas fa-phone text-success"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h5>Phone Numbers</h5>
+                                    <p class="mb-1">
+                                        <a href="tel:+27215550123" class="text-decoration-none">
+                                            <i class="fas fa-phone me-1"></i>+27 (021) 555-0123
+                                        </a>
+                                    </p>
+                                    <p class="mb-1">
+                                        <a href="tel:+27821234567" class="text-decoration-none">
+                                            <i class="fas fa-mobile-alt me-1"></i>+27 82 123 4567
+                                        </a>
+                                    </p>
+                                    <small class="text-muted">Mon-Fri: 8:00 AM - 6:00 PM</small>
+                                </div>
+                            </div>
+
+                            <div class="contact-item mb-4">
+                                <div class="contact-icon">
+                                    <i class="fas fa-envelope text-warning"></i>
+                                </div>
+                                <div class="contact-details">
+                                    <h5>Email Addresses</h5>
+                                    <p class="mb-1">
+                                        <a href="mailto:info@oluntunjibooks.co.za" class="text-decoration-none">
+                                            <i class="fas fa-envelope me-1"></i>info@oluntunjibooks.co.za
+                                        </a>
+                                    </p>
+                                    <p class="mb-1">
+                                        <a href="mailto:support@oluntunjibooks.co.za" class="text-decoration-none">
+                                            <i class="fas fa-headset me-1"></i>support@oluntunjibooks.co.za
+                                        </a>
+                                    </p>
+                                    <small class="text-muted">24/7 Email Support</small>
+                                </div>
+                            </div>
+
+                            <div class="social-links">
+                                <h5>Follow Us</h5>
+                                <div class="social-icons">
+                                    <a href="#" class="social-icon facebook" title="Facebook">
+                                        <i class="fab fa-facebook-f"></i>
+                                    </a>
+                                    <a href="#" class="social-icon twitter" title="Twitter">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="social-icon instagram" title="Instagram">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                                    <a href="#" class="social-icon linkedin" title="LinkedIn">
+                                        <i class="fab fa-linkedin-in"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="quick-links-card mt-4">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-link me-2"></i>Quick Links
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <a href="@Url.Action("FAQ", "Home")" class="text-decoration-none">
+                                            <i class="fas fa-question-circle me-2 text-info"></i>Frequently Asked Questions
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a href="@Url.Action("Index", "Books")" class="text-decoration-none">
+                                            <i class="fas fa-book me-2 text-primary"></i>Browse Books
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a href="@Url.Action("TrackOrder", "Orders")" class="text-decoration-none">
+                                            <i class="fas fa-shipping-fast me-2 text-success"></i>Track Your Order
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a href="@Url.Action("Privacy", "Home")" class="text-decoration-none">
+                                            <i class="fas fa-shield-alt me-2 text-warning"></i>Privacy Policy
+                                        </a>
+                                    </li>
+                                    <li class="mb-0">
+                                        <a href="@Url.Action("Terms", "Home")" class="text-decoration-none">
+                                            <i class="fas fa-file-contract me-2 text-secondary"></i>Terms of Service
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="col-lg-8">
+                    <div class="contact-form-card">
+                        <div class="card-header bg-light p-4">
+                            <h3 class="mb-0">
+                                <i class="fas fa-edit me-2"></i>Send us a Message
+                            </h3>
+                            <p class="text-muted mb-0 mt-2">Fill out the form below and we'll get back to you within 24 hours.</p>
+                        </div>
+                        <div class="card-body p-4">
+                            @if (TempData["Success"] != null)
+                            {
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <strong>Thank you!</strong> @TempData["Success"]
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            }
+
+                            @if (TempData["Error"] != null)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    <strong>Oops!</strong> @TempData["Error"]
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            }
+
+                            @using (Html.BeginForm("ContactUs", "Home", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate", id = "contact-form" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="FirstName" class="form-label fw-semibold">
+                                        First Name <span class="text-danger">*</span>
+                                    </label>
+                                        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control form-control-lg", placeholder = "Enter your first name", required = "required" })
+                                        @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "invalid-feedback" })
+                                        <div class="invalid-feedback">Please enter your first name.</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="LastName" class="form-label fw-semibold">
+                                        Last Name <span class="text-danger">*</span>
+                                    </label>
+                                        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control form-control-lg", placeholder = "Enter your last name", required = "required" })
+                                        @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "invalid-feedback" })
+                                        <div class="invalid-feedback">Please enter your last name.</div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="Email" class="form-label fw-semibold">
+                                        Email Address <span class="text-danger">*</span>
+                                    </label>
+                                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control form-control-lg", placeholder = "your.email@example.com", type = "email", required = "required" })
+                                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "invalid-feedback" })
+                                        <div class="invalid-feedback">Please enter a valid email address.</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="Phone" class="form-label fw-semibold">Phone Number (Optional)</label>
+                                        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control form-control-lg", placeholder = "+27 82 123 4567", type = "tel" })
+                                        @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "invalid-feedback" })
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="Subject" class="form-label fw-semibold">
+                                        Subject <span class="text-danger">*</span>
+                                    </label>
+                                    @Html.DropDownListFor(m => m.Subject, new SelectList(new[] {
+                                        new { Value = "", Text = "Select a subject..." },
+                                        new { Value = "General Inquiry", Text = "General Inquiry" },
+                                        new { Value = "Order Support", Text = "Order Support" },
+                                        new { Value = "Book Recommendation", Text = "Book Recommendation" },
+                                        new { Value = "Account Issue", Text = "Account Issue" },
+                                        new { Value = "Shipping Question", Text = "Shipping Question" },
+                                        new { Value = "Return/Refund", Text = "Return/Refund" },
+                                        new { Value = "Business Inquiry", Text = "Business Inquiry" },
+                                        new { Value = "Other", Text = "Other" }
+                                    }, "Value", "Text"), new { @class = "form-select form-select-lg", required = "required" })
+                                    @Html.ValidationMessageFor(m => m.Subject, "", new { @class = "invalid-feedback" })
+                                    <div class="invalid-feedback">Please select a subject.</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="Message" class="form-label fw-semibold">
+                                        Message <span class="text-danger">*</span>
+                                    </label>
+                                    @Html.TextAreaFor(m => m.Message, new { @class = "form-control form-control-lg", rows = "6", placeholder = "Please describe your inquiry in detail...", required = "required" })
+                                    @Html.ValidationMessageFor(m => m.Message, "", new { @class = "invalid-feedback" })
+                                    <div class="invalid-feedback">Please enter your message (minimum 10 characters).</div>
+                                    <small class="form-text text-muted">
+                                        <span id="message-counter">0</span>/1000 characters
+                                    </small>
+                                </div>
+
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        @Html.CheckBoxFor(m => m.Newsletter, new { @class = "form-check-input" })
+                                        <label class="form-check-label" for="Newsletter">
+                                            Subscribe to our newsletter for book recommendations and special offers
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-paper-plane me-2"></i>
+                                        Send Message
+                                        <span class="spinner-border spinner-border-sm ms-2 d-none" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </span>
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Section -->
+    <div class="map-section py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-4">
+                    <h2 class="display-5">Find Us</h2>
+                    <p class="lead">Visit our physical store in the heart of Cape Town</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="map-container rounded overflow-hidden shadow">
+                        <div class="map-placeholder bg-white p-5 text-center">
+                            <i class="fas fa-map-marked-alt fa-4x text-primary mb-3"></i>
+                            <h4>Oluntunji Books Store</h4>
+                            <p class="text-muted mb-3">123 Long Street, Cape Town, 8001</p>
+                            <div class="business-hours mb-3">
+                                <h6>Business Hours:</h6>
+                                <p class="mb-1"><strong>Monday - Friday:</strong> 8:00 AM - 6:00 PM</p>
+                                <p class="mb-0"><strong>Saturday:</strong> 9:00 AM - 4:00 PM</p>
+                                <p class="mb-0"><strong>Sunday:</strong> Closed</p>
+                            </div>
+                            <a href="https://maps.google.com/?q=123+Long+Street+Cape+Town" 
+                               target="_blank" 
+                               class="btn btn-outline-primary">
+                                <i class="fas fa-external-link-alt me-2"></i>Open in Google Maps
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Preview -->
+    <div class="faq-preview py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="display-5">Frequently Asked Questions</h2>
+                    <p class="lead">Quick answers to common questions</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="faq-item">
+                        <h5><i class="fas fa-question-circle text-primary me-2"></i>How do I place an order?</h5>
+                        <p>Simply browse our collection, add books to your cart, and proceed to checkout. You'll need to create an account or login to complete your purchase.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="faq-item">
+                        <h5><i class="fas fa-question-circle text-primary me-2"></i>What payment methods do you accept?</h5>
+                        <p>We accept credit cards, debit cards, EFT, and mobile payment options. All payments are processed securely.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="faq-item">
+                        <h5><i class="fas fa-question-circle text-primary me-2"></i>How long does delivery take?</h5>
+                        <p>Standard delivery takes 3-5 business days for major cities and 5-7 business days for outlying areas. Express delivery options are available.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="faq-item">
+                        <h5><i class="fas fa-question-circle text-primary me-2"></i>Can I return a book?</h5>
+                        <p>Yes, you can return books within 30 days of delivery if they are in their original condition. Please see our returns policy for full details.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="@Url.Action("FAQ", "Home")" class="btn btn-outline-primary">
+                    <i class="fas fa-list me-2"></i>View All FAQs
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @@keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Contact Statistics */
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+
+        /* Contact Information Card */
+        .contact-info-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .contact-info-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(13, 110, 253, 0.1);
+            flex-shrink: 0;
+        }
+
+        .contact-details h5 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .contact-details p {
+            margin-bottom: 0.25rem;
+            color: #666;
+        }
+
+        .contact-details a {
+            color: #0d6efd;
+            text-decoration: none;
+        }
+
+        .contact-details a:hover {
+            color: #0b5ed7;
+            text-decoration: underline;
+        }
+
+        /* Social Icons */
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        .social-icon.facebook { background: #3b5998; }
+        .social-icon.twitter { background: #1da1f2; }
+        .social-icon.instagram { background: #e1306c; }
+        .social-icon.linkedin { background: #0077b5; }
+
+        /* Contact Form Card */
+        .contact-form-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .contact-form-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .form-control-lg, .form-select-lg {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .form-control-lg:focus, .form-select-lg:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+            transform: translateY(-1px);
+        }
+
+        /* Map Section */
+        .map-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .map-placeholder {
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* FAQ Preview */
+        .faq-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .faq-item h5 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .faq-item p {
+            color: #666;
+            margin-bottom: 0;
+        }
+
+        /* Quick Links */
+        .quick-links-card .card-body a {
+            color: #495057;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .quick-links-card .card-body a:hover {
+            color: #0d6efd;
+        }
+
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .hero-section {
+                text-align: center;
+                padding: 3rem 0;
+            }
+
+            .hero-icon {
+                margin-top: 2rem;
+            }
+
+            .stat-card {
+                margin-bottom: 1rem;
+            }
+
+            .contact-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .social-icons {
+                justify-content: center;
+            }
+        }
+
+        /* Loading State */
+        .btn .spinner-border {
+            margin-left: 0.5rem;
+        }
+
+        /* Alert Animations */
+        .alert {
+            animation: slideInDown 0.5s ease;
+        }
+
+        @@keyframes slideInDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Form validation enhancement
+            const form = document.getElementById('contact-form');
+            const messageTextarea = document.getElementById('Message');
+            const messageCounter = document.getElementById('message-counter');
+
+            // Character counter for message
+            if (messageTextarea && messageCounter) {
+                messageTextarea.addEventListener('input', function() {
+                    const length = this.value.length;
+                    messageCounter.textContent = length;
+                    
+                    if (length > 1000) {
+                        this.value = this.value.substring(0, 1000);
+                        messageCounter.textContent = 1000;
+                    }
+                });
+            }
+
+            // Bootstrap form validation
+            if (form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    
+                    form.classList.add('was-validated');
+                });
+            }
+
+            // Auto-hide alerts after 5 seconds
+            $('.alert').delay(5000).fadeOut('slow');
+
+            // Smooth scrolling for anchor links
+            $('a[href^="#"]').on('click', function(e) {
+                e.preventDefault();
+                const target = $(this.getAttribute('href'));
+                if (target.length) {
+                    $('html, body').animate({
+                        scrollTop: target.offset().top - 100
+                    }, 1000);
+                }
+            });
+
+            // Loading state for submit button
+            $('form').on('submit', function() {
+                const submitBtn = $(this).find('button[type="submit"]');
+                const spinner = submitBtn.find('.spinner-border');
+                
+                submitBtn.prop('disabled', true);
+                spinner.removeClass('d-none');
+                
+                // Re-enable button after 3 seconds (fallback)
+                setTimeout(function() {
+                    submitBtn.prop('disabled', false);
+                    spinner.addClass('d-none');
+                }, 3000);
+            });
+
+            // Phone number formatting
+            const phoneInput = document.getElementById('Phone');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length >= 10) {
+                        value = '+27 ' + value.slice(2, 5) + ' ' + value.slice(5, 8) + ' ' + value.slice(8);
+                    }
+                    e.target.value = value;
+                });
+            }
+
+            // Fade in animation for cards
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.stat-card, .contact-info-card, .contact-form-card, .faq-item').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+}

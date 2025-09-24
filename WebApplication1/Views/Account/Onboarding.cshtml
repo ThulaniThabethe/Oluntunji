@@ -1,0 +1,450 @@
+@model WebApplication1.ViewModels.OnboardingViewModel
+
+@{
+    ViewBag.Title = "Complete Your Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Progress Bar -->
+            <div class="progress-container mb-5">
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-primary" role="progressbar" id="progressBar" style="width: 25%"></div>
+                </div>
+                <div class="d-flex justify-content-between mt-2">
+                    <small class="text-muted">Personal Info</small>
+                    <small class="text-muted">Contact Details</small>
+                    <small class="text-muted">Role Setup</small>
+                    <small class="text-muted">Complete</small>
+                </div>
+            </div>
+
+            <!-- Welcome Message -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold text-primary">
+                    <i class="bi bi-book"></i> Welcome to South African Bookstore
+                </h1>
+                <p class="lead text-muted">Let's complete your profile to get you started on your reading journey</p>
+            </div>
+
+            <!-- Onboarding Form -->
+            @using (Html.BeginForm("Onboarding", "Account", FormMethod.Post, new { enctype = "multipart/form-data", @class = "needs-validation", novalidate = "novalidate", id = "onboardingForm" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger alert-dismissible fade show" })
+
+                <!-- Step 1: Personal Information -->
+                <div class="onboarding-step" id="step1">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-person"></i> Personal Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    @Html.LabelFor(m => m.FirstName, new { @class = "form-label" })
+                                    @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = "Enter your first name" })
+                                    @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    @Html.LabelFor(m => m.LastName, new { @class = "form-label" })
+                                    @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", placeholder = "Enter your last name" })
+                                    @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                @Html.LabelFor(m => m.ProfileImage, new { @class = "form-label" })
+                                <div class="input-group">
+                                    <input type="file" class="form-control" id="ProfileImage" name="ProfileImage" accept="image/*" onchange="previewImage(this)">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('ProfileImage').click()">
+                                        <i class="bi bi-upload"></i> Choose File
+                                    </button>
+                                </div>
+                                @Html.ValidationMessageFor(m => m.ProfileImage, "", new { @class = "text-danger" })
+                                <div class="mt-2" id="imagePreview" style="display: none;">
+                                    <img src="#" alt="Profile Preview" class="img-thumbnail" style="max-width: 150px; max-height: 150px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Contact Details -->
+                <div class="onboarding-step" id="step2" style="display: none;">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-telephone"></i> Contact Details
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    @Html.LabelFor(m => m.PhoneNumber, new { @class = "form-label" })
+                                    @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "+27 11 123 4567" })
+                                    @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    @Html.LabelFor(m => m.AlternatePhone, new { @class = "form-label" })
+                                    @Html.TextBoxFor(m => m.AlternatePhone, new { @class = "form-control", placeholder = "Alternative phone number" })
+                                    @Html.ValidationMessageFor(m => m.AlternatePhone, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    @Html.LabelFor(m => m.AddressLine1, new { @class = "form-label" })
+                                    @Html.TextBoxFor(m => m.AddressLine1, new { @class = "form-control", placeholder = "Street address" })
+                                    @Html.ValidationMessageFor(m => m.AddressLine1, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    @Html.LabelFor(m => m.AddressLine2, new { @class = "form-label" })
+                                    @Html.TextBoxFor(m => m.AddressLine2, new { @class = "form-control", placeholder = "Apartment, suite, etc. (optional)" })
+                                    @Html.ValidationMessageFor(m => m.AddressLine2, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    @Html.LabelFor(m => m.City, new { @class = "form-label" })
+                                    @Html.TextBoxFor(m => m.City, new { @class = "form-control", placeholder = "City" })
+                                    @Html.ValidationMessageFor(m => m.City, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    @Html.LabelFor(m => m.Province, new { @class = "form-label" })
+                                    @Html.DropDownListFor(m => m.Province, new SelectList(new[] {
+                                        new { Value = "", Text = "Select Province" },
+                                        new { Value = "EC", Text = "Eastern Cape" },
+                                        new { Value = "FS", Text = "Free State" },
+                                        new { Value = "GP", Text = "Gauteng" },
+                                        new { Value = "KZN", Text = "KwaZulu-Natal" },
+                                        new { Value = "LP", Text = "Limpopo" },
+                                        new { Value = "MP", Text = "Mpumalanga" },
+                                        new { Value = "NC", Text = "Northern Cape" },
+                                        new { Value = "NW", Text = "North West" },
+                                        new { Value = "WC", Text = "Western Cape" }
+                                    }, "Value", "Text"), new { @class = "form-select" })
+                                    @Html.ValidationMessageFor(m => m.Province, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    @Html.LabelFor(m => m.PostalCode, new { @class = "form-label" })
+                                    @Html.TextBoxFor(m => m.PostalCode, new { @class = "form-control", placeholder = "0000" })
+                                    @Html.ValidationMessageFor(m => m.PostalCode, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Role Setup -->
+                <div class="onboarding-step" id="step3" style="display: none;">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-gear"></i> Role Setup
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Your Current Role</label>
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i> You are registered as: <strong>@Model.CurrentRole</strong>
+                                </div>
+                            </div>
+
+                            @if (Model.CurrentRole == "Seller")
+                            {
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="bi bi-shop"></i> Seller Information
+                                        </h6>
+                                        <div class="mb-3">
+                                            @Html.LabelFor(m => m.SellerBusinessName, new { @class = "form-label" })
+                                            @Html.TextBoxFor(m => m.SellerBusinessName, new { @class = "form-control", placeholder = "Your business name" })
+                                            @Html.ValidationMessageFor(m => m.SellerBusinessName, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="mb-3">
+                                            @Html.LabelFor(m => m.SellerDescription, new { @class = "form-label" })
+                                            @Html.TextAreaFor(m => m.SellerDescription, new { @class = "form-control", rows = "3", placeholder = "Tell us about your bookstore business" })
+                                            @Html.ValidationMessageFor(m => m.SellerDescription, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="mb-3">
+                                            @Html.LabelFor(m => m.SellerWebsite, new { @class = "form-label" })
+                                            @Html.TextBoxFor(m => m.SellerWebsite, new { @class = "form-control", placeholder = "https://yourwebsite.com (optional)" })
+                                            @Html.ValidationMessageFor(m => m.SellerWebsite, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (Model.CurrentRole == "Employee")
+                            {
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="bi bi-person-badge"></i> Employee Information
+                                        </h6>
+                                        <div class="mb-3">
+                                            @Html.LabelFor(m => m.EmployeeDepartment, new { @class = "form-label" })
+                                            @Html.DropDownListFor(m => m.EmployeeDepartment, new SelectList(new[] {
+                                                new { Value = "", Text = "Select Department" },
+                                                new { Value = "Sales", Text = "Sales" },
+                                                new { Value = "Marketing", Text = "Marketing" },
+                                                new { Value = "Operations", Text = "Operations" },
+                                                new { Value = "Customer Service", Text = "Customer Service" },
+                                                new { Value = "IT", Text = "IT" },
+                                                new { Value = "Management", Text = "Management" }
+                                            }, "Value", "Text"), new { @class = "form-select" })
+                                            @Html.ValidationMessageFor(m => m.EmployeeDepartment, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="mb-3">
+                                            @Html.LabelFor(m => m.EmployeePosition, new { @class = "form-label" })
+                                            @Html.TextBoxFor(m => m.EmployeePosition, new { @class = "form-control", placeholder = "Your position/title" })
+                                            @Html.ValidationMessageFor(m => m.EmployeePosition, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="form-check mb-3">
+                                @Html.CheckBoxFor(m => m.AcceptTerms, new { @class = "form-check-input" })
+                                @Html.LabelFor(m => m.AcceptTerms, new { @class = "form-check-label" })
+                                <a href="#" class="text-decoration-none">Terms and Conditions</a>
+                                @Html.ValidationMessageFor(m => m.AcceptTerms, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Complete -->
+                <div class="onboarding-step" id="step4" style="display: none;">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body text-center">
+                            <div class="mb-4">
+                                <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                            </div>
+                            <h4 class="text-success mb-3">You're All Set!</h4>
+                            <p class="text-muted mb-4">
+                                Your profile has been completed successfully. You can now enjoy all the features of our bookstore platform.
+                            </p>
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i> You'll be redirected to your dashboard in a moment...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" id="prevBtn" onclick="changeStep(-1)" style="display: none;">
+                        <i class="bi bi-arrow-left"></i> Previous
+                    </button>
+                    <div></div>
+                    <button type="button" class="btn btn-primary" id="nextBtn" onclick="changeStep(1)">
+                        Next <i class="bi bi-arrow-right"></i>
+                    </button>
+                    <button type="submit" class="btn btn-success" id="submitBtn" style="display: none;">
+                        <i class="bi bi-check"></i> Complete Profile
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        function showStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.onboarding-step').forEach(s => s.style.display = 'none');
+            
+            // Show current step
+            document.getElementById(`step${step}`).style.display = 'block';
+            
+            // Update progress bar
+            const progress = (step / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'inline-block';
+            document.getElementById('nextBtn').style.display = step === totalSteps ? 'none' : 'inline-block';
+            document.getElementById('submitBtn').style.display = step === totalSteps - 1 ? 'inline-block' : 'none';
+            
+            // Update next button text for last step
+            if (step === totalSteps - 1) {
+                document.getElementById('nextBtn').style.display = 'none';
+            }
+        }
+
+        function changeStep(direction) {
+            if (direction === 1 && !validateStep(currentStep)) {
+                return;
+            }
+            
+            currentStep += direction;
+            showStep(currentStep);
+        }
+
+        function validateStep(step) {
+            let isValid = true;
+            const currentStepElement = document.getElementById(`step${step}`);
+            const requiredFields = currentStepElement.querySelectorAll('[required]');
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            return isValid;
+        }
+
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const previewImg = preview.querySelector('img');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        // Initialize form validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('onboardingForm');
+            
+            // Add validation classes on blur
+            form.querySelectorAll('input, select, textarea').forEach(field => {
+                field.addEventListener('blur', function() {
+                    if (this.hasAttribute('required') && !this.value.trim()) {
+                        this.classList.add('is-invalid');
+                    } else {
+                        this.classList.remove('is-invalid');
+                        if (this.value.trim()) {
+                            this.classList.add('is-valid');
+                        }
+                    }
+                });
+            });
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                if (!validateStep(currentStep)) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .progress-container {
+            position: relative;
+        }
+        
+        .onboarding-step {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            transition: transform 0.2s ease-in-out;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+        
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .display-5 {
+            font-weight: 700;
+        }
+        
+        .text-primary {
+            color: #0d6efd !important;
+        }
+        
+        .bg-primary {
+            background-color: #0d6efd !important;
+        }
+        
+        .progress-bar {
+            background-color: #0d6efd;
+        }
+        
+        .alert {
+            border-radius: 8px;
+            border: none;
+        }
+        
+        .img-thumbnail {
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+        }
+        
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        
+        .form-check-input:focus {
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+        
+        .is-invalid {
+            border-color: #dc3545;
+        }
+        
+        .is-valid {
+            border-color: #198754;
+        }
+        
+        .text-danger {
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+    </style>
+}

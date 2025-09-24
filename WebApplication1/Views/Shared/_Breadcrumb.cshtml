@@ -1,0 +1,60 @@
+@model List<Tuple<string, string>>
+
+@if (Model != null && Model.Count > 0)
+{
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index", "Home")" class="text-decoration-none">
+                    <i class="bi bi-house-door"></i> Home
+                </a>
+            </li>
+            
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var item = Model[i];
+                var isLast = i == Model.Count - 1;
+                
+                if (isLast || string.IsNullOrEmpty(item.Item2))
+                {
+                    <li class="breadcrumb-item active" aria-current="page">
+                        @item.Item1
+                    </li>
+                }
+                else
+                {
+                    <li class="breadcrumb-item">
+                        <a href="@item.Item2" class="text-decoration-none">@item.Item1</a>
+                    </li>
+                }
+            }
+        </ol>
+    </nav>
+}
+
+<style>
+    .breadcrumb {
+        background: transparent;
+        padding: 0.5rem 0;
+        margin-bottom: 1rem;
+    }
+    
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "/";
+        color: #6c757d;
+    }
+    
+    .breadcrumb-item a {
+        color: #0d6efd;
+        text-decoration: none;
+    }
+    
+    .breadcrumb-item a:hover {
+        color: #0a58ca;
+        text-decoration: underline;
+    }
+    
+    .breadcrumb-item.active {
+        color: #6c757d;
+    }
+</style>
