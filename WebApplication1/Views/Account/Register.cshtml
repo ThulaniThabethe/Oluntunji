@@ -1,6 +1,6 @@
 @model WebApplication1.ViewModels.RegisterViewModel
 @{
-    ViewBag.Title = "Register - South African Bookstore";
+    ViewBag.Title = "Register - Connect2us";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -14,7 +14,7 @@
                             <i class="fas fa-user-plus fa-3x text-primary"></i>
                         </div>
                         <h2 class="fw-bold text-dark">Create Your Account</h2>
-                        <p class="text-muted">Join South Africa's premier bookstore</p>
+                        <p class="text-muted">Join Connect2us - Your premier platform</p>
                     </div>
 
                     @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate", enctype = "multipart/form-data" }))
@@ -221,7 +221,7 @@
                 if (password.match(/[a-z]+/)) strength++;
                 if (password.match(/[A-Z]+/)) strength++;
                 if (password.match(/[0-9]+/)) strength++;
-                if (password.match(/[$@#&!]+/)) strength++;
+                @Html.Raw("if (password.indexOf('$') !== -1 || password.indexOf('@') !== -1 || password.indexOf('#') !== -1 || password.indexOf('&') !== -1 || password.indexOf('!') !== -1) strength++;")
                 
                 return strength;
             }

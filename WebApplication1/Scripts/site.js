@@ -1,4 +1,4 @@
-// South African Bookstore Custom JavaScript
+// Connect2us Custom JavaScript
 
 $(document).ready(function() {
     // Initialize tooltips

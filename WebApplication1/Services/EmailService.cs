@@ -32,8 +32,8 @@ namespace WebApplication1.Services
             _smtpPort = int.Parse(ConfigurationManager.AppSettings["SmtpPort"] ?? "587");
             _smtpUsername = ConfigurationManager.AppSettings["SmtpUsername"] ?? "your-email@gmail.com";
             _smtpPassword = ConfigurationManager.AppSettings["SmtpPassword"] ?? "your-app-password";
-            _fromEmail = ConfigurationManager.AppSettings["FromEmail"] ?? "noreply@southafricanbookstore.co.za";
-            _fromName = ConfigurationManager.AppSettings["FromName"] ?? "South African Bookstore";
+            _fromEmail = ConfigurationManager.AppSettings["FromEmail"] ?? "noreply@connect2us.co.za";
+            _fromName = ConfigurationManager.AppSettings["FromName"] ?? "Connect2us";
         }
 
         public async Task<bool> SendEmailConfirmationAsync(User user, string confirmationToken)
@@ -41,14 +41,14 @@ namespace WebApplication1.Services
             try
             {
                 var confirmationUrl = $"https://localhost:44300/Account/ConfirmEmail?userId={user.UserId}&token={confirmationToken}";
-                var subject = "Confirm Your Email Address - South African Bookstore";
+                var subject = "Confirm Your Email Address - Connect2us";
                 var body = $@"
                     <html>
                     <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
                         <div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
-                            <h2 style='color: #2c3e50; text-align: center;'>Welcome to South African Bookstore!</h2>
+                            <h2 style='color: #2c3e50; text-align: center;'>Welcome to Connect2us!</h2>
                             <p>Hello {user.FirstName},</p>
-                            <p>Thank you for registering with South African Bookstore. To complete your registration, please confirm your email address by clicking the button below:</p>
+                            <p>Thank you for registering with Connect2us. To complete your registration, please confirm your email address by clicking the button below:</p>
                             <div style='text-align: center; margin: 30px 0;'>
                                 <a href='{confirmationUrl}' style='background-color: #3498db; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Confirm Email Address</a>
                             </div>
@@ -57,7 +57,7 @@ namespace WebApplication1.Services
                             <p>This confirmation link will expire in 24 hours for security reasons.</p>
                             <hr style='border: 1px solid #eee; margin: 30px 0;'>
                             <p style='font-size: 12px; color: #666;'>If you didn't create an account with us, please ignore this email.</p>
-                            <p style='font-size: 12px; color: #666;'>© 2024 South African Bookstore. All rights reserved.</p>
+                            <p style='font-size: 12px; color: #666;'>© 2024 Connect2us. All rights reserved.</p>
                         </div>
                     </body>
                     </html>";
@@ -76,7 +76,7 @@ namespace WebApplication1.Services
         {
             try
             {
-                var subject = $"Order Confirmation #{order.OrderNumber} - South African Bookstore";
+                var subject = $"Order Confirmation #{order.OrderNumber} - Connect2us";
                 var orderItemsHtml = "";
                 
                 foreach (var item in order.OrderItems)
@@ -137,10 +137,10 @@ namespace WebApplication1.Services
 
                             <p>We'll send you another email when your order has been shipped. If you have any questions about your order, please don't hesitate to contact our customer support.</p>
                             
-                            <p>Thank you for choosing South African Bookstore!</p>
+                            <p>Thank you for choosing Connect2us!</p>
                             
                             <hr style='border: 1px solid #eee; margin: 30px 0;'>
-                            <p style='font-size: 12px; color: #666;'>© 2024 South African Bookstore. All rights reserved.</p>
+                            <p style='font-size: 12px; color: #666;'>© 2024 Connect2us. All rights reserved.</p>
                         </div>
                     </body>
                     </html>";
@@ -158,7 +158,7 @@ namespace WebApplication1.Services
         {
             try
             {
-                var subject = $"Order #{order.OrderNumber} Status Update - South African Bookstore";
+                var subject = $"Order #{order.OrderNumber} Status Update - Connect2us";
                 var body = $@"
                     <html>
                     <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
@@ -187,10 +187,10 @@ namespace WebApplication1.Services
 
                 body += $@"
                             <p>If you have any questions about your order, please don't hesitate to contact our customer support.</p>
-                            <p>Thank you for choosing South African Bookstore!</p>
+                            <p>Thank you for choosing Connect2us!</p>
                             
                             <hr style='border: 1px solid #eee; margin: 30px 0;'>
-                            <p style='font-size: 12px; color: #666;'>© 2024 South African Bookstore. All rights reserved.</p>
+                            <p style='font-size: 12px; color: #666;'>© 2024 Connect2us. All rights reserved.</p>
                         </div>
                     </body>
                     </html>";
@@ -209,14 +209,14 @@ namespace WebApplication1.Services
             try
             {
                 var resetUrl = $"https://localhost:44300/Account/ResetPassword?userId={user.UserId}&token={resetToken}";
-                var subject = "Password Reset Request - South African Bookstore";
+                var subject = "Password Reset Request - Connect2us";
                 var body = $@"
                     <html>
                     <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
                         <div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
                             <h2 style='color: #2c3e50; text-align: center;'>Password Reset Request</h2>
                             <p>Hello {user.FirstName},</p>
-                            <p>We received a request to reset your password for your South African Bookstore account. If you made this request, please click the button below to reset your password:</p>
+                            <p>We received a request to reset your password for your Connect2us account. If you made this request, please click the button below to reset your password:</p>
                             
                             <div style='text-align: center; margin: 30px 0;'>
                                 <a href='{resetUrl}' style='background-color: #e74c3c; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Reset Password</a>
@@ -230,10 +230,10 @@ namespace WebApplication1.Services
                             </div>
                             
                             <p>If you have any questions, please contact our customer support.</p>
-                            <p>Thank you for choosing South African Bookstore!</p>
+                            <p>Thank you for choosing Connect2us!</p>
                             
                             <hr style='border: 1px solid #eee; margin: 30px 0;'>
-                            <p style='font-size: 12px; color: #666;'>© 2024 South African Bookstore. All rights reserved.</p>
+                            <p style='font-size: 12px; color: #666;'>© 2024 Connect2us. All rights reserved.</p>
                         </div>
                     </body>
                     </html>";
@@ -251,14 +251,14 @@ namespace WebApplication1.Services
         {
             try
             {
-                var subject = "Welcome to South African Bookstore!";
+                var subject = "Welcome to Connect2us!";
                 var body = $@"
                     <html>
                     <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
                         <div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
-                            <h2 style='color: #2c3e50; text-align: center;'>Welcome to South African Bookstore!</h2>
+                            <h2 style='color: #2c3e50; text-align: center;'>Welcome to Connect2us!</h2>
                             <p>Hello {user.FirstName},</p>
-                            <p>Welcome to South African Bookstore! We're thrilled to have you as part of our community of book lovers.</p>
+                            <p>Welcome to Connect2us! We're thrilled to have you as part of our community of book lovers.</p>
                             
                             <div style='background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;'>
                                 <h3 style='margin-top: 0; color: #2c3e50;'>Your Account Details</h3>
@@ -299,10 +299,10 @@ namespace WebApplication1.Services
                             </div>
                             
                             <p>If you have any questions or need assistance, please don't hesitate to contact our customer support team.</p>
-                            <p>Thank you for joining South African Bookstore. Happy reading!</p>
+                            <p>Thank you for joining Connect2us. Happy reading!</p>
                             
                             <hr style='border: 1px solid #eee; margin: 30px 0;'>
-                            <p style='font-size: 12px; color: #666;'>© 2024 South African Bookstore. All rights reserved.</p>
+                            <p style='font-size: 12px; color: #666;'>© 2024 Connect2us. All rights reserved.</p>
                         </div>
                     </body>
                     </html>";
@@ -320,7 +320,7 @@ namespace WebApplication1.Services
         {
             try
             {
-                var subject = $"Low Stock Alert: {book.Title} - South African Bookstore";
+                var subject = $"Low Stock Alert: {book.Title} - Connect2us";
                 var body = $@"
                     <html>
                     <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
@@ -345,10 +345,10 @@ namespace WebApplication1.Services
                             </div>
                             
                             <p>If you have any questions, please contact our support team.</p>
-                            <p>Thank you for being a valued seller on South African Bookstore!</p>
+                            <p>Thank you for being a valued seller on Connect2us!</p>
                             
                             <hr style='border: 1px solid #eee; margin: 30px 0;'>
-                            <p style='font-size: 12px; color: #666;'>© 2024 South African Bookstore. All rights reserved.</p>
+                            <p style='font-size: 12px; color: #666;'>© 2024 Connect2us. All rights reserved.</p>
                         </div>
                     </body>
                     </html>";

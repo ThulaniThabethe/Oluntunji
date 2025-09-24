@@ -70,6 +70,14 @@ namespace WebApplication1.ViewModels
         [Display(Name = "Postal Code")]
         [StringLength(10)]
         public string PostalCode { get; set; }
+
+        [Required]
+        [Display(Name = "Role")]
+        public string Role { get; set; }
+
+        [Required]
+        [Display(Name = "Accept Terms")]
+        public bool AcceptTerms { get; set; }
     }
 
     public class ProfileViewModel

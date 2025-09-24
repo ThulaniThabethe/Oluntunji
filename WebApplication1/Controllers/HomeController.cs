@@ -63,19 +63,19 @@ namespace WebApplication1.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "About South African Bookstore";
-            ViewBag.Mission = "To provide South Africans with easy access to quality books, supporting local authors and promoting literacy across the nation.";
-            ViewBag.Vision = "To become the leading online bookstore in South Africa, known for our extensive collection, excellent service, and commitment to education and culture.";
+            ViewBag.Message = "About Connect2us";
+            ViewBag.Mission = "To connect people through quality books, supporting local authors and promoting literacy.";
+            ViewBag.Vision = "To become the leading online bookstore, known for our extensive collection, excellent service, and commitment to education and culture.";
             
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Get in touch with South African Bookstore";
+            ViewBag.Message = "Get in touch with Connect2us";
             ViewBag.Address = "123 Book Street, Johannesburg, 2000";
             ViewBag.Phone = "+27 11 123 4567";
-            ViewBag.Email = "info@southafricanbookstore.co.za";
+            ViewBag.Email = "info@connect2us.co.za";
             ViewBag.Hours = "Monday - Friday: 8:00 AM - 6:00 PM\nSaturday: 9:00 AM - 4:00 PM\nSunday: Closed";
             
             return View();
@@ -99,7 +99,7 @@ namespace WebApplication1.Controllers
                 new { Question = "What payment methods do you accept?", Answer = "We accept credit cards, debit cards, EFT, and mobile payment options. All payments are processed securely." },
                 new { Question = "How long does delivery take?", Answer = "Standard delivery takes 3-5 business days for major cities and 5-7 business days for outlying areas. Express delivery options are available." },
                 new { Question = "Can I return a book?", Answer = "Yes, you can return books within 30 days of delivery if they are in their original condition. Please see our returns policy for full details." },
-                new { Question = "Do you ship internationally?", Answer = "Currently, we only ship within South Africa. International shipping may be available in the future." },
+                new { Question = "Do you ship internationally?", Answer = "Currently, we only ship within selected regions. International shipping may be available in the future." },
                 new { Question = "How do I track my order?", Answer = "Once your order is shipped, you'll receive a tracking number via email. You can use this to track your package on our website." }
             };
             

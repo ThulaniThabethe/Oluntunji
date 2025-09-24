@@ -88,7 +88,7 @@ namespace WebApplication1.Controllers
                     City = model.City,
                     Province = model.Province,
                     PostalCode = model.PostalCode,
-                    Role = UserRole.Customer.ToString()
+                    Role = model.Role
                 };
 
                 if (_authService.Register(user, model.Password))

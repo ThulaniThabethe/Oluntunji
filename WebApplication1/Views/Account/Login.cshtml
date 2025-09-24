@@ -1,6 +1,6 @@
 @model WebApplication1.ViewModels.LoginViewModel
 @{
-    ViewBag.Title = "Login - South African Bookstore";
+    ViewBag.Title = "Login - Connect2us";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -24,9 +24,9 @@
                         @Html.ValidationSummary(true, "", new { @class = "alert alert-danger alert-dismissible fade show" })
 
                         <div class="mb-4">
-                            @Html.LabelFor(m => m.Email, new { @class = "form-label fw-semibold" })
-                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control form-control-lg", placeholder = "Enter your email", required = "required" })
-                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "invalid-feedback d-block" })
+                            @Html.LabelFor(m => m.Username, new { @class = "form-label fw-semibold" })
+                            @Html.TextBoxFor(m => m.Username, new { @class = "form-control form-control-lg", placeholder = "Enter your username", required = "required" })
+                            @Html.ValidationMessageFor(m => m.Username, "", new { @class = "invalid-feedback d-block" })
                         </div>
 
                         <div class="mb-4">

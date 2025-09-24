@@ -38,7 +38,7 @@ namespace WebApplication1.Migrations
                 {
                     FirstName = "Admin",
                     LastName = "User",
-                    Email = "admin@oluntunjibooks.co.za",
+                    Email = "admin@connect2us.co.za",
                     Username = "admin",
                     PasswordHash = PasswordHelper.HashPassword("Admin@123"),
                     Role = "Admin",
@@ -57,7 +57,7 @@ namespace WebApplication1.Migrations
                 {
                     FirstName = "John",
                     LastName = "Smith",
-                    Email = "employee@oluntunjibooks.co.za",
+                    Email = "employee@connect2us.co.za",
                     Username = "employee",
                     PasswordHash = PasswordHelper.HashPassword("Employee@123"),
                     Role = "Employee",
@@ -76,7 +76,7 @@ namespace WebApplication1.Migrations
                 {
                     FirstName = "Sarah",
                     LastName = "Johnson",
-                    Email = "seller@oluntunjibooks.co.za",
+                    Email = "seller@connect2us.co.za",
                     Username = "seller",
                     PasswordHash = PasswordHelper.HashPassword("Seller@123"),
                     Role = "Seller",
@@ -95,7 +95,7 @@ namespace WebApplication1.Migrations
                 {
                     FirstName = "Michael",
                     LastName = "Brown",
-                    Email = "customer@oluntunjibooks.co.za",
+                    Email = "customer@connect2us.co.za",
                     Username = "customer",
                     PasswordHash = PasswordHelper.HashPassword("Customer@123"),
                     Role = "Customer",
