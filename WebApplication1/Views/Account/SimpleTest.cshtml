@@ -1,0 +1,101 @@
+@{
+    ViewBag.Title = "Simple Test Registration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Simple Test Registration</h3>
+                </div>
+                <div class="card-body">
+                    <form id="simpleTestForm" action="/Account/Register" method="post">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="mb-3">
+                            <label for="FirstName" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="FirstName" name="FirstName" value="Test" required />
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="LastName" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="LastName" name="LastName" value="User" required />
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="Email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="Email" name="Email" value="test@example.com" required />
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="Username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="Username" name="Username" value="testuser" required />
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="Password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="Password" name="Password" value="Test123!" required />
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="ConfirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" value="Test123!" required />
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="Role" class="form-label">Role</label>
+                            <select class="form-control" id="Role" name="Role" required>
+                                <option value="Customer">Customer</option>
+                                <option value="Seller">Seller</option>
+                                <option value="Employee">Employee</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="AcceptTerms" name="AcceptTerms" value="true" checked />
+                            <label class="form-check-label" for="AcceptTerms">Accept Terms</label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Submit Test Registration</button>
+                        <button type="button" onclick="submitWithAjax()" class="btn btn-secondary">Submit with AJAX</button>
+                    </form>
+                    
+                    <div id="result" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function submitWithAjax() {
+            var form = $('#simpleTestForm');
+            var resultDiv = $('#result');
+            
+            resultDiv.html('<div class="alert alert-info">Submitting form...</div>');
+            
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function(response) {
+                    resultDiv.html('<div class="alert alert-success">Success! Response: ' + response.substring(0, 200) + '...</div>');
+                    console.log('Success Response:', response);
+                },
+                error: function(xhr, status, error) {
+                    resultDiv.html('<div class="alert alert-danger">Error! Status: ' + status + ', Error: ' + error + '</div>');
+                    console.log('Error Response:', xhr.responseText);
+                }
+            });
+        }
+        
+        // Log form submission attempts
+        $('#simpleTestForm').on('submit', function(e) {
+            console.log('Form submission attempted');
+            console.log('Form data:', $(this).serialize());
+        });
+    </script>
+}

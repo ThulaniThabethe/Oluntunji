@@ -1,0 +1,282 @@
+@{
+    ViewBag.Title = "Database Connection Test";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>@ViewBag.Title</h2>
+            <p class="text-muted">Test database connectivity and initialization</p>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Database Status</h4>
+                </div>
+                <div class="card-body">
+                    <div id="status-container">
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            <p class="mt-2">Checking database status...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Test Actions</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <button id="test-connection-btn" class="btn btn-primary btn-block">
+                                <i class="fas fa-plug"></i> Test Connection
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <button id="check-exists-btn" class="btn btn-info btn-block">
+                                <i class="fas fa-database"></i> Check Database Exists
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <button id="initialize-btn" class="btn btn-success btn-block">
+                                <i class="fas fa-plus"></i> Initialize Database
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <button id="reset-btn" class="btn btn-warning btn-block">
+                                <i class="fas fa-refresh"></i> Reset Database
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h4>Results</h4>
+                </div>
+                <div class="card-body">
+                    <div id="results-container">
+                        <p class="text-muted">Results will appear here after testing...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Check initial status
+            checkDatabaseStatus();
+
+            // Bind button events
+            $('#test-connection-btn').click(function() {
+                testConnection();
+            });
+
+            $('#check-exists-btn').click(function() {
+                checkExists();
+            });
+
+            $('#initialize-btn').click(function() {
+                initializeDatabase();
+            });
+
+            $('#reset-btn').click(function() {
+                resetDatabase();
+            });
+        });
+
+        function checkDatabaseStatus() {
+            $.ajax({
+                url: '/Database/CheckExists',
+                type: 'GET',
+                success: function(response) {
+                    displayStatus(response);
+                },
+                error: function(xhr, status, error) {
+                    displayError('Status check failed: ' + error);
+                }
+            });
+        }
+
+        function testConnection() {
+            showLoading('Testing connection...');
+            
+            $.ajax({
+                url: '/Database/TestConnection',
+                type: 'GET',
+                success: function(response) {
+                    displayResults(response, 'Connection Test');
+                },
+                error: function(xhr, status, error) {
+                    displayError('Connection test failed: ' + error);
+                }
+            });
+        }
+
+        function checkExists() {
+            showLoading('Checking database existence...');
+            
+            $.ajax({
+                url: '/Database/CheckExists',
+                type: 'GET',
+                success: function(response) {
+                    displayResults(response, 'Database Check');
+                    displayStatus(response);
+                },
+                error: function(xhr, status, error) {
+                    displayError('Database check failed: ' + error);
+                }
+            });
+        }
+
+        function initializeDatabase() {
+            if (!confirm('This will create the database with seed data. Continue?')) {
+                return;
+            }
+
+            showLoading('Initializing database...');
+            
+            $.ajax({
+                url: '/Database/InitializeDatabase',
+                type: 'POST',
+                success: function(response) {
+                    displayResults(response, 'Database Initialization');
+                    if (response.success) {
+                        checkDatabaseStatus();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    displayError('Database initialization failed: ' + error);
+                }
+            });
+        }
+
+        function resetDatabase() {
+            if (!confirm('This will reset the database and all data will be lost. Continue?')) {
+                return;
+            }
+
+            showLoading('Resetting database...');
+            
+            $.ajax({
+                url: '/Database/Reset',
+                type: 'POST',
+                success: function(response) {
+                    displayResults(response, 'Database Reset');
+                    if (response.success) {
+                        checkDatabaseStatus();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    displayError('Database reset failed: ' + error);
+                }
+            });
+        }
+
+        function showLoading(message) {
+            $('#results-container').html(
+                '<div class="text-center">' +
+                '<div class="spinner-border text-primary" role="status">' +
+                '<span class="sr-only">Loading...</span>' +
+                '</div>' +
+                '<p class="mt-2">' + message + '</p>' +
+                '</div>'
+            );
+        }
+
+        function displayStatus(response) {
+            var statusHtml = '';
+            
+            if (response.success) {
+                var badgeClass = response.databaseExists ? 'badge-success' : 'badge-warning';
+                var statusText = response.databaseExists ? 'Database Exists' : 'Database Not Found';
+                
+                statusHtml = '<div class="alert alert-' + (response.databaseExists ? 'success' : 'warning') + '">' +
+                    '<h5><span class="badge ' + badgeClass + '">' + statusText + '</span></h5>' +
+                    '<p><strong>Users:</strong> ' + response.userCount + '</p>' +
+                    '<p><strong>App_Data Path:</strong> ' + response.appDataPath + '</p>';
+                
+                if (response.databaseFiles && response.databaseFiles.length > 0) {
+                    statusHtml += '<p><strong>Database Files:</strong></p><ul>';
+                    response.databaseFiles.forEach(function(file) {
+                        statusHtml += '<li>' + file.split('\\').pop() + '</li>';
+                    });
+                    statusHtml += '</ul>';
+                } else {
+                    statusHtml += '<p><strong>Database Files:</strong> None found</p>';
+                }
+                
+                statusHtml += '</div>';
+            } else {
+                statusHtml = '<div class="alert alert-danger">' +
+                    '<h5>Status Check Failed</h5>' +
+                    '<p>' + response.message + '</p>' +
+                    '<p><strong>Error:</strong> ' + response.error + '</p>' +
+                    '</div>';
+            }
+            
+            $('#status-container').html(statusHtml);
+        }
+
+        function displayResults(response, title) {
+            var resultsHtml = '<div class="alert alert-' + (response.success ? 'success' : 'danger') + '">' +
+                '<h5>' + title + ' - ' + (response.success ? 'Success' : 'Failed') + '</h5>' +
+                '<p><strong>Message:</strong> ' + response.message + '</p>';
+            
+            if (response.connectionString) {
+                resultsHtml += '<p><strong>Connection String:</strong> ' + response.connectionString + '</p>';
+            }
+            
+            if (response.databaseExists !== undefined) {
+                resultsHtml += '<p><strong>Database Exists:</strong> ' + response.databaseExists + '</p>';
+            }
+            
+            if (response.userCount !== undefined) {
+                resultsHtml += '<p><strong>User Count:</strong> ' + response.userCount + '</p>';
+            }
+            
+            if (response.usersCreated && response.usersCreated.length > 0) {
+                resultsHtml += '<p><strong>Users Created:</strong> ' + response.usersCreated.join(', ') + '</p>';
+            }
+            
+            if (response.error) {
+                resultsHtml += '<p><strong>Error:</strong> ' + response.error + '</p>';
+                if (response.stackTrace) {
+                    resultsHtml += '<details><summary>Stack Trace</summary><pre>' + response.stackTrace + '</pre></details>';
+                }
+            }
+            
+            if (response.appDataPath) {
+                resultsHtml += '<p><strong>App_Data Path:</strong> ' + response.appDataPath + '</p>';
+            }
+            
+            if (response.databaseFiles && response.databaseFiles.length > 0) {
+                resultsHtml += '<p><strong>Database Files:</strong></p><ul>';
+                response.databaseFiles.forEach(function(file) {
+                    resultsHtml += '<li>' + file + '</li>';
+                });
+                resultsHtml += '</ul>';
+            }
+            
+            resultsHtml += '</div>';
+            
+            $('#results-container').html(resultsHtml);
+        }
+
+        function displayError(message) {
+            $('#results-container').html(
+                '<div class="alert alert-danger">' +
+                '<h5>Error</h5>' +
+                '<p>' + message + '</p>' +
+                '</div>'
+            );
+        }
+    </script>
+}

@@ -1,0 +1,100 @@
+@model WebApplication1.ViewModels.RegisterViewModel
+@{
+    ViewBag.Title = "Test Register - Simple Form";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2>Test Registration Form</h2>
+                    <p>This is a simplified test form to debug registration issues.</p>
+                    
+                    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { id = "testForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.FirstName)
+                            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.FirstName)
+                        </div>
+                        
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.LastName)
+                            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.LastName)
+                        </div>
+                        
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Email)
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Email)
+                        </div>
+                        
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Username)
+                            @Html.TextBoxFor(m => m.Username, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Username)
+                        </div>
+                        
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Password)
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Password)
+                        </div>
+                        
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.ConfirmPassword)
+                            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.ConfirmPassword)
+                        </div>
+                        
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Role)
+                            @Html.DropDownListFor(m => m.Role, new SelectList(new[] 
+                            { 
+                                new { Value = "Customer", Text = "Customer" },
+                                new { Value = "Seller", Text = "Seller" },
+                                new { Value = "Employee", Text = "Employee" }
+                            }, "Value", "Text"), "Select Role", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Role)
+                        </div>
+                        
+                        <div class="mb-3">
+                            @Html.CheckBoxFor(m => m.AcceptTerms)
+                            @Html.LabelFor(m => m.AcceptTerms)
+                            @Html.ValidationMessageFor(m => m.AcceptTerms)
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Register</button>
+                        <button type="button" onclick="testForm()" class="btn btn-warning">Test Form</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function testForm() {
+        alert('Testing form submission...');
+        var form = document.getElementById('testForm');
+        
+        // Fill in test data
+        document.getElementById('FirstName').value = 'Test';
+        document.getElementById('LastName').value = 'User';
+        document.getElementById('Email').value = 'test@example.com';
+        document.getElementById('Username').value = 'testuser';
+        document.getElementById('Password').value = 'Password123!';
+        document.getElementById('ConfirmPassword').value = 'Password123!';
+        document.getElementById('Role').value = 'Customer';
+        document.getElementById('AcceptTerms').checked = true;
+        
+        alert('Form filled with test data - submitting...');
+        form.submit();
+    }
+</script>

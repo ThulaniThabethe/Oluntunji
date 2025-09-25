@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Comprehensive Registration Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        button { margin: 10px 5px; padding: 10px 20px; font-size: 14px; }
+        #result { margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9; }
+        pre { white-space: pre-wrap; word-wrap: break-word; max-height: 400px; overflow-y: auto; }
+        .error { background-color: #ffe6e6; border-color: #ff0000; }
+        .success { background-color: #e6ffe6; border-color: #00ff00; }
+        .debug-info { background-color: #e6f3ff; border-color: #0066cc; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .test-section h3 { margin-top: 0; }
+    </style>
+</head>
+<body>
+    <h1>Comprehensive Registration Debug</h1>
+    
+    <div class="test-section">
+        <h3>1. Test Database Connection</h3>
+        <button onclick="testDatabase()">Test Database</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. Test Simple POST</h3>
+        <button onclick="testSimplePost()">Test Simple POST</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. Test Registration with Unique Data</h3>
+        <button onclick="testRegistrationUnique()">Test Registration (Unique)</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>4. Test Registration with Fixed Data</h3>
+        <button onclick="testRegistrationFixed()">Test Registration (Fixed)</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>5. Check Debug Log</h3>
+        <button onclick="readDebugLog()">Read Debug Log</button>
+        <button onclick="clearDebugLog()">Clear Debug Log</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>6. Get Debug Info</h3>
+        <button onclick="getDebugInfo()">Get Debug Info</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        async function testDatabase() {
+            const resultDiv = document.getElementById('result');
+            try {
+                const response = await fetch('/Debug/TestDatabase');
+                const text = await response.text();
+                
+                resultDiv.className = response.status === 200 ? 'success' : 'error';
+                resultDiv.innerHTML = `
+                    <h3>Database Test Result:</h3>
+                    <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                    <pre>${text}</pre>
+                `;
+            } catch (error) {
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = `
+                    <h3>Database Test Error:</h3>
+                    <pre>${error.stack || error.message || error}</pre>
+                `;
+            }
+        }
+        
+        async function testSimplePost() {
+            const resultDiv = document.getElementById('result');
+            try {
+                const response = await fetch('/Account/TestPost', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ test: 'data' })
+                });
+                const data = await response.json();
+                
+                resultDiv.className = response.status === 200 ? 'success' : 'error';
+                resultDiv.innerHTML = `
+                    <h3>Simple POST Test Result:</h3>
+                    <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = `
+                    <h3>Simple POST Test Error:</h3>
+                    <pre>${error.stack || error.message || error}</pre>
+                `;
+            }
+        }
+        
+        async function testRegistrationUnique() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Testing registration with unique data...</p>';
+            
+            try {
+                // Get the registration page to extract the anti-forgery token
+                const getResponse = await fetch('/Account/Register');
+                const html = await getResponse.text();
+                
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const token = doc.querySelector('input[name="__RequestVerificationToken"]');
+                
+                if (!token) {
+                    throw new Error('Could not find anti-forgery token');
+                }
+                
+                // Create unique data
+                const timestamp = Date.now();
+                
+                // Create form data
+                const formData = new FormData();
+                formData.append('__RequestVerificationToken', token.value);
+                formData.append('FirstName', 'Test');
+                formData.append('LastName', 'User');
+                formData.append('Email', `testuser${timestamp}@example.com`);
+                formData.append('Username', `testuser${timestamp}`);
+                formData.append('Password', 'Password123!');
+                formData.append('ConfirmPassword', 'Password123!');
+                formData.append('Role', 'Customer');
+                formData.append('AcceptTerms', 'true');
+                
+                // Log the test to file
+                await fetch(`/Debug/LogToFile?message=Testing registration with email: testuser${timestamp}@example.com`);
+                
+                // Make the POST request
+                const postResponse = await fetch('/Account/Register', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const responseText = await postResponse.text();
+                
+                resultDiv.className = postResponse.status === 200 ? 'success' : 'error';
+                resultDiv.innerHTML = `
+                    <h3>Registration Test Result:</h3>
+                    <p><strong>Status Code:</strong> ${postResponse.status} ${postResponse.statusText}</p>
+                    <p><strong>Email Used:</strong> testuser${timestamp}@example.com</p>
+                    <p><strong>Username Used:</strong> testuser${timestamp}</p>
+                    <p><strong>Response Preview:</strong></p>
+                    <pre>${responseText.substring(0, 1000)}${responseText.length > 1000 ? '...' : ''}</pre>
+                `;
+                
+                // Log the result
+                await fetch(`/Debug/LogToFile?message=Registration result: ${postResponse.status} - ${postResponse.statusText}`);
+                
+            } catch (error) {
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = `
+                    <h3>Registration Test Error:</h3>
+                    <pre>${error.stack || error.message || error}</pre>
+                `;
+                
+                // Log the error
+                await fetch(`/Debug/LogToFile?message=Registration error: ${error.message}`);
+            }
+        }
+        
+        async function testRegistrationFixed() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Testing registration with fixed data...</p>';
+            
+            try {
+                // Get the registration page to extract the anti-forgery token
+                const getResponse = await fetch('/Account/Register');
+                const html = await getResponse.text();
+                
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const token = doc.querySelector('input[name="__RequestVerificationToken"]');
+                
+                if (!token) {
+                    throw new Error('Could not find anti-forgery token');
+                }
+                
+                // Create form data with fixed values
+                const formData = new FormData();
+                formData.append('__RequestVerificationToken', token.value);
+                formData.append('FirstName', 'John');
+                formData.append('LastName', 'Doe');
+                formData.append('Email', 'johndoe@example.com');
+                formData.append('Username', 'johndoe');
+                formData.append('Password', 'Password123!');
+                formData.append('ConfirmPassword', 'Password123!');
+                formData.append('Role', 'Customer');
+                formData.append('AcceptTerms', 'true');
+                
+                // Log the test to file
+                await fetch('/Debug/LogToFile?message=Testing registration with fixed data: johndoe@example.com');
+                
+                // Make the POST request
+                const postResponse = await fetch('/Account/Register', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const responseText = await postResponse.text();
+                
+                resultDiv.className = postResponse.status === 200 ? 'success' : 'error';
+                resultDiv.innerHTML = `
+                    <h3>Fixed Registration Test Result:</h3>
+                    <p><strong>Status Code:</strong> ${postResponse.status} ${postResponse.statusText}</p>
+                    <p><strong>Email Used:</strong> johndoe@example.com</p>
+                    <p><strong>Username Used:</strong> johndoe</p>
+                    <p><strong>Response Preview:</strong></p>
+                    <pre>${responseText.substring(0, 1000)}${responseText.length > 1000 ? '...' : ''}</pre>
+                `;
+                
+                // Log the result
+                await fetch(`/Debug/LogToFile?message=Fixed registration result: ${postResponse.status} - ${postResponse.statusText}`);
+                
+            } catch (error) {
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = `
+                    <h3>Fixed Registration Test Error:</h3>
+                    <pre>${error.stack || error.message || error}</pre>
+                `;
+                
+                // Log the error
+                await fetch(`/Debug/LogToFile?message=Fixed registration error: ${error.message}`);
+            }
+        }
+        
+        async function readDebugLog() {
+            const resultDiv = document.getElementById('result');
+            try {
+                const response = await fetch('/Debug/ReadLog');
+                const text = await response.text();
+                
+                resultDiv.className = 'debug-info';
+                resultDiv.innerHTML = `
+                    <h3>Debug Log Contents:</h3>
+                    <pre>${text}</pre>
+                `;
+            } catch (error) {
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = `
+                    <h3>Error reading debug log:</h3>
+                    <pre>${error.stack || error.message || error}</pre>
+                `;
+            }
+        }
+        
+        async function clearDebugLog() {
+            const resultDiv = document.getElementById('result');
+            try {
+                const response = await fetch('/Debug/LogToFile?message=--- LOG CLEARED ---');
+                const text = await response.text();
+                
+                resultDiv.className = 'success';
+                resultDiv.innerHTML = `
+                    <h3>Debug Log Cleared:</h3>
+                    <pre>${text}</pre>
+                `;
+            } catch (error) {
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = `
+                    <h3>Error clearing debug log:</h3>
+                    <pre>${error.stack || error.message || error}</pre>
+                `;
+            }
+        }
+        
+        async function getDebugInfo() {
+            const resultDiv = document.getElementById('result');
+            try {
+                const response = await fetch('/Debug/GetDebugInfo');
+                const text = await response.text();
+                
+                resultDiv.className = 'debug-info';
+                resultDiv.innerHTML = `
+                    <h3>Debug Info from AccountController:</h3>
+                    <pre>${text}</pre>
+                `;
+            } catch (error) {
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = `
+                    <h3>Error getting debug info:</h3>
+                    <pre>${error.stack || error.message || error}</pre>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

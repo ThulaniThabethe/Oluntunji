@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Direct Register Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        button { margin: 10px 0; padding: 10px 20px; font-size: 16px; }
+        #result { margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+        .form-container { margin: 20px 0; padding: 15px; border: 1px solid #ddd; background-color: #f5f5f5; }
+        input { margin: 5px 0; padding: 5px; width: 300px; }
+    </style>
+</head>
+<body>
+    <h1>Direct Register Test</h1>
+    
+    <div class="form-container">
+        <h2>Test Registration Form</h2>
+        <form id="testForm">
+            <div>
+                <label>First Name:</label>
+                <input type="text" name="FirstName" value="Test" required />
+            </div>
+            <div>
+                <label>Last Name:</label>
+                <input type="text" name="LastName" value="User" required />
+            </div>
+            <div>
+                <label>Email:</label>
+                <input type="email" name="Email" value="test@example.com" required />
+            </div>
+            <div>
+                <label>Username:</label>
+                <input type="text" name="Username" value="testuser" required />
+            </div>
+            <div>
+                <label>Password:</label>
+                <input type="password" name="Password" value="Test123!" required />
+            </div>
+            <div>
+                <label>Confirm Password:</label>
+                <input type="password" name="ConfirmPassword" value="Test123!" required />
+            </div>
+            <div>
+                <label>Role:</label>
+                <select name="Role">
+                    <option value="Customer" selected>Customer</option>
+                    <option value="Seller">Seller</option>
+                </select>
+            </div>
+            <div>
+                <label>
+                    <input type="checkbox" name="AcceptTerms" value="true" checked />
+                    Accept Terms
+                </label>
+            </div>
+            <button type="submit">Submit Registration</button>
+        </form>
+    </div>
+    
+    <button onclick="fetchAntiForgeryToken()">Get Anti-Forgery Token</button>
+    <button onclick="testRegistration()">Test Registration (Manual)</button>
+    
+    <div id="result"></div>
+
+    <script>
+        let antiForgeryToken = '';
+        
+        function fetchAntiForgeryToken() {
+            fetch('/Account/Register')
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const token = doc.querySelector('input[name="__RequestVerificationToken"]');
+                    if (token) {
+                        antiForgeryToken = token.value;
+                        document.getElementById('result').innerHTML = '<h3>Anti-Forgery Token Retrieved:</h3><pre>' + antiForgeryToken + '</pre>';
+                    } else {
+                        document.getElementById('result').innerHTML = '<h3>Error:</h3><pre>Could not find anti-forgery token</pre>';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = '<h3>Error:</h3><pre>' + error + '</pre>';
+                });
+        }
+        
+        function testRegistration() {
+            if (!antiForgeryToken) {
+                alert('Please fetch anti-forgery token first');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('__RequestVerificationToken', antiForgeryToken);
+            formData.append('FirstName', 'Test');
+            formData.append('LastName', 'User');
+            formData.append('Email', 'test@example.com');
+            formData.append('Username', 'testuser');
+            formData.append('Password', 'Test123!');
+            formData.append('ConfirmPassword', 'Test123!');
+            formData.append('Role', 'Customer');
+            formData.append('AcceptTerms', 'true');
+            
+            fetch('/Account/Register', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.redirected) {
+                    return 'Redirected to: ' + response.url;
+                } else {
+                    return response.text();
+                }
+            })
+            .then(data => {
+                document.getElementById('result').innerHTML = '<h3>Registration Response:</h3><pre>' + data + '</pre>';
+            })
+            .catch(error => {
+                document.getElementById('result').innerHTML = '<h3>Registration Error:</h3><pre>' + error + '</pre>';
+            });
+        }
+        
+        // Handle form submission
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('/Account/Register', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.redirected) {
+                    return 'Redirected to: ' + response.url;
+                } else {
+                    return response.text();
+                }
+            })
+            .then(data => {
+                document.getElementById('result').innerHTML = '<h3>Form Submission Response:</h3><pre>' + data + '</pre>';
+            })
+            .catch(error => {
+                document.getElementById('result').innerHTML = '<h3>Form Submission Error:</h3><pre>' + error + '</pre>';
+            });
+        });
+        
+        // Fetch token on page load
+        fetchAntiForgeryToken();
+    </script>
+</body>
+</html>

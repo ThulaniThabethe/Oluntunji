@@ -24,7 +24,7 @@ namespace WebApplication1.Models
 
         [Required]
         [Display(Name = "Total Revenue (ZAR)")]
-        [Column(TypeName = "decimal(18, 2)")]
+        [Column(TypeName = "money")]
         public decimal TotalRevenue { get; set; }
 
         [Required]
@@ -36,7 +36,7 @@ namespace WebApplication1.Models
         public int NumberOfBooksSold { get; set; }
 
         [Display(Name = "Average Order Value (ZAR)")]
-        [Column(TypeName = "decimal(18, 2)")]
+        [Column(TypeName = "money")]
         public decimal AverageOrderValue { get; set; }
 
         [StringLength(50)]

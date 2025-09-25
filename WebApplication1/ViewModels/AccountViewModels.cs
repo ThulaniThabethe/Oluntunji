@@ -75,8 +75,8 @@ namespace WebApplication1.ViewModels
         [Display(Name = "Role")]
         public string Role { get; set; }
 
-        [Required]
         [Display(Name = "Accept Terms")]
+        [Range(typeof(bool), "true", "true", ErrorMessage = "You must accept the terms and conditions.")]
         public bool AcceptTerms { get; set; }
     }
 

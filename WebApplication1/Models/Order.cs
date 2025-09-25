@@ -21,7 +21,7 @@ namespace WebApplication1.Models
 
         [Required]
         [Display(Name = "Total Amount (ZAR)")]
-        [Column(TypeName = "decimal(18, 2)")]
+        [Column(TypeName = "money")]
         public decimal TotalAmount { get; set; }
 
         [Required]
@@ -90,12 +90,12 @@ namespace WebApplication1.Models
 
         [Required]
         [Display(Name = "Unit Price (ZAR)")]
-        [Column(TypeName = "decimal(18, 2)")]
+        [Column(TypeName = "money")]
         public decimal UnitPrice { get; set; }
 
         [Required]
         [Display(Name = "Subtotal (ZAR)")]
-        [Column(TypeName = "decimal(18, 2)")]
+        [Column(TypeName = "money")]
         public decimal Subtotal { get; set; }
 
         // Foreign keys

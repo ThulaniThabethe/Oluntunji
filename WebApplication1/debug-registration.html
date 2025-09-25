@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        button { margin: 10px 0; padding: 10px 20px; font-size: 16px; }
+        #result { margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+    <h1>Registration Debug Test</h1>
+    
+    <h2>Test with Simple Data</h2>
+    <button onclick="testSimpleRegistration()">Test Simple Registration</button>
+    
+    <h2>Test with Form Data</h2>
+    <button onclick="testFormRegistration()">Test Form Registration</button>
+    
+    <div id="result"></div>
+
+    <script>
+        function testSimpleRegistration() {
+            // First, get the anti-forgery token
+            fetch('/Account/Register')
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const token = doc.querySelector('input[name="__RequestVerificationToken"]');
+                    
+                    if (token) {
+                        const formData = new FormData();
+                        formData.append('__RequestVerificationToken', token.value);
+                        formData.append('FirstName', 'John');
+                        formData.append('LastName', 'Doe');
+                        formData.append('Email', 'john.doe@example.com');
+                        formData.append('Username', 'johndoe');
+                        formData.append('Password', 'Password123!');
+                        formData.append('ConfirmPassword', 'Password123!');
+                        formData.append('Role', 'Customer');
+                        formData.append('AcceptTerms', 'true');
+                        
+                        return fetch('/Account/Register', {
+                            method: 'POST',
+                            body: formData
+                        });
+                    } else {
+                        throw new Error('Could not find anti-forgery token');
+                    }
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        return 'Redirected to: ' + response.url;
+                    } else {
+                        return response.text();
+                    }
+                })
+                .then(data => {
+                    document.getElementById('result').innerHTML = '<h3>Simple Registration Response:</h3><pre>' + data + '</pre>';
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = '<h3>Simple Registration Error:</h3><pre>' + error + '</pre>';
+                });
+        }
+        
+        function testFormRegistration() {
+            // Create a form and submit it programmatically
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/Account/Register';
+            
+            // First, get the anti-forgery token and create the form
+            fetch('/Account/Register')
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const token = doc.querySelector('input[name="__RequestVerificationToken"]');
+                    
+                    if (token) {
+                        // Create form fields
+                        const fields = [
+                            { name: '__RequestVerificationToken', value: token.value },
+                            { name: 'FirstName', value: 'Jane' },
+                            { name: 'LastName', value: 'Smith' },
+                            { name: 'Email', value: 'jane.smith@example.com' },
+                            { name: 'Username', value: 'janesmith' },
+                            { name: 'Password', value: 'Password123!' },
+                            { name: 'ConfirmPassword', value: 'Password123!' },
+                            { name: 'Role', value: 'Customer' },
+                            { name: 'AcceptTerms', value: 'true' }
+                        ];
+                        
+                        fields.forEach(field => {
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = field.name;
+                            input.value = field.value;
+                            form.appendChild(input);
+                        });
+                        
+                        document.body.appendChild(form);
+                        form.submit();
+                        
+                        document.getElementById('result').innerHTML = '<h3>Form submitted via browser:</h3><pre>Form submitted - check if page redirects or shows error</pre>';
+                    } else {
+                        throw new Error('Could not find anti-forgery token');
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = '<h3>Form Registration Error:</h3><pre>' + error + '</pre>';
+                });
+        }
+    </script>
+</body>
+</html>

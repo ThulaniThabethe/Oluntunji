@@ -37,7 +37,7 @@ namespace WebApplication1.Models
 
         [Required]
         [Display(Name = "Price (ZAR)")]
-        [Column(TypeName = "decimal(18, 2)")]
+        [Column(TypeName = "money")]
         public decimal Price { get; set; }
 
         [Required]

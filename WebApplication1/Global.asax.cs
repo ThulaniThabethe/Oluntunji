@@ -39,6 +39,11 @@ namespace WebApplication1
                 // Log the error but don't prevent application startup
                 System.Diagnostics.EventLog.WriteEntry("Application", $"Database initialization failed: {ex.Message}", System.Diagnostics.EventLogEntryType.Warning);
             }
+            
+            // Debug: Log application startup with timestamp - Force recompilation v2
+            System.Diagnostics.Debug.WriteLine("Application started at: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+            System.Diagnostics.Debug.WriteLine("Force recompilation v2: " + Guid.NewGuid().ToString());
+            System.Diagnostics.Debug.WriteLine("Database connection string: " + System.Configuration.ConfigurationManager.ConnectionStrings["BookstoreConnection"]?.ConnectionString);
         }
     }
 }

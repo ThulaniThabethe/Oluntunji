@@ -17,10 +17,19 @@
                         <p class="text-muted">Join Connect2us - Your premier platform</p>
                     </div>
 
-                    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate", enctype = "multipart/form-data" }))
+                    <!-- Debug Information -->
+                    @if (TempData["DebugInfo"] != null)
+                    {
+                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                            <h5>Debug Information:</h5>
+                            <pre style="white-space: pre-wrap; font-size: 12px;">@TempData["DebugInfo"]</pre>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "needs-validation", novalidate = "true", id = "registerForm" }))
                     {
                         @Html.AntiForgeryToken()
-                        
                         @Html.ValidationSummary(true, "", new { @class = "alert alert-danger alert-dismissible fade show" })
 
                         <div class="row">
@@ -41,6 +50,12 @@
                             @Html.LabelFor(m => m.Email, new { @class = "form-label fw-semibold" })
                             @Html.TextBoxFor(m => m.Email, new { @class = "form-control form-control-lg", placeholder = "Enter your email", required = "required" })
                             @Html.ValidationMessageFor(m => m.Email, "", new { @class = "invalid-feedback d-block" })
+                        </div>
+
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Username, new { @class = "form-label fw-semibold" })
+                            @Html.TextBoxFor(m => m.Username, new { @class = "form-control form-control-lg", placeholder = "Choose a username", required = "required" })
+                            @Html.ValidationMessageFor(m => m.Username, "", new { @class = "invalid-feedback d-block" })
                         </div>
 
                         <div class="row">
@@ -95,6 +110,19 @@
                                 <i class="fas fa-user-plus me-2"></i>Create Account
                             </button>
                         </div>
+                        
+                        <!-- Debug button to test form submission -->
+                    <div class="mb-4">
+                        <button type="button" onclick="testFormSubmission()" class="btn btn-warning btn-sm">
+                            Test Form Submission (Debug)
+                        </button>
+                        <button type="button" onclick="manualSubmit()" class="btn btn-info btn-sm">
+                            Manual Submit (Force)
+                        </button>
+                        <button type="button" onclick="checkValidation()" class="btn btn-secondary btn-sm">
+                            Check Validation
+                        </button>
+                    </div>
 
                         <div class="text-center">
                             <p class="mb-0">
@@ -163,6 +191,28 @@
     @Scripts.Render("~/bundles/jqueryval")
     <script>
         $(document).ready(function() {
+            console.log('Register page loaded - jQuery ready');
+            
+            // Add form submission logging
+            $('#registerForm').on('submit', function(e) {
+                console.log('Form submit event triggered');
+                console.log('Form action:', $(this).attr('action'));
+                console.log('Form method:', $(this).attr('method'));
+                console.log('Form data:', $(this).serialize());
+                
+                // Check if jQuery validation is available and what it reports
+                if (typeof $.fn.validate !== 'undefined') {
+                    var validator = $(this).validate();
+                    var isValid = validator.form();
+                    console.log('jQuery validation result:', isValid);
+                    if (!isValid) {
+                        console.log('Validation errors:', validator.errorList);
+                    }
+                } else {
+                    console.log('jQuery validation NOT available');
+                }
+            });
+            
             // Toggle password visibility
             $('#togglePassword').click(function() {
                 const passwordField = $('#passwordField');
@@ -213,6 +263,129 @@
             setTimeout(function() {
                 $('.alert-danger').fadeOut('slow');
             }, 5000);
+
+            // Test form submission function - make it global
+        window.testFormSubmission = function() {
+            console.log('Testing form submission...');
+            alert('Testing form submission...');
+            
+            var form = $('#registerForm');
+            console.log('Form found:', form.length > 0);
+            
+            // Check if jQuery validation is available
+            if (typeof $.fn.validate !== 'undefined') {
+                var validator = form.validate();
+                var isValid = validator.form();
+                console.log('Form validation result:', isValid);
+                alert('Form validation result: ' + isValid);
+                
+                if (!isValid) {
+                    var errors = validator.errorList;
+                    console.log('Validation errors:', errors);
+                    if (errors.length > 0) {
+                        var errorMessages = errors.map(function(e) { return e.message; }).join('\n');
+                        alert('Validation errors:\n' + errorMessages);
+                    }
+                } else {
+                    alert('Form is valid - attempting submission...');
+                    
+                    // Try to submit manually with AJAX to see the response
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: 'POST',
+                        data: form.serialize(),
+                        success: function(response) {
+                            alert('AJAX submission successful! Check console for response.');
+                            console.log('AJAX Response:', response);
+                        },
+                        error: function(xhr, status, error) {
+                            alert('AJAX submission failed! Status: ' + status + ', Error: ' + error);
+                            console.log('AJAX Error:', xhr, status, error);
+                        }
+                    });
+                }
+            } else {
+                alert('jQuery validation not available - submitting form anyway');
+                form.submit();
+            }
+        }
+        
+        // Manual submit function
+        window.manualSubmit = function() {
+            console.log('Manual submit called...');
+            alert('Manual submit - bypassing validation...');
+            
+            var form = $('#registerForm')[0];
+            console.log('Form element:', form);
+            
+            // Disable validation and submit
+            if (typeof $.fn.validate !== 'undefined') {
+                $(form).validate().cancelSubmit = true;
+            }
+            
+            form.submit();
+            alert('Form submitted manually');
+        }
+        
+        // Check validation function
+        window.checkValidation = function() {
+            console.log('Checking validation...');
+            
+            var form = $('#registerForm');
+            console.log('Form found:', form.length > 0);
+            
+            // Check if jQuery validation is loaded
+            if (typeof $.fn.validate !== 'undefined') {
+                var validator = form.validate();
+                console.log('jQuery validation found:', validator);
+                console.log('Validation rules:', validator.settings.rules);
+                console.log('Validation messages:', validator.settings.messages);
+                
+                var isValid = validator.form();
+                alert('Validation check result: ' + isValid);
+                
+                if (!isValid) {
+                    var errors = validator.errorList;
+                    console.log('Current validation errors:', errors);
+                    if (errors.length > 0) {
+                        var errorMessages = errors.map(function(e) { return e.field + ': ' + e.message; }).join('\n');
+                        alert('Current validation errors:\n' + errorMessages);
+                    }
+                }
+            } else {
+                alert('jQuery validation is NOT loaded!');
+                console.log('jQuery validation not found');
+            }
+            
+            // Check for missing required fields
+            var requiredFields = form.find('[required]');
+            console.log('Required fields found:', requiredFields.length);
+            requiredFields.each(function(index, field) {
+                console.log('Required field ' + index + ':', field.name, 'value:', $(field).val());
+            });
+        }
+            
+            // Add debugging for form submission
+            $('form').on('submit', function(e) {
+                console.log('Form submission attempted');
+                alert('Form submission attempted - check console for details');
+                var form = $(this);
+                var validator = form.validate();
+                if (!validator.form()) {
+                    console.log('Client-side validation failed');
+                    alert('Client-side validation failed - check console for details');
+                    var errors = validator.errorList;
+                    if (errors.length > 0) {
+                        console.log('Validation errors:');
+                        errors.forEach(function(error) {
+                            console.log('- ' + error.message);
+                        });
+                    }
+                } else {
+                    console.log('Client-side validation passed');
+                    alert('Client-side validation passed - form should submit');
+                }
+            });
             
             function calculatePasswordStrength(password) {
                 let strength = 0;
