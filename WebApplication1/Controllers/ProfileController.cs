@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using WebApplication1.Models;
 using WebApplication1.ViewModels;
@@ -262,7 +263,7 @@ namespace WebApplication1.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [SellerOnly]
-        public ActionResult EditBook(Book model)
+        public ActionResult EditBook(Book model, HttpPostedFileBase coverImageFile)
         {
             if (!ModelState.IsValid)
             {
@@ -276,6 +277,52 @@ namespace WebApplication1.Controllers
             if (book == null)
             {
                 return HttpNotFound();
+            }
+
+            // Handle image upload
+            if (coverImageFile != null && coverImageFile.ContentLength > 0)
+            {
+                // Validate file type
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+                var fileExtension = System.IO.Path.GetExtension(coverImageFile.FileName).ToLower();
+                
+                if (!allowedExtensions.Contains(fileExtension))
+                {
+                    ModelState.AddModelError("coverImageFile", "Only image files (.jpg, .jpeg, .png, .gif, .webp) are allowed.");
+                    return View(model);
+                }
+
+                // Validate file size (max 2MB)
+                if (coverImageFile.ContentLength > 2 * 1024 * 1024)
+                {
+                    ModelState.AddModelError("coverImageFile", "Image size must be less than 2MB.");
+                    return View(model);
+                }
+
+                try
+                {
+                    // Create uploads directory if it doesn't exist
+                    var uploadsDir = Server.MapPath("~/Uploads/Books/");
+                    if (!System.IO.Directory.Exists(uploadsDir))
+                    {
+                        System.IO.Directory.CreateDirectory(uploadsDir);
+                    }
+
+                    // Generate unique filename
+                    var fileName = $"book_{model.BookId}_{DateTime.Now:yyyyMMddHHmmss}{fileExtension}";
+                    var filePath = System.IO.Path.Combine(uploadsDir, fileName);
+
+                    // Save the file
+                    coverImageFile.SaveAs(filePath);
+
+                    // Update the CoverImageUrl
+                    model.CoverImageUrl = $"/Uploads/Books/{fileName}";
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("coverImageFile", "Error uploading image: " + ex.Message);
+                    return View(model);
+                }
             }
 
             // Update book details

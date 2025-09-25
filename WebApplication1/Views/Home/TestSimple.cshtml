@@ -1,0 +1,16 @@
+@{
+    ViewBag.Title = "Simple Test";
+}
+
+<h1>Connect2us - Simple Test Page</h1>
+
+<p>This is a simple test page to verify the application is working.</p>
+
+<div>
+    <h2>Test Data</h2>
+    <p>Featured Books Count: @ViewBag.FeaturedBooks?.Count ?? 0</p>
+    <p>Best Sellers Count: @ViewBag.BestSellers?.Count ?? 0</p>
+    <p>Categories Count: @ViewBag.Categories?.Count ?? 0</p>
+    <p>Total Books: @ViewBag.TotalBooks ?? 0</p>
+    <p>Total Categories: @ViewBag.TotalCategories ?? 0</p>
+</div>

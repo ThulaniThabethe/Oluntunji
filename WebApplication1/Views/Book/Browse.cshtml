@@ -1,0 +1,98 @@
+@model IEnumerable<WebApplication1.Models.Book>
+@{
+    ViewBag.Title = "Browse Books";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-4 mb-4">Browse Books</h1>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            @using (Html.BeginForm("Browse", "Book", FormMethod.Get, new { @class = "d-flex" }))
+            {
+                <div class="input-group">
+                    @Html.TextBox("searchString", ViewBag.SearchString as string, new { @class = "form-control", placeholder = "Search by title, author, or ISBN..." })
+                    <button class="btn btn-outline-secondary" type="submit">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+                </div>
+            }
+        </div>
+        <div class="col-md-4">
+            @using (Html.BeginForm("Browse", "Book", FormMethod.Get, new { @class = "d-flex" }))
+            {
+                @Html.Hidden("searchString", ViewBag.SearchString as string)
+                <div class="input-group">
+                    @Html.DropDownList("category", new SelectList(ViewBag.Categories as List<string>, ViewBag.SelectedCategory as string), "All Categories", new { @class = "form-select", onchange = "this.form.submit()" })
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Sort Options -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="btn-group" role="group">
+                @Html.ActionLink("Title", "Browse", new { searchString = ViewBag.SearchString, category = ViewBag.SelectedCategory, sortOrder = ViewBag.TitleSortParam }, new { @class = "btn btn-outline-primary" + (ViewBag.CurrentSort == "" || ViewBag.CurrentSort == "title_desc" ? " active" : "") })
+                @Html.ActionLink("Author", "Browse", new { searchString = ViewBag.SearchString, category = ViewBag.SelectedCategory, sortOrder = ViewBag.AuthorSortParam }, new { @class = "btn btn-outline-primary" + (ViewBag.CurrentSort != null && ViewBag.CurrentSort.ToString().Contains("Author") ? " active" : "") })
+                @Html.ActionLink("Price", "Browse", new { searchString = ViewBag.SearchString, category = ViewBag.SelectedCategory, sortOrder = ViewBag.PriceSortParam }, new { @class = "btn btn-outline-primary" + (ViewBag.CurrentSort != null && ViewBag.CurrentSort.ToString().Contains("Price") ? " active" : "") })
+            </div>
+        </div>
+    </div>
+
+    <!-- Books Grid -->
+    <div class="row">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var book in Model)
+            {
+                <div class="col-md-4 col-lg-3 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrEmpty(book.CoverImageUrl))
+                        {
+                            <img src="@book.CoverImageUrl" class="card-img-top" alt="@book.Title" style="height: 200px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="bi bi-book" style="font-size: 4rem; color: #ccc;"></i>
+                            </div>
+                        }
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@book.Title</h5>
+                            <p class="card-text text-muted">by @book.Author</p>
+                            <p class="card-text flex-grow-1">@book.Description?.Substring(0, Math.Min(100, book.Description.Length))...</p>
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-primary fw-bold">R @book.Price.ToString("F2")</span>
+                                    @if (book.IsAvailable && book.StockQuantity > 0)
+                                    {
+                                        <span class="badge bg-success">In Stock</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Out of Stock</span>
+                                    }
+                                </div>
+                                @Html.ActionLink("View Details", "Details", new { id = book.BookId }, new { @class = "btn btn-outline-primary w-100" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> No books found matching your criteria.
+                </div>
+            </div>
+        }
+    </div>
+</div>

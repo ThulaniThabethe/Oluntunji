@@ -168,9 +168,9 @@
                                             <input type="checkbox" class="form-check-input book-checkbox" value="@book.Id">
                                         </td>
                                         <td>
-                                            @if (!string.IsNullOrEmpty(book.ImageUrl))
+                                            @if (!string.IsNullOrEmpty(book.CoverImageUrl))
                                             {
-                                                <img src="@book.ImageUrl" alt="@book.Title" class="img-thumbnail" style="width: 60px; height: 80px; object-fit: cover;">
+                                                <img src="@book.CoverImageUrl" alt="@book.Title" class="img-thumbnail" style="width: 60px; height: 80px; object-fit: cover;">
                                             }
                                             else
                                             {

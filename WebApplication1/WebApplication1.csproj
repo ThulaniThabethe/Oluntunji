@@ -125,7 +125,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\BookController.cs" />
     <Compile Include="Controllers\BooksController.cs" />
+    <Compile Include="Controllers\BrowseController.cs" />
     <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Controllers\DeliveryController.cs" />
@@ -208,6 +210,10 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Book\Browse.cshtml" />
+    <Content Include="Views\Book\Details.cshtml" />
+    <Content Include="Views\Browse\Index.cshtml" />
+    <Content Include="Views\Browse\Details.cshtml" />
     <Content Include="Views\Delivery\Index.cshtml" />
     <Content Include="Views\Delivery\Details.cshtml" />
     <Content Include="Views\Delivery\Update.cshtml" />

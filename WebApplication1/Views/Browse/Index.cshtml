@@ -1,0 +1,98 @@
+@model IEnumerable<WebApplication1.Models.Book>
+@{
+    ViewBag.Title = "Browse Books";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Browse Books</h2>
+
+    <!-- Search and Filter Form -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Index", "Browse", FormMethod.Get, new { @class = "form-inline" }))
+            {
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            @Html.TextBox("searchString", ViewBag.SearchString as string, new { @class = "form-control", placeholder = "Search books..." })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            @Html.DropDownList("category", new SelectList(ViewBag.Categories as System.Collections.IEnumerable, ViewBag.SelectedCategory as string), "All Categories", new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            @Html.DropDownList("sortOrder", new List<SelectListItem>
+                            {
+                                new SelectListItem { Text = "Title A-Z", Value = "" },
+                                new SelectListItem { Text = "Title Z-A", Value = "title_desc" },
+                                new SelectListItem { Text = "Price Low-High", Value = "Price" },
+                                new SelectListItem { Text = "Price High-Low", Value = "price_desc" },
+                                new SelectListItem { Text = "Author A-Z", Value = "Author" },
+                                new SelectListItem { Text = "Author Z-A", Value = "author_desc" }
+                            }, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Books Grid -->
+    <div class="row">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var book in Model)
+            {
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        @if (!string.IsNullOrEmpty(book.CoverImageUrl))
+                        {
+                            <img src="@book.CoverImageUrl" class="card-img-top" alt="@book.Title" style="height: 200px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="bi bi-book" style="font-size: 3rem; color: #ccc;"></i>
+                            </div>
+                        }
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@book.Title</h5>
+                            <p class="card-text">
+                                <small class="text-muted">by @book.Author</small><br />
+                                <strong>R @book.Price.ToString("F2")</strong>
+                            </p>
+                            <div class="mt-auto">
+                                @Html.ActionLink("View Details", "Details", new { id = book.BookId }, new { @class = "btn btn-primary btn-sm w-100" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <h4>No books found</h4>
+                    <p>There are no books available that match your search criteria.</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+</style>

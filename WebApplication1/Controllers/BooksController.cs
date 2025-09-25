@@ -10,7 +10,16 @@ namespace WebApplication1.Controllers
     [Authorize]
     public class BooksController : BaseController
     {
+        // GET: Books/Browse - Alias for Index action
+        [AllowAnonymous]
+        public ActionResult Browse()
+        {
+            // Force recompilation - timestamp: 2025-01-01 13:00:00
+            return Content("Browse action is working!");
+        }
+
         // GET: Books
+        [AllowAnonymous]
         public ActionResult Index(string searchString, string category, string sortOrder)
         {
             ViewBag.CurrentSort = sortOrder;

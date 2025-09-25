@@ -1,1 +1,0 @@
-Registration Debug Log Started - " + new Date().toISOString() + "

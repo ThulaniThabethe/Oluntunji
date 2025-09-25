@@ -43,7 +43,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                     <div class="book-card">
                         <div class="book-cover">
-                            <img src="@book.ImageUrl" alt="@book.Title" class="img-fluid">
+                            <img src="@book.CoverImageUrl" alt="@book.Title" class="img-fluid">
                             <div class="book-overlay">
                                 <a href="@Url.Action("Details", "Book", new { id = book.BookId })" class="btn btn-primary btn-sm">View Details</a>
                             </div>
@@ -53,10 +53,6 @@
                             <p class="book-author">by @book.Author</p>
                             <div class="book-price">
                                 <span class="price">R @book.Price.ToString("0.00")</span>
-                                @if (book.OriginalPrice > book.Price)
-                                {
-                                    <span class="original-price">R @book.OriginalPrice.ToString("0.00")</span>
-                                }
                             </div>
                             <div class="book-actions">
                                 <button class="btn btn-primary btn-sm add-to-cart" data-book-id="@book.BookId">
@@ -85,7 +81,7 @@
                 <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
                     <div class="book-card compact">
                         <div class="book-cover">
-                            <img src="@book.ImageUrl" alt="@book.Title" class="img-fluid">
+                            <img src="@book.CoverImageUrl" alt="@book.Title" class="img-fluid">
                             <div class="bestseller-badge">
                                 <i class="fas fa-star"></i>
                             </div>
@@ -115,11 +111,11 @@
             {
                 <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
                     <div class="category-card">
-                        <a href="@Url.Action("Browse", "Book", new { category = category.Name })">
+                        <a href="@Url.Action("Browse", "Book", new { category = category.CategoryName })">
                             <div class="category-icon">
-                                <i class="@category.Icon"></i>
+                                <i class="fas fa-book"></i>
                             </div>
-                            <h5 class="category-name">@category.Name</h5>
+                            <h5 class="category-name">@category.CategoryName</h5>
                             <p class="category-count">@category.BookCount books</p>
                         </a>
                     </div>

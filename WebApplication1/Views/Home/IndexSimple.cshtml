@@ -1,0 +1,45 @@
+@{
+    ViewBag.Title = "Connect2us - Simple Test";
+}
+
+<h1>Connect2us Homepage - Simple Test</h1>
+
+<h2>Featured Books (@ViewBag.FeaturedBooks?.Count ?? 0)</h2>
+@if (ViewBag.FeaturedBooks != null)
+{
+    foreach (var book in ViewBag.FeaturedBooks)
+    {
+        <div>
+            <h3>@book.Title</h3>
+            <p>Author: @book.Author</p>
+            <p>Price: R @book.Price</p>
+            <p>BookId: @book.BookId</p>
+            <p>CoverImageUrl: @book.CoverImageUrl</p>
+        </div>
+    }
+}
+
+<h2>Best Sellers (@ViewBag.BestSellers?.Count ?? 0)</h2>
+@if (ViewBag.BestSellers != null)
+{
+    foreach (var book in ViewBag.BestSellers)
+    {
+        <div>
+            <h3>@book.Title</h3>
+            <p>Author: @book.Author</p>
+            <p>Price: R @book.Price</p>
+        </div>
+    }
+}
+
+<h2>Categories (@ViewBag.Categories?.Count ?? 0)</h2>
+@if (ViewBag.Categories != null)
+{
+    foreach (var category in ViewBag.Categories)
+    {
+        <div>
+            <h3>@category.CategoryName</h3>
+            <p>BookCount: @category.BookCount</p>
+        </div>
+    }
+}

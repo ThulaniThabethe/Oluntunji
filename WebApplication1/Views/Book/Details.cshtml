@@ -1,0 +1,111 @@
+@model WebApplication1.Models.Book
+@{
+    ViewBag.Title = Model.Title;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
+            {
+                <img src="@Model.CoverImageUrl" class="img-fluid rounded" alt="@Model.Title" style="max-height: 400px; object-fit: cover;">
+            }
+            else
+            {
+                <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 400px;">
+                    <i class="bi bi-book" style="font-size: 6rem; color: #ccc;"></i>
+                </div>
+            }
+        </div>
+        <div class="col-md-8">
+            <h1>@Model.Title</h1>
+            <p class="text-muted">by @Model.Author</p>
+            
+            <div class="mb-3">
+                <h3 class="text-primary">R @Model.Price.ToString("F2")</h3>
+                <p><strong>Availability:</strong> 
+                    @if (Model.IsAvailable && Model.StockQuantity > 0)
+                    {
+                        <span class="text-success">In Stock (@Model.StockQuantity available)</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">Out of Stock</span>
+                    }
+                </p>
+            </div>
+
+            <div class="mb-3">
+                <h5>Description</h5>
+                <p>@Model.Description</p>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p><strong>Publisher:</strong> @Model.Publisher</p>
+                    <p><strong>ISBN:</strong> @Model.ISBN</p>
+                    <p><strong>Publication Year:</strong> @(Model.PublicationYear?.ToString() ?? "N/A")</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Category:</strong> @(Model.Category ?? "N/A")</p>
+                    <p><strong>Genre:</strong> @(Model.Genre ?? "N/A")</p>
+                    <p><strong>Seller:</strong> @(Model.Seller?.FullName ?? "Unknown")</p>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                @if (Model.IsAvailable && Model.StockQuantity > 0)
+                {
+                    @Html.ActionLink("Add to Cart", "AddToCart", "Cart", new { id = Model.BookId }, new { @class = "btn btn-primary btn-lg" })
+                }
+                else
+                {
+                    <button class="btn btn-secondary btn-lg" disabled>Out of Stock</button>
+                }
+                @Html.ActionLink("Back to Browse", "Browse", null, new { @class = "btn btn-outline-secondary btn-lg ms-2" })
+            </div>
+
+            @if (Model.IsFeatured)
+            {
+                <div class="alert alert-info">
+                    <i class="bi bi-star-fill"></i> This book is featured in our collection!
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Reviews Section -->
+    @if (Model.Reviews != null && Model.Reviews.Any())
+    {
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3>Customer Reviews</h3>
+                <hr />
+                @foreach (var review in Model.Reviews)
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="card-title">@(review.User?.FullName ?? "Anonymous")</h6>
+                                    <p class="card-text">@review.Comment</p>
+                                    <small class="text-muted">@review.CreatedDate.ToString("MMMM dd, yyyy")</small>
+                                </div>
+                                <div class="text-warning">
+                                    @for (int i = 0; i < review.Rating; i++)
+                                    {
+                                        <i class="bi bi-star-fill"></i>
+                                    }
+                                    @for (int i = review.Rating; i < 5; i++)
+                                    {
+                                        <i class="bi bi-star"></i>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
