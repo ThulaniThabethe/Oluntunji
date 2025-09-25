@@ -5,6 +5,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using System.Data.Entity;
+using WebApplication1.Models;
+using WebApplication1.Migrations;
 
 namespace WebApplication1
 {
@@ -16,6 +19,24 @@ namespace WebApplication1
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            
+            // Initialize database with migrations
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<BookstoreDbContext, Configuration>());
+            
+            // Force database initialization
+            using (var context = new BookstoreDbContext())
+            {
+                try
+                {
+                    context.Database.Initialize(true);
+                    System.Diagnostics.Debug.WriteLine("Database initialized successfully.");
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Database initialization error: {ex.Message}");
+                    // Continue with application startup even if database initialization fails
+                }
+            }
             
             // Debug: Log application startup with timestamp - Force recompilation v5
             System.Diagnostics.Debug.WriteLine("Application started at: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));

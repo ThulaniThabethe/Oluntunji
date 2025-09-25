@@ -12,7 +12,8 @@ namespace WebApplication1.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
-            AutomaticMigrationDataLossAllowed = false;
+            AutomaticMigrationDataLossAllowed = true; // Allow data loss for schema updates
+            ContextKey = "WebApplication1.Models.BookstoreDbContext";
         }
 
         protected override void Seed(WebApplication1.Models.BookstoreDbContext context)
