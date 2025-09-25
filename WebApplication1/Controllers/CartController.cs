@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Web.Mvc;
 using WebApplication1.Models;
 using WebApplication1.ViewModels;
+using System.Collections.Generic;
 
 namespace WebApplication1.Controllers
 {
@@ -74,7 +75,7 @@ namespace WebApplication1.Controllers
         {
             var currentUser = CurrentUser;
             var cartItem = Db.CartItems
-                .Include("Book")
+                .Include(ci => ci.Book)
                 .FirstOrDefault(ci => ci.CartItemId == cartItemId && ci.CustomerId == currentUser.UserId);
 
             if (cartItem == null)
@@ -101,7 +102,7 @@ namespace WebApplication1.Controllers
 
             // Calculate new totals
             var cartItems = Db.CartItems
-                .Include("Book")
+                .Include(ci => ci.Book)
                 .Where(ci => ci.CustomerId == currentUser.UserId)
                 .ToList();
 
@@ -148,7 +149,7 @@ namespace WebApplication1.Controllers
         {
             var currentUser = CurrentUser;
             var cartItems = Db.CartItems
-                .Include("Book")
+                .Include(ci => ci.Book)
                 .Where(ci => ci.CustomerId == currentUser.UserId)
                 .ToList();
 
@@ -192,7 +193,7 @@ namespace WebApplication1.Controllers
 
             var currentUser = CurrentUser;
             var cartItems = Db.CartItems
-                .Include("Book")
+                .Include(ci => ci.Book)
                 .Where(ci => ci.CustomerId == currentUser.UserId)
                 .ToList();
 
@@ -201,13 +202,16 @@ namespace WebApplication1.Controllers
                 return RedirectToAction("Index");
             }
 
+            // Calculate total amount from cart items
+            var totalAmount = cartItems.Sum(ci => ci.Quantity * ci.Book.Price);
+
             // Create order
             var order = new Order
             {
                 OrderNumber = Helpers.PasswordHelper.GenerateOrderNumber(),
                 CustomerId = currentUser.UserId,
                 OrderDate = DateTime.Now,
-                TotalAmount = model.TotalAmount,
+                TotalAmount = totalAmount,
                 OrderStatus = OrderStatus.Pending.ToString(),
                 PaymentStatus = PaymentStatus.Pending.ToString(),
                 ShippingAddress = model.ShippingAddress,
