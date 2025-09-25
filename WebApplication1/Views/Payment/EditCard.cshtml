@@ -1,0 +1,126 @@
+@model WebApplication1.ViewModels.EditCardViewModel
+
+@{
+    ViewData["Title"] = "Edit Card";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-warning text-dark text-center py-4">
+                    <h2 class="mb-0">
+                        <i class="fas fa-edit me-3"></i>Edit Card
+                    </h2>
+                    <p class="mb-0 mt-2">Update your saved payment information</p>
+                </div>
+                <div class="card-body p-5">
+                    @using (Html.BeginForm("EditCard", "Payment", FormMethod.Post, new { @class = "needs-validation", novalidate = "true", id = "editCardForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.CardId)
+
+                        @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong><i class="fas fa-exclamation-triangle me-2"></i>Please correct the following errors:</strong>
+                                @Html.ValidationSummary(false, "", new { @class = "mt-2 mb-0" })
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        }
+
+                        <!-- Cardholder Name -->
+                        <div class="mb-4">
+                            @Html.LabelFor(m => m.CardholderName, new { @class = "form-label fw-bold" })
+                            @Html.TextBoxFor(m => m.CardholderName, new { @class = "form-control form-control-lg", placeholder = "Enter cardholder name as it appears on card" })
+                            @Html.ValidationMessageFor(m => m.CardholderName, "", new { @class = "text-danger" })
+                            <div class="form-text">Enter the name exactly as it appears on your card</div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Expiry Month -->
+                            <div class="col-md-6 mb-4">
+                                @Html.LabelFor(m => m.ExpiryMonth, new { @class = "form-label fw-bold" })
+                                @Html.DropDownListFor(m => m.ExpiryMonth, new SelectList(Enumerable.Range(1, 12).Select(i => new { Value = i, Text = i.ToString("D2") }), "Value", "Text", Model.ExpiryMonth), "Select Month", new { @class = "form-select form-select-lg" })
+                                @Html.ValidationMessageFor(m => m.ExpiryMonth, "", new { @class = "text-danger" })
+                            </div>
+
+                            <!-- Expiry Year -->
+                            <div class="col-md-6 mb-4">
+                                @Html.LabelFor(m => m.ExpiryYear, new { @class = "form-label fw-bold" })
+                                @Html.DropDownListFor(m => m.ExpiryYear, new SelectList(Enumerable.Range(DateTime.Now.Year, 10).Select(i => new { Value = i, Text = i.ToString() }), "Value", "Text", Model.ExpiryYear), "Select Year", new { @class = "form-select form-select-lg" })
+                                @Html.ValidationMessageFor(m => m.ExpiryYear, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <!-- Set as Default -->
+                        <div class="mb-4">
+                            <div class="form-check form-switch form-switch-lg">
+                                @Html.CheckBoxFor(m => m.SetAsDefault, new { @class = "form-check-input", id = "setAsDefault" })
+                                @Html.LabelFor(m => m.SetAsDefault, new { @class = "form-check-label fw-bold" })
+                            </div>
+                            <div class="form-text">Set this card as your default payment method</div>
+                        </div>
+
+                        <!-- Is Active -->
+                        <div class="mb-4">
+                            <div class="form-check form-switch form-switch-lg">
+                                @Html.CheckBoxFor(m => m.IsActive, new { @class = "form-check-input", id = "isActive" })
+                                @Html.LabelFor(m => m.IsActive, new { @class = "form-check-label fw-bold" })
+                            </div>
+                            <div class="form-text">Activate or deactivate this card</div>
+                        </div>
+
+                        <!-- Security Notice -->
+                        <div class="alert alert-info mb-4">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-shield-alt fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h6 class="alert-heading mb-1">Security Notice</h6>
+                                    <p class="mb-0 small">Only the cardholder name and expiry date can be updated. For security reasons, the card number cannot be modified.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <a href="@Url.Action("SavedCards", "Payment")" class="btn btn-outline-secondary btn-lg w-100">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-warning btn-lg w-100">
+                                    <i class="fas fa-save me-2"></i>Update Card
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Form validation
+            $('#editCardForm').on('submit', function(e) {
+                if (!this.checkValidity()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                $(this).addClass('was-validated');
+            });
+
+            // Enable tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+}
