@@ -1,0 +1,318 @@
+@model WebApplication1.Models.SellerReportViewModel
+@{
+    ViewBag.Title = "Seller Performance Report";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Seller Performance Report</h2>
+                <div>
+                    @Html.ActionLink("Export PDF", "ExportSellerReport", new { startDate = Model.StartDate, endDate = Model.EndDate }, new { @class = "btn btn-danger btn-sm me-2" })
+                    @Html.ActionLink("Back to Reports", "Reports", null, new { @class = "btn btn-secondary btn-sm" })
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Report Period: @Model.StartDate.ToString("yyyy-MM-dd") to @Model.EndDate.ToString("yyyy-MM-dd")</h5>
+                        </div>
+                        <div class="card-body">
+                            @using (Html.BeginForm("SellerReport", "Revenue", FormMethod.Get, new { @class = "row g-3" }))
+                            {
+                                <div class="col-md-4">
+                                    <label for="startDate" class="form-label">Start Date</label>
+                                    <input type="date" class="form-control" id="startDate" name="startDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" required />
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="endDate" class="form-label">End Date</label>
+                                    <input type="date" class="form-control" id="endDate" name="endDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" required />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">&nbsp;</label>
+                                    <div>
+                                        <button type="submit" class="btn btn-primary me-2">Update Report</button>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="setCurrentMonth()">Current Month</button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Sellers</h6>
+                            <h4>@Model.TotalSellers</h4>
+                            <small class="text-light">Active sellers</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-info">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Revenue</h6>
+                            <h4>@Model.TotalRevenue.ToString("C")</h4>
+                            <small class="text-light">All sellers combined</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <h6 class="card-title">Average per Seller</h6>
+                            <h4>@Model.AverageRevenuePerSeller.ToString("C")</h4>
+                            <small class="text-light">Revenue per seller</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-dark">
+                        <div class="card-body">
+                            <h6 class="card-title">Top Seller</h6>
+                            <h4>@(Model.TopSeller?.SellerName ?? "N/A")</h4>
+                            <small class="text-light">@(Model.TopSeller?.Revenue.ToString("C") ?? "")</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Seller Revenue Distribution</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="sellerDistributionChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Top 10 Sellers Performance</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="topSellersChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Seller Performance Summary</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.SellerData != null && Model.SellerData.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Seller</th>
+                                        <th>Revenue</th>
+                                        <th>Orders</th>
+                                        <th>Books Sold</th>
+                                        <th>Avg Order Value</th>
+                                        <th>Commission</th>
+                                        <th>Rating</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var seller in Model.SellerData.OrderByDescending(s => s.Revenue))
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@seller.SellerName</strong>
+                                                <br /><small class="text-muted">@seller.SellerEmail</small>
+                                            </td>
+                                            <td>@seller.Revenue.ToString("C")</td>
+                                            <td>@seller.OrderCount</td>
+                                            <td>@seller.BooksSold</td>
+                                            <td>@seller.AverageOrderValue.ToString("C")</td>
+                                            <td>@seller.Commission.ToString("C")</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        <i class="fas fa-star @(i <= seller.AverageRating ? "text-warning" : "text-muted")"></i>
+                                                    }
+                                                    <span class="ms-1">@seller.AverageRating.ToString("F1")</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    @Html.ActionLink("View", "SellerDetails", new { sellerId = seller.SellerId, startDate = Model.StartDate, endDate = Model.EndDate }, new { @class = "btn btn-outline-primary btn-sm" })
+                                                    @Html.ActionLink("Contact", "ContactSeller", new { sellerId = seller.SellerId }, new { @class = "btn btn-outline-info btn-sm" })
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No seller data available for the selected period.</p>
+                    }
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Top Performing Sellers</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.TopPerformers != null && Model.TopPerformers.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Rank</th>
+                                                <th>Seller</th>
+                                                <th>Revenue</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.TopPerformers.Count(); i++)
+                                            {
+                                                var seller = Model.TopPerformers.ElementAt(i);
+                                                <tr>
+                                                    <td>
+                                                        @if (i < 3)
+                                                        {
+                                                            <span class="badge bg-warning text-dark">#@(i + 1)</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-secondary">#@(i + 1)</span>
+                                                        }
+                                                    </td>
+                                                    <td>@seller.SellerName</td>
+                                                    <td>@seller.Revenue.ToString("C")</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted">No top performers data available.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Seller Insights</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <h6>Highest Revenue Seller</h6>
+                                <p class="text-success">
+                                    <strong>@Model.TopSeller?.SellerName</strong> - @Model.TopSeller?.Revenue.ToString("C")
+                                </p>
+                            </div>
+                            <div class="mb-3">
+                                <h6>Most Active Seller</h6>
+                                <p class="text-info">
+                                    <strong>@Model.MostActiveSeller?.SellerName</strong> - @Model.MostActiveSeller?.OrderCount orders
+                                </p>
+                            </div>
+                            <div class="mb-3">
+                                <h6>Best Rated Seller</h6>
+                                <p class="text-primary">
+                                    <strong>@Model.BestRatedSeller?.SellerName</strong> - @Model.BestRatedSeller?.AverageRating.ToString("F1") stars
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Seller Distribution Chart
+            var ctx = document.getElementById('sellerDistributionChart').getContext('2d');
+            var sellerDistributionChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: @Html.Raw(Json.Encode(Model.SellerData?.Take(5).Select(s => s.SellerName))),
+                    datasets: [{
+                        data: @Html.Raw(Json.Encode(Model.SellerData?.Take(5).Select(s => s.Revenue))),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 205, 86, 0.8)',
+                            'rgba(75, 192, 192, 0.8)',
+                            'rgba(153, 102, 255, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Top Sellers Chart
+            var ctx2 = document.getElementById('topSellersChart').getContext('2d');
+            var topSellersChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: @Html.Raw(Json.Encode(Model.TopPerformers?.Select(s => s.SellerName))),
+                    datasets: [{
+                        label: 'Revenue',
+                        data: @Html.Raw(Json.Encode(Model.TopPerformers?.Select(s => s.Revenue))),
+                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        function setCurrentMonth() {
+            var today = new Date();
+            var firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+            var lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            
+            document.getElementById('startDate').value = firstDay.toISOString().split('T')[0];
+            document.getElementById('endDate').value = lastDay.toISOString().split('T')[0];
+        }
+    </script>
+}

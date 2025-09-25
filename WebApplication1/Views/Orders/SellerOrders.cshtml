@@ -1,0 +1,342 @@
+@model List<WebApplication1.Models.Order>
+@{
+    ViewBag.Title = "Seller Orders";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>My Seller Orders</h2>
+                <div>
+                    @Html.ActionLink("Dashboard", "Dashboard", "Seller", null, new { @class = "btn btn-primary" })
+                    @Html.ActionLink("Add New Book", "Create", "Book", null, new { @class = "btn btn-success" })
+                </div>
+            </div>
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-white bg-primary">
+                            <div class="card-body">
+                                <h6 class="card-title">Total Orders</h6>
+                                <h4>@Model.Count</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-success">
+                            <div class="card-body">
+                                <h6 class="card-title">Delivered</h6>
+                                <h4>@Model.Count(o => o.OrderStatus == "Delivered")</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-warning">
+                            <div class="card-body">
+                                <h6 class="card-title">Pending</h6>
+                                <h4>@Model.Count(o => o.OrderStatus == "Pending")</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-info">
+                            <div class="card-body">
+                                <h6 class="card-title">Shipped</h6>
+                                <h4>@Model.Count(o => o.OrderStatus == "Shipped")</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label for="statusFilter" class="form-label">Filter by Status:</label>
+                                        <select class="form-select" id="statusFilter">
+                                            <option value="">All Orders</option>
+                                            <option value="Pending">Pending</option>
+                                            <option value="Confirmed">Confirmed</option>
+                                            <option value="Shipped">Shipped</option>
+                                            <option value="Delivered">Delivered</option>
+                                            <option value="Cancelled">Cancelled</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="dateFrom" class="form-label">From Date:</label>
+                                        <input type="date" class="form-control" id="dateFrom">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="dateTo" class="form-label">To Date:</label>
+                                        <input type="date" class="form-control" id="dateTo">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="revenueFilter" class="form-label">Revenue Range:</label>
+                                        <select class="form-select" id="revenueFilter">
+                                            <option value="">All Revenue</option>
+                                            <option value="0-100">$0 - $100</option>
+                                            <option value="100-500">$100 - $500</option>
+                                            <option value="500-1000">$500 - $1,000</option>
+                                            <option value="1000+">$1,000+</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <button type="button" class="btn btn-secondary" onclick="filterOrders()">Apply Filter</button>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="clearFilters()">Clear Filters</button>
+                                        <button type="button" class="btn btn-outline-primary" onclick="exportOrders()">Export Orders</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="sellerOrdersTable">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Total Amount</th>
+                                <th>Status</th>
+                                <th>Payment Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model)
+                            {
+                                <tr data-status="@order.OrderStatus" data-revenue="@order.TotalAmount">
+                                    <td>
+                                        <strong>@order.OrderId</strong>
+                                    </td>
+                                    <td>
+                                        @order.OrderDate.ToString("yyyy-MM-dd HH:mm")
+                                    </td>
+                                    <td>
+                                        @if (order.User != null)
+                                        {
+                                            <div>
+                                                <strong>@order.User.FullName</strong>
+                                                <br>
+                                                <small class="text-muted">@order.User.Email</small>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Guest Customer</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (order.OrderItems != null && order.OrderItems.Any())
+                                        {
+                                            <span>@order.OrderItems.Count item(s)</span>
+                                            <br>
+                                            <small class="text-muted">
+                                                @foreach (var item in order.OrderItems.Take(2))
+                                                {
+                                                    <span>@item.Book.Title</span>
+                                                    if (item != order.OrderItems.Take(2).Last())
+                                                    {
+                                                        <span>, </span>
+                                                    }
+                                                }
+                                                @if (order.OrderItems.Count > 2)
+                                                {
+                                                    <span>...</span>
+                                                }
+                                            </small>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No items</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <strong>@order.TotalAmount.ToString("C")</strong>
+                                    </td>
+                                    <td>
+                                        @{
+                                            var statusClass = order.OrderStatus switch
+                                            {
+                                                "Pending" => "badge bg-warning text-dark",
+                                                "Confirmed" => "badge bg-info",
+                                                "Shipped" => "badge bg-primary",
+                                                "Delivered" => "badge bg-success",
+                                                "Cancelled" => "badge bg-danger",
+                                                _ => "badge bg-secondary"
+                                            };
+                                        }
+                                        <span class="@statusClass">@order.OrderStatus</span>
+                                    </td>
+                                    <td>
+                                        @{
+                                            var paymentStatusClass = order.PaymentStatus switch
+                                            {
+                                                "Pending" => "badge bg-warning text-dark",
+                                                "Paid" => "badge bg-success",
+                                                "Failed" => "badge bg-danger",
+                                                "Refunded" => "badge bg-secondary",
+                                                _ => "badge bg-secondary"
+                                            };
+                                        }
+                                        <span class="@paymentStatusClass">@order.PaymentStatus</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            @Html.ActionLink("View Details", "Details", new { id = order.OrderId }, new { @class = "btn btn-outline-primary btn-sm" })
+                                            
+                                            @if (order.OrderStatus == "Pending")
+                                            {
+                                                @Html.ActionLink("Confirm", "ConfirmOrder", new { id = order.OrderId }, new { @class = "btn btn-outline-success btn-sm" })
+                                            }
+                                            else if (order.OrderStatus == "Confirmed")
+                                            {
+                                                @Html.ActionLink("Ship", "ShipOrder", new { id = order.OrderId }, new { @class = "btn btn-outline-primary btn-sm" })
+                                            }
+                                            else if (order.OrderStatus == "Shipped")
+                                            {
+                                                @Html.ActionLink("Mark Delivered", "MarkDelivered", new { id = order.OrderId }, new { @class = "btn btn-outline-success btn-sm" })
+                                            }
+                                            
+                                            @if (order.OrderStatus != "Cancelled" && order.OrderStatus != "Delivered")
+                                            {
+                                                @Html.ActionLink("Cancel", "CancelOrder", new { id = order.OrderId }, new { @class = "btn btn-outline-danger btn-sm", onclick = "return confirm('Are you sure you want to cancel this order?');" })
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info" role="alert">
+                    <h4 class="alert-heading">No Orders Found</h4>
+                    <p>You don't have any orders yet.</p>
+                    <hr>
+                    <p class="mb-0">
+                        @Html.ActionLink("Manage Books", "Index", "Book", null, new { @class = "btn btn-primary" })
+                    </p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var table = $('#sellerOrdersTable').DataTable({
+                order: [[1, 'desc']], // Sort by date descending
+                pageLength: 25
+            });
+
+            // Store original data for reset
+            var originalData = table.rows().data().toArray();
+        });
+
+        function filterOrders() {
+            var statusFilter = $('#statusFilter').val();
+            var dateFrom = $('#dateFrom').val();
+            var dateTo = $('#dateTo').val();
+            var revenueFilter = $('#revenueFilter').val();
+
+            var table = $('#sellerOrdersTable').DataTable();
+
+            // Clear existing filters
+            table.search('').columns().search('').draw();
+
+            // Apply status filter
+            if (statusFilter) {
+                table.column(5).search(statusFilter).draw();
+            }
+
+            // Apply date range filter
+            if (dateFrom || dateTo) {
+                $.fn.dataTable.ext.search.push(
+                    function(settings, data, dataIndex) {
+                        var orderDate = new Date(data[1].split(' ')[0]); // Extract date from datetime
+                        var fromDate = dateFrom ? new Date(dateFrom) : null;
+                        var toDate = dateTo ? new Date(dateTo) : null;
+
+                        if (fromDate && orderDate < fromDate) return false;
+                        if (toDate && orderDate > toDate) return false;
+                        return true;
+                    }
+                );
+                table.draw();
+            }
+
+            // Apply revenue filter
+            if (revenueFilter) {
+                $.fn.dataTable.ext.search.push(
+                    function(settings, data, dataIndex) {
+                        var revenue = parseFloat(data[4].replace(/[$,]/g, '')); // Remove currency formatting
+                        
+                        switch(revenueFilter) {
+                            case '0-100':
+                                return revenue >= 0 && revenue <= 100;
+                            case '100-500':
+                                return revenue > 100 && revenue <= 500;
+                            case '500-1000':
+                                return revenue > 500 && revenue <= 1000;
+                            case '1000+':
+                                return revenue > 1000;
+                            default:
+                                return true;
+                        }
+                    }
+                );
+                table.draw();
+            }
+        }
+
+        function clearFilters() {
+            $('#statusFilter').val('');
+            $('#dateFrom').val('');
+            $('#dateTo').val('');
+            $('#revenueFilter').val('');
+
+            var table = $('#sellerOrdersTable').DataTable();
+            table.search('').columns().search('').draw();
+            
+            // Remove custom search functions
+            $.fn.dataTable.ext.search.pop();
+            $.fn.dataTable.ext.search.pop();
+            table.draw();
+        }
+
+        function exportOrders() {
+            // Simple CSV export functionality
+            var table = $('#sellerOrdersTable').DataTable();
+            var data = table.rows().data().toArray();
+            
+            var csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Order ID,Date,Customer,Items,Total Amount,Status,Payment Status\n";
+            
+            data.forEach(function(row) {
+                csvContent += row.join(",") + "\n";
+            });
+            
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "seller_orders.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+}

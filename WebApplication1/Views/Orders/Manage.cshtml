@@ -1,0 +1,231 @@
+@model List<WebApplication1.Models.Order>
+@{
+    ViewBag.Title = "Manage Orders";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Manage Orders</h2>
+                <div>
+                    @Html.ActionLink("Pending Orders", "PendingOrders", null, new { @class = "btn btn-warning me-2" })
+                    @Html.ActionLink("Shipped Orders", "ShippedOrders", null, new { @class = "btn btn-info me-2" })
+                    @Html.ActionLink("All Orders", "Index", null, new { @class = "btn btn-secondary" })
+                </div>
+            </div>
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="ordersTable">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Total Amount</th>
+                                <th>Status</th>
+                                <th>Payment Status</th>
+                                <th>Items</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@order.OrderId</strong>
+                                    </td>
+                                    <td>
+                                        @if (order.Customer != null)
+                                        {
+                                            <div>
+                                                <strong>@order.Customer.Name</strong>
+                                                <br /><small class="text-muted">@order.Customer.Email</small>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Customer info not available</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @order.OrderDate.ToString("yyyy-MM-dd HH:mm")
+                                    </td>
+                                    <td>
+                                        <strong>@order.TotalAmount.ToString("C")</strong>
+                                    </td>
+                                    <td>
+                                        @{
+                                            var statusClass = order.OrderStatus switch
+                                            {
+                                                "Pending" => "badge bg-warning text-dark",
+                                                "Confirmed" => "badge bg-info",
+                                                "Shipped" => "badge bg-primary",
+                                                "Delivered" => "badge bg-success",
+                                                "Cancelled" => "badge bg-danger",
+                                                _ => "badge bg-secondary"
+                                            };
+                                        }
+                                        <span class="@statusClass">@order.OrderStatus</span>
+                                    </td>
+                                    <td>
+                                        @{
+                                            var paymentStatusClass = order.PaymentStatus switch
+                                            {
+                                                "Pending" => "badge bg-warning text-dark",
+                                                "Paid" => "badge bg-success",
+                                                "Failed" => "badge bg-danger",
+                                                "Refunded" => "badge bg-secondary",
+                                                _ => "badge bg-secondary"
+                                            };
+                                        }
+                                        <span class="@paymentStatusClass">@order.PaymentStatus</span>
+                                    </td>
+                                    <td>
+                                        @if (order.OrderItems != null && order.OrderItems.Any())
+                                        {
+                                            <span>@order.OrderItems.Count item(s)</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No items</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            @Html.ActionLink("View Details", "Details", new { id = order.OrderId }, new { @class = "btn btn-outline-primary btn-sm" })
+                                            
+                                            <div class="dropdown">
+                                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                                    Update Status
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(@order.OrderId, 'Pending')">Mark as Pending</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(@order.OrderId, 'Confirmed')">Mark as Confirmed</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(@order.OrderId, 'Shipped')">Mark as Shipped</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="updateOrderStatus(@order.OrderId, 'Delivered')">Mark as Delivered</a></li>
+                                                </ul>
+                                            </div>
+                                            
+                                            <div class="dropdown">
+                                                <button type="button" class="btn btn-outline-warning btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                                    Payment
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" onclick="updatePaymentStatus(@order.OrderId, 'Pending')">Payment Pending</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="updatePaymentStatus(@order.OrderId, 'Paid')">Payment Paid</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="updatePaymentStatus(@order.OrderId, 'Failed')">Payment Failed</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="updatePaymentStatus(@order.OrderId, 'Refunded')">Payment Refunded</a></li>
+                                                </ul>
+                                            </div>
+                                            
+                                            @if (order.OrderStatus == "Pending")
+                                            {
+                                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="cancelOrder(@order.OrderId)">Cancel</button>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info" role="alert">
+                    <h4 class="alert-heading">No Orders Found</h4>
+                    <p>There are no orders in the system yet.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#ordersTable').DataTable({
+                order: [[2, 'desc']], // Sort by date descending
+                pageLength: 25
+            });
+        });
+
+        function updateOrderStatus(orderId, newStatus) {
+            if (confirm(`Are you sure you want to mark this order as ${newStatus}?`)) {
+                $.ajax({
+                    url: '@Url.Action("UpdateOrderStatus", "Orders")',
+                    type: 'POST',
+                    data: {
+                        orderId: orderId,
+                        newStatus: newStatus,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(result) {
+                        if (result.success) {
+                            alert(result.message);
+                            location.reload();
+                        } else {
+                            alert(result.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Error updating order status. Please try again.');
+                    }
+                });
+            }
+        }
+
+        function updatePaymentStatus(orderId, newStatus) {
+            if (confirm(`Are you sure you want to update the payment status to ${newStatus}?`)) {
+                $.ajax({
+                    url: '@Url.Action("UpdatePaymentStatus", "Orders")',
+                    type: 'POST',
+                    data: {
+                        orderId: orderId,
+                        newStatus: newStatus,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(result) {
+                        if (result.success) {
+                            alert(result.message);
+                            location.reload();
+                        } else {
+                            alert(result.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Error updating payment status. Please try again.');
+                    }
+                });
+            }
+        }
+
+        function cancelOrder(orderId) {
+            if (confirm('Are you sure you want to cancel this order?')) {
+                $.ajax({
+                    url: '@Url.Action("CancelOrder", "Orders")',
+                    type: 'POST',
+                    data: {
+                        orderId: orderId,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(result) {
+                        if (result.success) {
+                            alert(result.message);
+                            location.reload();
+                        } else {
+                            alert(result.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Error cancelling order. Please try again.');
+                    }
+                });
+            }
+        }
+    </script>
+}

@@ -1,0 +1,154 @@
+@model IEnumerable<WebApplication1.Models.Revenue>
+@{
+    ViewBag.Title = "Revenue Management";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Revenue Management</h2>
+            
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Revenue Overview</h5>
+                    <div>
+                        @Html.ActionLink("Dashboard", "Dashboard", null, new { @class = "btn btn-primary btn-sm me-2" })
+                        @Html.ActionLink("Reports", "Reports", null, new { @class = "btn btn-info btn-sm me-2" })
+                        @using (Html.BeginForm("UpdateRevenueData", "Revenue", FormMethod.Post, new { @class = "d-inline" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-warning btn-sm">Update Data</button>
+                        }
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card text-white bg-success">
+                                <div class="card-body">
+                                    <h6 class="card-title">Daily Revenue</h6>
+                                    <h4>@ViewBag.DailyRevenue?.ToString("C")</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-info">
+                                <div class="card-body">
+                                    <h6 class="card-title">Monthly Revenue</h6>
+                                    <h4>@ViewBag.MonthlyRevenue?.ToString("C")</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-warning">
+                                <div class="card-body">
+                                    <h6 class="card-title">Yearly Revenue</h6>
+                                    <h4>@ViewBag.YearlyRevenue?.ToString("C")</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-dark">
+                                <div class="card-body">
+                                    <h6 class="card-title">Total Orders</h6>
+                                    <h4>@ViewBag.TotalOrders</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Revenue Data</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Period Type</th>
+                                        <th>Total Revenue</th>
+                                        <th>Number of Orders</th>
+                                        <th>Books Sold</th>
+                                        <th>Average Order Value</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@item.Date.ToString("yyyy-MM-dd")</td>
+                                            <td>
+                                                <span class="badge bg-primary">@item.PeriodType</span>
+                                            </td>
+                                            <td>@item.TotalRevenue.ToString("C")</td>
+                                            <td>@item.NumberOfOrders</td>
+                                            <td>@item.NumberOfBooksSold</td>
+                                            <td>@item.AverageOrderValue.ToString("C")</td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    @if (item.PeriodType == "Daily")
+                                                    {
+                                                        @Html.ActionLink("View", "DailyReport", new { date = item.Date }, new { @class = "btn btn-outline-primary btn-sm" })
+                                                    }
+                                                    else if (item.PeriodType == "Monthly")
+                                                    {
+                                                        @Html.ActionLink("View", "MonthlyReport", new { year = item.Date.Year, month = item.Date.Month }, new { @class = "btn btn-outline-primary btn-sm" })
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No revenue data available.</p>
+                            @using (Html.BeginForm("UpdateRevenueData", "Revenue", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-primary">Generate Initial Data</button>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function() {
+            // Add any additional JavaScript for revenue management
+            console.log('Revenue management page loaded');
+        });
+    </script>
+}

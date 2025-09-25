@@ -394,5 +394,17 @@ namespace WebApplication1.Controllers
 
             return Json(new { success = true, message = "User status updated successfully." });
         }
+
+        // GET: Profile/Notifications
+        public ActionResult Notifications()
+        {
+            var currentUser = CurrentUser;
+            var notifications = Db.Notifications
+                .Where(n => n.UserId == currentUser.UserId)
+                .OrderByDescending(n => n.CreatedDate)
+                .ToList();
+
+            return View(notifications);
+        }
     }
 }

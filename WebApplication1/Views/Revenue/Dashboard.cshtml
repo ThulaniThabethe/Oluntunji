@@ -1,0 +1,196 @@
+@model WebApplication1.Models.RevenueDashboardViewModel
+@{
+    ViewBag.Title = "Revenue Dashboard";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Revenue Dashboard</h2>
+            
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body">
+                            <h6 class="card-title">Today's Revenue</h6>
+                            <h3>@Model.TodayRevenue.ToString("C")</h3>
+                            <small class="text-light">@Model.TodayOrders orders</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <h6 class="card-title">This Week</h6>
+                            <h3>@Model.WeekRevenue.ToString("C")</h3>
+                            <small class="text-light">@Model.WeekOrders orders</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-info">
+                        <div class="card-body">
+                            <h6 class="card-title">This Month</h6>
+                            <h3>@Model.MonthRevenue.ToString("C")</h3>
+                            <small class="text-light">@Model.MonthOrders orders</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-dark">
+                        <div class="card-body">
+                            <h6 class="card-title">This Year</h6>
+                            <h3>@Model.YearRevenue.ToString("C")</h3>
+                            <small class="text-light">@Model.YearOrders orders</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Revenue Trend</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="revenueChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Top Categories</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="categoryChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Recent Orders</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.RecentOrders != null && Model.RecentOrders.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Order #</th>
+                                                <th>Date</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var order in Model.RecentOrders.Take(10))
+                                            {
+                                                <tr>
+                                                    <td>@order.OrderNumber</td>
+                                                    <td>@order.OrderDate.ToString("MM/dd")</td>
+                                                    <td>@order.TotalAmount.ToString("C")</td>
+                                                    <td>
+                                                        <span class="badge bg-@(order.Status == "Completed" ? "success" : order.Status == "Pending" ? "warning" : "secondary")">
+                                                            @order.Status
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted">No recent orders found.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                @Html.ActionLink("View Reports", "Reports", null, new { @class = "btn btn-primary" })
+                                @Html.ActionLink("Daily Report", "DailyReport", null, new { @class = "btn btn-outline-primary" })
+                                @Html.ActionLink("Monthly Report", "MonthlyReport", null, new { @class = "btn btn-outline-primary" })
+                                @Html.ActionLink("Category Analysis", "CategoryReport", null, new { @class = "btn btn-outline-info" })
+                                @Html.ActionLink("Seller Performance", "SellerReport", null, new { @class = "btn btn-outline-info" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Revenue Trend Chart
+            var ctx = document.getElementById('revenueChart').getContext('2d');
+            var revenueChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: @Html.Raw(Json.Encode(Model.DailyRevenueData?.Select(d => d.Date.ToString("MM/dd")))),
+                    datasets: [{
+                        label: 'Daily Revenue',
+                        data: @Html.Raw(Json.Encode(Model.DailyRevenueData?.Select(d => d.Revenue))),
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Category Chart
+            var ctx2 = document.getElementById('categoryChart').getContext('2d');
+            var categoryChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: @Html.Raw(Json.Encode(Model.TopCategories?.Select(c => c.Category))),
+                    datasets: [{
+                        data: @Html.Raw(Json.Encode(Model.TopCategories?.Select(c => c.Revenue))),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 205, 86, 0.8)',
+                            'rgba(75, 192, 192, 0.8)',
+                            'rgba(153, 102, 255, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        });
+    </script>
+}

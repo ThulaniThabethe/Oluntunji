@@ -1,0 +1,460 @@
+@model WebApplication1.ViewModels.AdminDashboardViewModel
+
+@{
+    ViewBag.Title = "Admin Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>@ViewBag.Title</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Profile")">Profile</a></li>
+                    <li class="breadcrumb-item active">Admin Dashboard</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Total Users</h6>
+                            <h3 class="card-text">@Model.TotalUsers</h3>
+                        </div>
+                        <div class="fs-1">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="@Url.Action("ManageUsers", "Profile")" class="text-white text-decoration-none">
+                        Manage Users <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Total Books</h6>
+                            <h3 class="card-text">@Model.TotalBooks</h3>
+                        </div>
+                        <div class="fs-1">
+                            <i class="fas fa-book"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="@Url.Action("Index", "Books")" class="text-white text-decoration-none">
+                        View Books <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Total Orders</h6>
+                            <h3 class="card-text">@Model.TotalOrders</h3>
+                        </div>
+                        <div class="fs-1">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="@Url.Action("Index", "Orders")" class="text-white text-decoration-none">
+                        View Orders <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Pending Orders</h6>
+                            <h3 class="card-text">@Model.PendingOrders</h3>
+                        </div>
+                        <div class="fs-1">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="@Url.Action("PendingOrders", "Orders")" class="text-white text-decoration-none">
+                        Process Orders <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Revenue</h5>
+                    <h3 class="text-success">R @Model.TotalRevenue.ToString("F2")</h3>
+                    <p class="text-muted">All time revenue</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">New Users (30 days)</h5>
+                    <h3 class="text-primary">@Model.RegisteredUsersThisMonth</h3>
+                    <p class="text-muted">Users registered this month</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Revenue</h5>
+                    <h3 class="text-info">R @Model.TotalRevenue.ToString("F2")</h3>
+                    <p class="text-muted">Total system revenue</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Users -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users"></i> Recent Users
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentUsers == null || !Model.RecentUsers.Any())
+                    {
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> No recent users found.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in Model.RecentUsers)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@user.FirstName @user.LastName</strong>
+                                            </td>
+                                            <td>
+                                                <small>@user.Email</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-@GetRoleColor(user.Role)">@user.Role</span>
+                                            </td>
+                                            <td>
+                                                <small>@user.CreatedDate.ToString("MMM dd")</small>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewUser(@user.UserId)" title="View User">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center">
+                            <a href="@Url.Action("ManageUsers", "Profile")" class="btn btn-sm btn-outline-primary">
+                                Manage All Users
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-shopping-cart"></i> Recent Orders
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentOrders == null || !Model.RecentOrders.Any())
+                    {
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> No recent orders found.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model.RecentOrders)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>#@order.OrderId.ToString("D6")</strong>
+                                            </td>
+                                            <td>
+                                                <strong>@order.Customer?.FirstName @order.Customer?.LastName</strong>
+                                                <br />
+                                                <small class="text-muted">@order.Customer?.Email</small>
+                                            </td>
+                                            <td>
+                                                <strong>R @order.TotalAmount.ToString("F2")</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-@GetStatusColor(order.OrderStatus)">@order.OrderStatus</span>
+                                            </td>
+                                            <td>
+                                                <a href="@Url.Action("Details", "Orders", new { id = order.OrderId })" class="btn btn-sm btn-outline-primary" title="View Order">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center">
+                            <a href="@Url.Action("Index", "Orders")" class="btn btn-sm btn-outline-primary">
+                                View All Orders
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Selling Books -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-fire"></i> Top Selling Books
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.TopSellingBooks == null || !Model.TopSellingBooks.Any())
+                    {
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> No sales data available.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Book</th>
+                                        <th>Author</th>
+                                        <th>Price</th>
+                                        <th>Stock</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var book in Model.TopSellingBooks)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    @if (!string.IsNullOrEmpty(book.CoverImageUrl))
+                                                    {
+                                                        <img src="@book.CoverImageUrl" alt="@book.Title" class="img-thumbnail me-2" style="width: 40px; height: 60px; object-fit: cover;">
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 60px;">
+                                                            <small>No Image</small>
+                                                        </div>
+                                                    }
+                                                    <div>
+                                                        <strong>@book.Title</strong>
+                                                        <br />
+                                                        <small class="text-muted">by @book.Author</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <small>@book.Author</small>
+                                            </td>
+                                            <td>
+                                                <strong>R @book.Price.ToString("F2")</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-@GetStockColor(book.StockQuantity)">@book.StockQuantity</span>
+                                            </td>
+                                            <td>
+                                                <a href="@Url.Action("Details", "Book", new { id = book.BookId })" class="btn btn-sm btn-outline-primary" title="View Book">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt"></i> Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2 mb-2">
+                            <a href="@Url.Action("ManageUsers", "Profile")" class="btn btn-primary w-100">
+                                <i class="fas fa-users"></i> Manage Users
+                            </a>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <a href="@Url.Action("Index", "Orders")" class="btn btn-success w-100">
+                                <i class="fas fa-shopping-cart"></i> All Orders
+                            </a>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <a href="@Url.Action("PendingOrders", "Orders")" class="btn btn-warning w-100">
+                                <i class="fas fa-clock"></i> Pending Orders
+                            </a>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <a href="@Url.Action("Index", "Revenue")" class="btn btn-info w-100">
+                                <i class="fas fa-chart-line"></i> Revenue
+                            </a>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <a href="@Url.Action("Index", "Books")" class="btn btn-secondary w-100">
+                                <i class="fas fa-book"></i> All Books
+                            </a>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <a href="@Url.Action("Statistics", "Delivery")" class="btn btn-dark w-100">
+                                <i class="fas fa-truck"></i> Deliveries
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetStatusColor(string status)
+    {
+        switch (status.ToLower())
+        {
+            case "pending":
+                return "warning";
+            case "shipped":
+                return "info";
+            case "delivered":
+                return "success";
+            case "cancelled":
+                return "danger";
+            default:
+                return "secondary";
+        }
+    }
+
+    private string GetRoleColor(string role)
+    {
+        switch (role.ToLower())
+        {
+            case "admin":
+                return "danger";
+            case "seller":
+                return "success";
+            case "employee":
+                return "info";
+            case "customer":
+                return "primary";
+            default:
+                return "secondary";
+        }
+    }
+
+    private string GetStockColor(int stock)
+    {
+        if (stock <= 0)
+            return "danger";
+        if (stock < 5)
+            return "warning";
+        return "success";
+    }
+}
+
+@section Scripts {
+    <script>
+        function viewUser(userId) {
+            // You can implement a modal or redirect to view user details
+            window.location.href = '@Url.Action("ManageUsers", "Profile")' + '?userId=' + userId;
+        }
+
+        $(document).ready(function() {
+            // Auto-refresh dashboard every 30 seconds
+            setTimeout(function() {
+                location.reload();
+            }, 30000);
+        });
+    </script>
+}
