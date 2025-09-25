@@ -77,5 +77,33 @@ namespace WebApplication1.Controllers
         {
             return Content("TestBrowse action is working!");
         }
+
+        // GET: ContactUs
+        public ActionResult ContactUs()
+        {
+            return View();
+        }
+
+        // POST: ContactUs
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ContactUs(ContactViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // In a real application, you would send an email or save to database
+                    TempData["Success"] = "Thank you for contacting us! We will get back to you soon.";
+                    return RedirectToAction("ContactUs");
+                }
+                catch (Exception ex)
+                {
+                    TempData["Error"] = "Sorry, there was an error sending your message. Please try again.";
+                    System.Diagnostics.Debug.WriteLine($"ContactUs error: {ex.Message}");
+                }
+            }
+            return View(model);
+        }
     }
 }

@@ -64,10 +64,22 @@ namespace WebApplication1.Models
         [Display(Name = "Last Login")]
         public DateTime? LastLoginDate { get; set; }
 
+        // Notification preferences
+        [Display(Name = "Email Notifications")]
+        public bool EmailNotifications { get; set; } = true;
+
+        [Display(Name = "SMS Notifications")]
+        public bool SmsNotifications { get; set; } = false;
+
+        [Display(Name = "Push Notifications")]
+        public bool PushNotifications { get; set; } = true;
+
         // Navigation properties
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Book> Books { get; set; } // For sellers
         public virtual ICollection<CartItem> CartItems { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; } // User notifications
+        public virtual ICollection<SavedCard> SavedCards { get; set; } // User saved payment cards
 
         [NotMapped]
         public string FullName

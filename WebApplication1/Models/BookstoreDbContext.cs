@@ -18,6 +18,8 @@ namespace WebApplication1.Models
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Revenue> Revenues { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<SavedCard> SavedCards { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -117,6 +119,54 @@ namespace WebApplication1.Models
             modelBuilder.Entity<Book>()
                 .Property(b => b.Category)
                 .HasMaxLength(100);
+
+            // Configure Notification relationships
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Notifications)
+                .WithRequired(n => n.User)
+                .HasForeignKey(n => n.UserId)
+                .WillCascadeOnDelete(true); // Delete notifications when user is deleted
+
+            modelBuilder.Entity<Notification>()
+                .Property(n => n.Title)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            modelBuilder.Entity<Notification>()
+                .Property(n => n.Message)
+                .IsRequired()
+                .HasMaxLength(1000);
+
+            modelBuilder.Entity<Notification>()
+                .Property(n => n.NotificationType)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            modelBuilder.Entity<Notification>()
+                .Property(n => n.Priority)
+                .HasMaxLength(20);
+
+            // Configure SavedCard relationships
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.SavedCards)
+                .WithRequired(sc => sc.User)
+                .HasForeignKey(sc => sc.UserId)
+                .WillCascadeOnDelete(true); // Delete saved cards when user is deleted
+
+            modelBuilder.Entity<SavedCard>()
+                .Property(sc => sc.CardholderName)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<SavedCard>()
+                .Property(sc => sc.LastFourDigits)
+                .IsRequired()
+                .HasMaxLength(4);
+
+            modelBuilder.Entity<SavedCard>()
+                .Property(sc => sc.CardType)
+                .IsRequired()
+                .HasMaxLength(50);
 
             base.OnModelCreating(modelBuilder);
         }
