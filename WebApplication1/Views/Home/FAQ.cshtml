@@ -1,0 +1,634 @@
+@{
+    ViewBag.Title = "Frequently Asked Questions";
+    ViewBag.Description = "Find answers to common questions about Connect2us - Your premier platform for literature.";
+}
+
+<!-- FAQ Page -->
+<div class="faq-page">
+    <!-- Hero Section -->
+    <div class="hero-section bg-gradient-primary text-white py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3">Frequently Asked Questions</h1>
+                    <p class="lead mb-4">Find answers to the most common questions about Connect2us, our services, and how to get the most out of your book shopping experience.</p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="#general-questions" class="btn btn-light btn-lg">
+                            <i class="fas fa-question-circle me-2"></i>General Questions
+                        </a>
+                        <a href="#ordering" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-shopping-cart me-2"></i>Ordering
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <div class="hero-icon">
+                        <i class="fas fa-question fa-8x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Categories -->
+    <div class="faq-categories py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="fw-bold">Browse by Category</h2>
+                    <p class="text-muted">Select a category to find answers to your questions</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="category-card bg-white rounded shadow-sm p-4 h-100 text-center">
+                        <div class="category-icon text-primary mb-3">
+                            <i class="fas fa-info-circle fa-3x"></i>
+                        </div>
+                        <h4 class="fw-bold">General Information</h4>
+                        <p class="text-muted mb-3">Learn about Connect2us and our services</p>
+                        <a href="#general-questions" class="btn btn-outline-primary">View Questions</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="category-card bg-white rounded shadow-sm p-4 h-100 text-center">
+                        <div class="category-icon text-success mb-3">
+                            <i class="fas fa-shopping-bag fa-3x"></i>
+                        </div>
+                        <h4 class="fw-bold">Ordering & Payment</h4>
+                        <p class="text-muted mb-3">Questions about placing orders and payments</p>
+                        <a href="#ordering" class="btn btn-outline-success">View Questions</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="category-card bg-white rounded shadow-sm p-4 h-100 text-center">
+                        <div class="category-icon text-warning mb-3">
+                            <i class="fas fa-truck fa-3x"></i>
+                        </div>
+                        <h4 class="fw-bold">Shipping & Delivery</h4>
+                        <p class="text-muted mb-3">Information about shipping and delivery</p>
+                        <a href="#shipping" class="btn btn-outline-warning">View Questions</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="category-card bg-white rounded shadow-sm p-4 h-100 text-center">
+                        <div class="category-icon text-info mb-3">
+                            <i class="fas fa-undo fa-3x"></i>
+                        </div>
+                        <h4 class="fw-bold">Returns & Refunds</h4>
+                        <p class="text-muted mb-3">How to return items and get refunds</p>
+                        <a href="#returns" class="btn btn-outline-info">View Questions</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="category-card bg-white rounded shadow-sm p-4 h-100 text-center">
+                        <div class="category-icon text-danger mb-3">
+                            <i class="fas fa-user fa-3x"></i>
+                        </div>
+                        <h4 class="fw-bold">Account & Profile</h4>
+                        <p class="text-muted mb-3">Managing your account and profile</p>
+                        <a href="#account" class="btn btn-outline-danger">View Questions</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="category-card bg-white rounded shadow-sm p-4 h-100 text-center">
+                        <div class="category-icon text-secondary mb-3">
+                            <i class="fas fa-headset fa-3x"></i>
+                        </div>
+                        <h4 class="fw-bold">Support & Contact</h4>
+                        <p class="text-muted mb-3">How to get help and contact us</p>
+                        <a href="#support" class="btn btn-outline-secondary">View Questions</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- General Questions -->
+    <div class="general-questions py-5" id="general-questions">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="fw-bold">General Questions</h2>
+                    <p class="text-muted">Everything you need to know about Connect2us</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="accordion" id="generalAccordion">
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading1">
+                                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                                    What is Connect2us?
+                                </button>
+                            </h2>
+                            <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="heading1" data-bs-parent="#generalAccordion">
+                                <div class="accordion-body">
+                                    <p>Connect2us is South Africa's premier online platform for literature, connecting book lovers with a vast collection of books across all genres. We offer a curated selection of local and international titles, competitive prices, and fast delivery throughout South Africa.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading2">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                                    Where are you located?
+                                </button>
+                            </h2>
+                            <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="heading2" data-bs-parent="#generalAccordion">
+                                <div class="accordion-body">
+                                    <p>Our headquarters are located in Cape Town, South Africa, but we ship books nationwide. We have distribution centers in major cities including Johannesburg, Durban, and Cape Town to ensure fast delivery.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading3">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+                                    Do you have a physical store?
+                                </button>
+                            </h2>
+                            <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3" data-bs-parent="#generalAccordion">
+                                <div class="accordion-body">
+                                    <p>Currently, Connect2us operates exclusively online. This allows us to offer competitive prices and a wider selection of books. However, we're exploring options for physical locations in the future.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading4">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+                                    What types of books do you sell?
+                                </button>
+                            </h2>
+                            <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4" data-bs-parent="#generalAccordion">
+                                <div class="accordion-body">
+                                    <p>We offer a wide variety of books including fiction, non-fiction, academic textbooks, children's books, self-help, business, technology, and South African literature. We also stock rare and collectible books.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ordering Questions -->
+    <div class="ordering-questions py-5 bg-light" id="ordering">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="fw-bold">Ordering & Payment</h2>
+                    <p class="text-muted">Questions about placing orders and payment options</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="accordion" id="orderingAccordion">
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading5">
+                                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="true" aria-controls="collapse5">
+                                    How do I place an order?
+                                </button>
+                            </h2>
+                            <div id="collapse5" class="accordion-collapse collapse show" aria-labelledby="heading5" data-bs-parent="#orderingAccordion">
+                                <div class="accordion-body">
+                                    <p>Placing an order is simple:</p>
+                                    <ol>
+                                        <li>Browse our catalog and add items to your cart</li>
+                                        <li>Click "Checkout" when ready</li>
+                                        <li>Enter your shipping and billing information</li>
+                                        <li>Choose your payment method</li>
+                                        <li>Review and confirm your order</li>
+                                    </ol>
+                                    <p>You'll receive an email confirmation once your order is placed successfully.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading6">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6" aria-expanded="false" aria-controls="collapse6">
+                                    What payment methods do you accept?
+                                </button>
+                            </h2>
+                            <div id="collapse6" class="accordion-collapse collapse" aria-labelledby="heading6" data-bs-parent="#orderingAccordion">
+                                <div class="accordion-body">
+                                    <p>We accept various payment methods:</p>
+                                    <ul>
+                                        <li>Credit cards (Visa, Mastercard, American Express)</li>
+                                        <li>Debit cards</li>
+                                        <li>PayPal</li>
+                                        <li>Instant EFT (Electronic Funds Transfer)</li>
+                                        <li>Bank deposits (EFT with proof of payment)</li>
+                                        <li>Mobicred (buy now, pay later)</li>
+                                    </ul>
+                                    <p>All payments are processed securely through encrypted connections.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading7">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse7" aria-expanded="false" aria-controls="collapse7">
+                                    Is it safe to order online?
+                                </button>
+                            </h2>
+                            <div id="collapse7" class="accordion-collapse collapse" aria-labelledby="heading7" data-bs-parent="#orderingAccordion">
+                                <div class="accordion-body">
+                                    <p>Yes, absolutely! We use industry-standard SSL encryption to protect all your personal and payment information. Our website is regularly tested for security vulnerabilities, and we comply with PCI DSS standards for payment processing.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading8">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse8" aria-expanded="false" aria-controls="collapse8">
+                                    Can I cancel or modify my order?
+                                </button>
+                            </h2>
+                            <div id="collapse8" class="accordion-collapse collapse" aria-labelledby="heading8" data-bs-parent="#orderingAccordion">
+                                <div class="accordion-body">
+                                    <p>You can cancel or modify your order within 2 hours of placing it, as long as it hasn't been processed for shipping. Contact our customer service team immediately at +27 (021) 555-0123 or email support@connect2us.co.za with your order number.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shipping Questions -->
+    <div class="shipping-questions py-5" id="shipping">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="fw-bold">Shipping & Delivery</h2>
+                    <p class="text-muted">Information about shipping options and delivery times</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="accordion" id="shippingAccordion">
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading9">
+                                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse9" aria-expanded="true" aria-controls="collapse9">
+                                    How much does shipping cost?
+                                </button>
+                            </h2>
+                            <div id="collapse9" class="accordion-collapse collapse show" aria-labelledby="heading9" data-bs-parent="#shippingAccordion">
+                                <div class="accordion-body">
+                                    <p>We offer competitive shipping rates:</p>
+                                    <ul>
+                                        <li><strong>Standard Shipping:</strong> R49 (3-5 business days) - FREE on orders over R500</li>
+                                        <li><strong>Express Shipping:</strong> R89 (1-2 business days)</li>
+                                        <li><strong>International Shipping:</strong> From R199 (7-14 business days)</li>
+                                    </ul>
+                                    <p>Shipping costs are calculated at checkout based on your location and order weight.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading10">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse10" aria-expanded="false" aria-controls="collapse10">
+                                    How long does delivery take?
+                                </button>
+                            </h2>
+                            <div id="collapse10" class="accordion-collapse collapse" aria-labelledby="heading10" data-bs-parent="#shippingAccordion">
+                                <div class="accordion-body">
+                                    <p>Delivery times vary by location and shipping method:</p>
+                                    <ul>
+                                        <li><strong>Major Cities:</strong> 2-3 days (Standard), 1-2 days (Express)</li>
+                                        <li><strong>Regional Areas:</strong> 4-5 days (Standard), 2-3 days (Express)</li>
+                                        <li><strong>Rural Areas:</strong> 5-7 days (Standard), 3-4 days (Express)</li>
+                                    </ul>
+                                    <p>These are estimated delivery times and may vary during peak periods or due to unforeseen circumstances.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading11">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse11" aria-expanded="false" aria-controls="collapse11">
+                                    Do you ship internationally?
+                                </button>
+                            </h2>
+                            <div id="collapse11" class="accordion-collapse collapse" aria-labelledby="heading11" data-bs-parent="#shippingAccordion">
+                                <div class="accordion-body">
+                                    <p>Yes, we ship to most countries worldwide! International shipping typically takes 7-14 business days and costs from R199, depending on the destination and package weight. Please note that international customers may be responsible for customs duties and taxes.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading12">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse12" aria-expanded="false" aria-controls="collapse12">
+                                    Can I track my order?
+                                </button>
+                            </h2>
+                            <div id="collapse12" class="accordion-collapse collapse" aria-labelledby="heading12" data-bs-parent="#shippingAccordion">
+                                <div class="accordion-body">
+                                    <p>Absolutely! Once your order is shipped, you'll receive an email with a tracking number and link to track your package. You can also log into your account to view order status and tracking information at any time.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Returns Questions -->
+    <div class="returns-questions py-5 bg-light" id="returns">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="fw-bold">Returns & Refunds</h2>
+                    <p class="text-muted">Information about our return policy and refund process</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="accordion" id="returnsAccordion">
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading13">
+                                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse13" aria-expanded="true" aria-controls="collapse13">
+                                    What is your return policy?
+                                </button>
+                            </h2>
+                            <div id="collapse13" class="accordion-collapse collapse show" aria-labelledby="heading13" data-bs-parent="#returnsAccordion">
+                                <div class="accordion-body">
+                                    <p>We offer a 30-day return policy for most items. Items must be in original condition, unopened, and with all original packaging. Some items like digital products, gift cards, and personalized items cannot be returned. Please see our <a href="@Url.Action("Returns", "Home")">Returns & Refunds</a> page for complete details.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading14">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse14" aria-expanded="false" aria-controls="collapse14">
+                                    How do I return an item?
+                                </button>
+                            </h2>
+                            <div id="collapse14" class="accordion-collapse collapse" aria-labelledby="heading14" data-bs-parent="#returnsAccordion">
+                                <div class="accordion-body">
+                                    <p>To return an item:</p>
+                                    <ol>
+                                        <li>Log into your account and request a return authorization</li>
+                                        <li>Package the item securely in original packaging</li>
+                                        <li>Include all accessories and documentation</li>
+                                        <li>Attach the provided return label</li>
+                                        <li>Drop off at the nearest courier location</li>
+                                    </ol>
+                                    <p>Once we receive and inspect your return, we'll process your refund within 5-7 business days.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading15">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse15" aria-expanded="false" aria-controls="collapse15">
+                                    When will I receive my refund?
+                                </button>
+                            </h2>
+                            <div id="collapse15" class="accordion-collapse collapse" aria-labelledby="heading15" data-bs-parent="#returnsAccordion">
+                                <div class="accordion-body">
+                                    <p>Refunds are processed within 5-7 business days after we receive and inspect your returned item. The refund will be credited to your original payment method. Credit card refunds typically take 3-5 business days to appear, while PayPal refunds are usually instant.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading16">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse16" aria-expanded="false" aria-controls="collapse16">
+                                    Do I have to pay for return shipping?
+                                </button>
+                            </h2>
+                            <div id="collapse16" class="accordion-collapse collapse" aria-labelledby="heading16" data-bs-parent="#returnsAccordion">
+                                <div class="accordion-body">
+                                    <p>Return shipping is free for defective items, wrong items sent, or items not as described. For change-of-mind returns, customers are responsible for return shipping costs. We'll provide a prepaid return label for qualifying returns.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Questions -->
+    <div class="account-questions py-5" id="account">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="fw-bold">Account & Profile</h2>
+                    <p class="text-muted">Managing your Connect2us account</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="accordion" id="accountAccordion">
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading17">
+                                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse17" aria-expanded="true" aria-controls="collapse17">
+                                    Do I need an account to order?
+                                </button>
+                            </h2>
+                            <div id="collapse17" class="accordion-collapse collapse show" aria-labelledby="heading17" data-bs-parent="#accountAccordion">
+                                <div class="accordion-body">
+                                    <p>No, you can checkout as a guest without creating an account. However, creating an account offers several benefits:</p>
+                                    <ul>
+                                        <li>Track your orders easily</li>
+                                        <li>Save your shipping addresses</li>
+                                        <li>Access your order history</li>
+                                        <li>Receive exclusive offers and discounts</li>
+                                        <li>Create wishlists</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading18">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse18" aria-expanded="false" aria-controls="collapse18">
+                                    How do I reset my password?
+                                </button>
+                            </h2>
+                            <div id="collapse18" class="accordion-collapse collapse" aria-labelledby="heading18" data-bs-parent="#accountAccordion">
+                                <div class="accordion-body">
+                                    <p>To reset your password:</p>
+                                    <ol>
+                                        <li>Click "Login" at the top of the page</li>
+                                        <li>Click "Forgot Password?"</li>
+                                        <li>Enter your email address</li>
+                                        <li>Check your email for reset instructions</li>
+                                        <li>Click the link and create a new password</li>
+                                    </ol>
+                                    <p>If you don't receive the email within a few minutes, check your spam folder or contact our support team.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading19">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse19" aria-expanded="false" aria-controls="collapse19">
+                                    How do I update my account information?
+                                </button>
+                            </h2>
+                            <div id="collapse19" class="accordion-collapse collapse" aria-labelledby="heading19" data-bs-parent="#accountAccordion">
+                                <div class="accordion-body">
+                                    <p>Log into your account and click "My Account" to update your information. You can change your email address, password, shipping addresses, and communication preferences. Make sure to save your changes before leaving the page.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading20">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse20" aria-expanded="false" aria-controls="collapse20">
+                                    Is my personal information secure?
+                                </button>
+                            </h2>
+                            <div id="collapse20" class="accordion-collapse collapse" aria-labelledby="heading20" data-bs-parent="#accountAccordion">
+                                <div class="accordion-body">
+                                    <p>Yes, we take your privacy and security seriously. We use advanced encryption technology to protect your personal information and comply with all relevant data protection laws. We never share or sell your information to third parties. See our <a href="@Url.Action("Privacy", "Home")">Privacy Policy</a> for more details.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Questions -->
+    <div class="support-questions py-5 bg-light" id="support">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="fw-bold">Support & Contact</h2>
+                    <p class="text-muted">How to get help when you need it</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="accordion" id="supportAccordion">
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading21">
+                                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse21" aria-expanded="true" aria-controls="collapse21">
+                                    How can I contact customer support?
+                                </button>
+                            </h2>
+                            <div id="collapse21" class="accordion-collapse collapse show" aria-labelledby="heading21" data-bs-parent="#supportAccordion">
+                                <div class="accordion-body">
+                                    <p>We're here to help! You can reach us through:</p>
+                                    <ul>
+                                        <li><strong>Phone:</strong> +27 (021) 555-0123 (Mon-Fri 8am-5pm, Sat 9am-1pm)</li>
+                                        <li><strong>Email:</strong> support@connect2us.co.za</li>
+                                        <li><strong>Live Chat:</strong> Available on our website during business hours</li>
+                                        <li><strong>Contact Form:</strong> Fill out our <a href="@Url.Action("ContactUs", "Home")">contact form</a></li>
+                                    </ul>
+                                    <p>We aim to respond to all inquiries within 24 hours.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading22">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse22" aria-expanded="false" aria-controls="collapse22">
+                                    What are your customer service hours?
+                                </button>
+                            </h2>
+                            <div id="collapse22" class="accordion-collapse collapse" aria-labelledby="heading22" data-bs-parent="#supportAccordion">
+                                <div class="accordion-body">
+                                    <p>Our customer service team is available:</p>
+                                    <ul>
+                                        <li><strong>Monday to Friday:</strong> 8:00 AM - 5:00 PM (SAST)</li>
+                                        <li><strong>Saturday:</strong> 9:00 AM - 1:00 PM (SAST)</li>
+                                        <li><strong>Sunday & Public Holidays:</strong> Closed</li>
+                                    </ul>
+                                    <p>Email support is available 24/7, and we respond to emails during business hours.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading23">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse23" aria-expanded="false" aria-controls="collapse23">
+                                    Do you offer gift wrapping or gift cards?
+                                </button>
+                            </h2>
+                            <div id="collapse23" class="accordion-collapse collapse" aria-labelledby="heading23" data-bs-parent="#supportAccordion">
+                                <div class="accordion-body">
+                                    <p>Yes! We offer both gift wrapping services and digital gift cards. Gift wrapping is available for R25 per item and includes elegant wrapping with a personalized message. Gift cards are available in denominations from R50 to R1000 and are delivered instantly via email.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item mb-3 border rounded shadow-sm">
+                            <h2 class="accordion-header" id="heading24">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse24" aria-expanded="false" aria-controls="collapse24">
+                                    Do you have a loyalty program?
+                                </button>
+                            </h2>
+                            <div id="collapse24" class="accordion-collapse collapse" aria-labelledby="heading24" data-bs-parent="#supportAccordion">
+                                <div class="accordion-body">
+                                    <p>Yes! Our Connect2us Rewards program is free to join and offers:</p>
+                                    <ul>
+                                        <li>Points for every purchase (1 point per R1 spent)</li>
+                                        <li>Exclusive member discounts and early access to sales</li>
+                                        <li>Birthday rewards</li>
+                                        <li>Free shipping on orders over R300 (instead of R500)</li>
+                                        <li>Early access to new releases</li>
+                                    </ul>
+                                    <p>Sign up during checkout or in your account settings to start earning rewards!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact CTA -->
+    <div class="contact-cta py-5 bg-primary text-white">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-3">Still Have Questions?</h2>
+            <p class="lead mb-4">Our customer service team is ready to help you with any additional questions.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="@Url.Action("ContactUs", "Home")" class="btn btn-light btn-lg">
+                    <i class="fas fa-envelope me-2"></i>Contact Us
+                </a>
+                <a href="tel:+27215550123" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-phone me-2"></i>Call Us Now
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    }
+    
+    .category-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid #e9ecef;
+    }
+    
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+    }
+    
+    .accordion-button {
+        background-color: #f8f9fa;
+        border: none;
+        font-weight: 600;
+    }
+    
+    .accordion-button:not(.collapsed) {
+        background-color: #e7f1ff;
+        color: #0056b3;
+    }
+    
+    .accordion-button:focus {
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+    }
+    
+    .accordion-item {
+        border: 1px solid #dee2e6;
+    }
+    
+    .accordion-body {
+        background-color: #ffffff;
+    }
+    
+    .contact-cta {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    }
+</style>

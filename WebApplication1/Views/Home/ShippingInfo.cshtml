@@ -1,0 +1,304 @@
+@{
+    ViewBag.Title = "Shipping Information";
+    ViewBag.Description = "Learn about our shipping options, delivery times, and policies at Connect2us - Your premier platform for literature.";
+}
+
+<!-- Shipping Information Page -->
+<div class="shipping-info-page">
+    <!-- Hero Section -->
+    <div class="hero-section bg-gradient-success text-white py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3">Shipping Information</h1>
+                    <p class="lead mb-4">Fast, reliable shipping across South Africa and internationally. We offer multiple shipping options to get your books to you quickly and safely.</p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="#shipping-options" class="btn btn-light btn-lg">
+                            <i class="fas fa-truck me-2"></i>View Options
+                        </a>
+                        <a href="#delivery-times" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-clock me-2"></i>Delivery Times
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <div class="hero-icon">
+                        <i class="fas fa-shipping-fast fa-8x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shipping Options -->
+    <div class="shipping-options py-5 bg-light" id="shipping-options">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="fw-bold">Shipping Options</h2>
+                    <p class="text-muted">Choose the shipping method that best suits your needs</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="shipping-card bg-white rounded shadow-sm p-4 h-100">
+                        <div class="shipping-icon text-primary mb-3">
+                            <i class="fas fa-truck fa-3x"></i>
+                        </div>
+                        <h4 class="fw-bold">Standard Shipping</h4>
+                        <p class="text-muted mb-3">Reliable delivery within 3-5 business days</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>3-5 business days</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Tracking included</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Free on orders over R500</li>
+                            <li><i class="fas fa-check text-success me-2"></i>R49 for orders under R500</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="shipping-card bg-white rounded shadow-sm p-4 h-100 border border-success">
+                        <div class="shipping-icon text-success mb-3">
+                            <i class="fas fa-rocket fa-3x"></i>
+                        </div>
+                        <h4 class="fw-bold">Express Shipping</h4>
+                        <p class="text-muted mb-3">Fast delivery within 1-2 business days</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>1-2 business days</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Priority processing</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Tracking included</li>
+                            <li><i class="fas fa-check text-success me-2"></i>R89 flat rate</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="shipping-card bg-white rounded shadow-sm p-4 h-100">
+                        <div class="shipping-icon text-warning mb-3">
+                            <i class="fas fa-globe fa-3x"></i>
+                        </div>
+                        <h4 class="fw-bold">International Shipping</h4>
+                        <p class="text-muted mb-3">Worldwide delivery to most countries</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>7-14 business days</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Customs clearance</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Tracking included</li>
+                            <li><i class="fas fa-check text-success me-2"></i>From R199</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delivery Times -->
+    <div class="delivery-times py-5" id="delivery-times">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="fw-bold">Estimated Delivery Times</h2>
+                    <p class="text-muted">Delivery times may vary based on location and shipping method</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="delivery-card bg-white rounded shadow-sm p-4">
+                        <h4 class="fw-bold text-primary mb-3">
+                            <i class="fas fa-map-marker-alt me-2"></i>Major Cities
+                        </h4>
+                        <div class="table-responsive">
+                            <table class="table table-borderless">
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Cape Town</strong></td>
+                                        <td>1-2 days (Express) / 2-3 days (Standard)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Johannesburg</strong></td>
+                                        <td>1-2 days (Express) / 3-4 days (Standard)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Durban</strong></td>
+                                        <td>1-2 days (Express) / 3-4 days (Standard)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Pretoria</strong></td>
+                                        <td>1-2 days (Express) / 3-4 days (Standard)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="delivery-card bg-white rounded shadow-sm p-4">
+                        <h4 class="fw-bold text-success mb-3">
+                            <i class="fas fa-map me-2"></i>Regional Areas
+                        </h4>
+                        <div class="table-responsive">
+                            <table class="table table-borderless">
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Coastal Areas</strong></td>
+                                        <td>2-3 days (Express) / 4-5 days (Standard)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Inland Towns</strong></td>
+                                        <td>2-3 days (Express) / 4-6 days (Standard)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Rural Areas</strong></td>
+                                        <td>3-4 days (Express) / 5-7 days (Standard)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Remote Areas</strong></td>
+                                        <td>4-5 days (Express) / 6-8 days (Standard)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shipping Process -->
+    <div class="shipping-process py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="fw-bold">How We Ship Your Books</h2>
+                    <p class="text-muted">Our careful shipping process ensures your books arrive in perfect condition</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-3 text-center">
+                    <div class="process-step mb-3">
+                        <div class="step-icon bg-primary text-white rounded-circle mx-auto mb-3">
+                            <i class="fas fa-box fa-2x"></i>
+                        </div>
+                        <h5>Careful Packaging</h5>
+                        <p class="text-muted">Each book is wrapped in protective material and placed in sturdy packaging</p>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="process-step mb-3">
+                        <div class="step-icon bg-success text-white rounded-circle mx-auto mb-3">
+                            <i class="fas fa-shipping-fast fa-2x"></i>
+                        </div>
+                        <h5>Fast Dispatch</h5>
+                        <p class="text-muted">Orders are processed within 24 hours of payment confirmation</p>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="process-step mb-3">
+                        <div class="step-icon bg-warning text-white rounded-circle mx-auto mb-3">
+                            <i class="fas fa-truck fa-2x"></i>
+                        </div>
+                        <h5>Reliable Delivery</h5>
+                        <p class="text-muted">Trusted courier partners ensure safe and timely delivery</p>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="process-step mb-3">
+                        <div class="step-icon bg-info text-white rounded-circle mx-auto mb-3">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                        </div>
+                        <h5>Delivery Confirmation</h5>
+                        <p class="text-muted">Track your order and receive confirmation upon delivery</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Important Notes -->
+    <div class="important-notes py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="notes-card bg-white rounded shadow-sm p-4">
+                        <h3 class="fw-bold text-warning mb-4">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Important Shipping Notes
+                        </h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="text-primary mb-3">Delivery Requirements</h5>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-user text-primary me-2"></i>Someone must be available to receive the package</li>
+                                    <li class="mb-2"><i class="fas fa-id-card text-primary me-2"></i>ID may be required for collection</li>
+                                    <li class="mb-2"><i class="fas fa-signature text-primary me-2"></i>Signature required upon delivery</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="text-success mb-3">Special Considerations</h5>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-calendar text-success me-2"></i>Delivery times exclude weekends and holidays</li>
+                                    <li class="mb-2"><i class="fas fa-clock text-success me-2"></i>Delivery attempts made during business hours</li>
+                                    <li class="mb-2"><i class="fas fa-redo text-success me-2"></i>Failed deliveries may incur additional fees</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Support -->
+    <div class="contact-support py-5 bg-primary text-white">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-3">Need Help with Shipping?</h2>
+            <p class="lead mb-4">Our customer service team is here to assist you with any shipping questions or concerns.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="@Url.Action("ContactUs", "Home")" class="btn btn-light btn-lg">
+                    <i class="fas fa-envelope me-2"></i>Contact Support
+                </a>
+                <a href="tel:+27215550123" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-phone me-2"></i>Call +27 (021) 555-0123
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    }
+    
+    .shipping-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .shipping-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+    }
+    
+    .step-icon {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+    
+    .process-step h5 {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+    
+    .notes-card {
+        border-left: 4px solid #ffc107;
+    }
+    
+    .delivery-card {
+        border: 1px solid #e9ecef;
+        transition: box-shadow 0.3s ease;
+    }
+    
+    .delivery-card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+</style>
