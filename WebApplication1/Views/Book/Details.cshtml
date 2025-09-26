@@ -73,39 +73,54 @@
             }
         </div>
     </div>
+</div>
 
-    <!-- Reviews Section -->
+<!-- Reviews Section -->
+<div class="container mt-5">
+    <h3>Customer Reviews</h3>
+    
     @if (Model.Reviews != null && Model.Reviews.Any())
     {
-        <div class="row mt-5">
-            <div class="col-12">
-                <h3>Customer Reviews</h3>
-                <hr />
-                @foreach (var review in Model.Reviews)
-                {
-                    <div class="card mb-3">
+        <div class="row">
+            @foreach (var review in Model.Reviews)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card">
                         <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h6 class="card-title">@(review.User?.FullName ?? "Anonymous")</h6>
-                                    <p class="card-text">@review.Comment</p>
-                                    <small class="text-muted">@review.CreatedDate.ToString("MMMM dd, yyyy")</small>
-                                </div>
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-0">@review.Customer.FullName</h5>
                                 <div class="text-warning">
-                                    @for (int i = 0; i < review.Rating; i++)
+                                    @for (int i = 1; i <= 5; i++)
                                     {
-                                        <i class="bi bi-star-fill"></i>
-                                    }
-                                    @for (int i = review.Rating; i < 5; i++)
-                                    {
-                                        <i class="bi bi-star"></i>
+                                        if (i <= review.Rating)
+                                        {
+                                            <i class="bi bi-star-fill"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star"></i>
+                                        }
                                     }
                                 </div>
                             </div>
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-calendar"></i> @review.ReviewDate.ToString("MMMM dd, yyyy")
+                            </p>
+                            <p class="card-text">@review.ReviewText</p>
                         </div>
                     </div>
-                }
-            </div>
+                </div>
+            }
         </div>
     }
+    else
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> No reviews yet. Be the first to review this book!
+        </div>
+    }
+    
+    <div class="mt-4">
+        @Html.ActionLink("Write a Review", "WriteReview", "Book", new { id = Model.BookId }, new { @class = "btn btn-primary" })
+    </div>
 </div>

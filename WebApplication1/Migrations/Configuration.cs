@@ -50,7 +50,10 @@ namespace WebApplication1.Migrations
                     PostalCode = "2000",
                     EmailConfirmed = true,
                     IsActive = true,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    EmailNotifications = true,
+                    SmsNotifications = false,
+                    PushNotifications = true
                 };
 
                 // Employee user
@@ -69,7 +72,10 @@ namespace WebApplication1.Migrations
                     PostalCode = "8000",
                     EmailConfirmed = true,
                     IsActive = true,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    EmailNotifications = true,
+                    SmsNotifications = false,
+                    PushNotifications = true
                 };
 
                 // Seller user
@@ -88,7 +94,10 @@ namespace WebApplication1.Migrations
                     PostalCode = "4000",
                     EmailConfirmed = true,
                     IsActive = true,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    EmailNotifications = true,
+                    SmsNotifications = false,
+                    PushNotifications = true
                 };
 
                 // Customer users
@@ -107,7 +116,10 @@ namespace WebApplication1.Migrations
                     PostalCode = "0001",
                     EmailConfirmed = true,
                     IsActive = true,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    EmailNotifications = true,
+                    SmsNotifications = false,
+                    PushNotifications = true
                 };
 
                 var customer2 = new User
@@ -125,7 +137,10 @@ namespace WebApplication1.Migrations
                     PostalCode = "6000",
                     EmailConfirmed = true,
                     IsActive = true,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    EmailNotifications = true,
+                    SmsNotifications = false,
+                    PushNotifications = true
                 };
 
                 context.Users.AddRange(new[] { admin, employee, seller, customer1, customer2 });

@@ -152,14 +152,13 @@ namespace WebApplication1.Controllers
 
             var sellerRevenue = Db.OrderItems
                 .Include(oi => oi.Book)
-                .Include(oi => oi.Book.Seller)
                 .Include(oi => oi.Order)
                 .Where(oi => oi.Order.OrderDate >= start && oi.Order.OrderDate <= end && oi.Order.OrderStatus == OrderStatus.Delivered.ToString())
-                .GroupBy(oi => new { oi.Book.SellerId, oi.Book.Seller.FirstName, oi.Book.Seller.LastName })
+                .GroupBy(oi => oi.Book.SellerId)
                 .Select(g => new SellerRevenueData
                 {
-                    SellerId = g.Key.SellerId,
-                    SellerName = g.Key.FirstName + " " + g.Key.LastName,
+                    SellerId = g.Key,
+                    SellerName = "Seller ID: " + g.Key, // Temporarily using ID instead of name
                     TotalRevenue = g.Sum(oi => oi.Subtotal),
                     NumberOfBooksSold = g.Sum(oi => oi.Quantity),
                     NumberOfOrders = g.Select(oi => oi.OrderId).Distinct().Count(),
@@ -266,14 +265,13 @@ namespace WebApplication1.Controllers
             var thirtyDaysAgo = DateTime.Now.AddDays(-30);
             return Db.OrderItems
                 .Include(oi => oi.Book)
-                .Include(oi => oi.Book.Seller)
                 .Include(oi => oi.Order)
                 .Where(oi => oi.Order.OrderDate >= thirtyDaysAgo && oi.Order.OrderStatus == OrderStatus.Delivered.ToString())
-                .GroupBy(oi => new { oi.Book.SellerId, oi.Book.Seller.FirstName, oi.Book.Seller.LastName })
+                .GroupBy(oi => oi.Book.SellerId)
                 .Select(g => new SellerRevenueData
                 {
-                    SellerId = g.Key.SellerId,
-                    SellerName = g.Key.FirstName + " " + g.Key.LastName,
+                    SellerId = g.Key,
+                    SellerName = "Seller ID: " + g.Key, // Temporarily using ID instead of name
                     TotalRevenue = g.Sum(oi => oi.Subtotal),
                     NumberOfBooksSold = g.Sum(oi => oi.Quantity)
                 })
