@@ -34,12 +34,21 @@ namespace WebApplication1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult AddToCart(int bookId, int quantity = 1)
         {
+            // Check if user is authenticated
+            if (!User.Identity.IsAuthenticated)
+            {
+                // Store the return URL in TempData to redirect back after login
+                TempData["ReturnUrl"] = $"/Books/Details/{bookId}";
+                return RedirectToAction("Login", "Account");
+            }
+
             var currentUser = CurrentUser;
             var book = Db.Books.Find(bookId);
 
             if (book == null || !book.IsAvailable || book.StockQuantity < quantity)
             {
-                return Json(new { success = false, message = "Book is not available or out of stock." });
+                TempData["Error"] = "Book is not available or out of stock.";
+                return RedirectToAction("Details", "Books", new { id = bookId });
             }
 
             // Check if item already exists in cart
@@ -65,7 +74,9 @@ namespace WebApplication1.Controllers
             }
 
             Db.SaveChanges();
-            return Json(new { success = true, message = "Book added to cart successfully!" });
+            
+            // Show success page with book details
+            return View("AddToCartSuccess", book);
         }
 
         // POST: Cart/UpdateQuantity

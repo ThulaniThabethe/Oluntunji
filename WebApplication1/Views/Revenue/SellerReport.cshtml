@@ -1,4 +1,4 @@
-@model WebApplication1.Models.SellerReportViewModel
+@model WebApplication1.ViewModels.SellerReportViewModel
 @{
     ViewBag.Title = "Seller Performance Report";
 }
@@ -49,7 +49,7 @@
                     <div class="card text-white bg-success">
                         <div class="card-body">
                             <h6 class="card-title">Total Sellers</h6>
-                            <h4>@Model.TotalSellers</h4>
+                            <h4>@(Model.SellerData != null ? Model.SellerData.Count() : 0)</h4>
                             <small class="text-light">Active sellers</small>
                         </div>
                     </div>
@@ -67,7 +67,7 @@
                     <div class="card text-white bg-warning">
                         <div class="card-body">
                             <h6 class="card-title">Average per Seller</h6>
-                            <h4>@Model.AverageRevenuePerSeller.ToString("C")</h4>
+                            <h4>@(Model.SellerData != null && Model.SellerData.Count() > 0 ? (Model.TotalRevenue / Model.SellerData.Count()).ToString("C") : "$0.00")</h4>
                             <small class="text-light">Revenue per seller</small>
                         </div>
                     </div>
@@ -76,8 +76,8 @@
                     <div class="card text-white bg-dark">
                         <div class="card-body">
                             <h6 class="card-title">Top Seller</h6>
-                            <h4>@(Model.TopSeller?.SellerName ?? "N/A")</h4>
-                            <small class="text-light">@(Model.TopSeller?.Revenue.ToString("C") ?? "")</small>
+                            <h4>@(Model.TopSeller ?? "N/A")</h4>
+                            <small class="text-light">@(Model.TopSellerRevenue.ToString("C"))</small>
                         </div>
                     </div>
                 </div>
@@ -128,25 +128,21 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var seller in Model.SellerData.OrderByDescending(s => s.Revenue))
+                                    @foreach (var seller in Model.SellerData.OrderByDescending(s => s.TotalRevenue))
                                     {
                                         <tr>
                                             <td>
                                                 <strong>@seller.SellerName</strong>
-                                                <br /><small class="text-muted">@seller.SellerEmail</small>
+                                                <br /><small class="text-muted">ID: @seller.SellerId</small>
                                             </td>
-                                            <td>@seller.Revenue.ToString("C")</td>
-                                            <td>@seller.OrderCount</td>
-                                            <td>@seller.BooksSold</td>
-                                            <td>@seller.AverageOrderValue.ToString("C")</td>
-                                            <td>@seller.Commission.ToString("C")</td>
+                                            <td>@seller.TotalRevenue.ToString("C")</td>
+                                            <td>@seller.NumberOfOrders</td>
+                                            <td>@seller.NumberOfBooksSold</td>
+                                            <td>@((seller.NumberOfOrders > 0 ? seller.TotalRevenue / seller.NumberOfOrders : 0).ToString("C"))</td>
+                                            <td>@((seller.TotalRevenue * 0.1m).ToString("C"))</td>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    @for (int i = 1; i <= 5; i++)
-                                                    {
-                                                        <i class="fas fa-star @(i <= seller.AverageRating ? "text-warning" : "text-muted")"></i>
-                                                    }
-                                                    <span class="ms-1">@seller.AverageRating.ToString("F1")</span>
+                                                    <span class="text-muted">N/A</span>
                                                 </div>
                                             </td>
                                             <td>
@@ -175,7 +171,7 @@
                             <h5 class="mb-0">Top Performing Sellers</h5>
                         </div>
                         <div class="card-body">
-                            @if (Model.TopPerformers != null && Model.TopPerformers.Any())
+                            @if (Model.SellerData != null && Model.SellerData.Any())
                             {
                                 <div class="table-responsive">
                                     <table class="table table-sm">
@@ -187,9 +183,9 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @for (int i = 0; i < Model.TopPerformers.Count(); i++)
+                                            @for (int i = 0; i < Model.SellerData.Take(10).Count(); i++)
                                             {
-                                                var seller = Model.TopPerformers.ElementAt(i);
+                                                var seller = Model.SellerData.Take(10).ElementAt(i);
                                                 <tr>
                                                     <td>
                                                         @if (i < 3)
@@ -202,7 +198,7 @@
                                                         }
                                                     </td>
                                                     <td>@seller.SellerName</td>
-                                                    <td>@seller.Revenue.ToString("C")</td>
+                                                    <td>@seller.TotalRevenue.ToString("C")</td>
                                                 </tr>
                                             }
                                         </tbody>
@@ -211,7 +207,7 @@
                             }
                             else
                             {
-                                <p class="text-muted">No top performers data available.</p>
+                                <p class="text-muted">No seller data available.</p>
                             }
                         </div>
                     </div>
@@ -225,19 +221,19 @@
                             <div class="mb-3">
                                 <h6>Highest Revenue Seller</h6>
                                 <p class="text-success">
-                                    <strong>@Model.TopSeller?.SellerName</strong> - @Model.TopSeller?.Revenue.ToString("C")
+                                    <strong>@(Model.TopSeller ?? "N/A")</strong> - @(Model.TopSellerRevenue.ToString("C"))
                                 </p>
                             </div>
                             <div class="mb-3">
-                                <h6>Most Active Seller</h6>
+                                <h6>Report Period</h6>
                                 <p class="text-info">
-                                    <strong>@Model.MostActiveSeller?.SellerName</strong> - @Model.MostActiveSeller?.OrderCount orders
+                                    <strong>@(Model.StartDate.ToString("MMM dd, yyyy"))</strong> to <strong>@(Model.EndDate.ToString("MMM dd, yyyy"))</strong>
                                 </p>
                             </div>
                             <div class="mb-3">
-                                <h6>Best Rated Seller</h6>
+                                <h6>Total Sellers</h6>
                                 <p class="text-primary">
-                                    <strong>@Model.BestRatedSeller?.SellerName</strong> - @Model.BestRatedSeller?.AverageRating.ToString("F1") stars
+                                    <strong>@(Model.SellerData != null ? Model.SellerData.Count() : 0)</strong> active sellers
                                 </p>
                             </div>
                         </div>
@@ -257,9 +253,9 @@
             var sellerDistributionChart = new Chart(ctx, {
                 type: 'pie',
                 data: {
-                    labels: @Html.Raw(Json.Encode(Model.SellerData?.Take(5).Select(s => s.SellerName))),
+                    labels: @Html.Raw(Json.Encode(Model.SellerData != null ? Model.SellerData.Take(5).Select(s => s.SellerName) : new List<string>())),
                     datasets: [{
-                        data: @Html.Raw(Json.Encode(Model.SellerData?.Take(5).Select(s => s.Revenue))),
+                        data: @Html.Raw(Json.Encode(Model.SellerData != null ? Model.SellerData.Take(5).Select(s => s.TotalRevenue) : new List<decimal>())),
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.8)',
                             'rgba(54, 162, 235, 0.8)',
@@ -280,10 +276,10 @@
             var topSellersChart = new Chart(ctx2, {
                 type: 'bar',
                 data: {
-                    labels: @Html.Raw(Json.Encode(Model.TopPerformers?.Select(s => s.SellerName))),
+                    labels: @Html.Raw(Json.Encode(Model.SellerData != null ? Model.SellerData.Take(5).Select(s => s.SellerName) : new List<string>())),
                     datasets: [{
                         label: 'Revenue',
-                        data: @Html.Raw(Json.Encode(Model.TopPerformers?.Select(s => s.Revenue))),
+                        data: @Html.Raw(Json.Encode(Model.SellerData != null ? Model.SellerData.Take(5).Select(s => s.TotalRevenue) : new List<decimal>())),
                         backgroundColor: 'rgba(54, 162, 235, 0.8)',
                         borderColor: 'rgba(54, 162, 235, 1)',
                         borderWidth: 1

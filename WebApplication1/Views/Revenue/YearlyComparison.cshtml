@@ -1,0 +1,196 @@
+@model WebApplication1.ViewModels.YearlyComparisonViewModel
+
+@{
+    ViewBag.Title = "Year-over-Year Revenue Comparison";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2>@ViewBag.Title</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Revenue")">Revenue</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("Reports", "Revenue")">Reports</a></li>
+                    <li class="breadcrumb-item active">Year-over-Year Comparison</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Year Selection -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Select Comparison Year</h5>
+                    @using (Html.BeginForm("YearlyComparison", "Revenue", FormMethod.Get, new { @class = "form-inline" }))
+                    {
+                        <div class="form-group mr-2">
+                            @Html.Label("year", "Year:", new { @class = "mr-2" })
+                            @Html.DropDownList("year", Enumerable.Range(2020, DateTime.Now.Year - 2019).Select(i => new SelectListItem { Text = i.ToString(), Value = i.ToString(), Selected = i == Model.CurrentYear }), new { @class = "form-control" })
+                        </div>
+                        <button type="submit" class="btn btn-primary">Compare</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">@Model.CurrentYear Revenue</h5>
+                    <h3>@Model.CurrentYearTotal.ToString("C")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">@Model.PreviousYear Revenue</h5>
+                    <h3>@Model.PreviousYearTotal.ToString("C")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white @(Model.GrowthRate >= 0 ? "bg-success" : "bg-danger")">
+                <div class="card-body">
+                    <h5 class="card-title">Growth Rate</h5>
+                    <h3>@Model.GrowthRate.ToString("F1")%</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Comparison Table -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Monthly Revenue Comparison</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>@Model.CurrentYear Revenue</th>
+                                    <th>@Model.PreviousYear Revenue</th>
+                                    <th>Difference</th>
+                                    <th>Growth %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < 12; i++)
+                                {
+                                    var currentMonth = Model.CurrentYearMonthlyData[i];
+                                    var previousMonth = Model.PreviousYearMonthlyData[i];
+                                    var difference = currentMonth.Revenue - previousMonth.Revenue;
+                                    var growthPercent = previousMonth.Revenue > 0 ? (difference / previousMonth.Revenue) * 100 : 0;
+                                    
+                                    <tr>
+                                        <td>@currentMonth.MonthName</td>
+                                        <td>@currentMonth.Revenue.ToString("C")</td>
+                                        <td>@previousMonth.Revenue.ToString("C")</td>
+                                        <td class="@(difference >= 0 ? "text-success" : "text-danger")">
+                                            @difference.ToString("C")
+                                        </td>
+                                        <td class="@(growthPercent >= 0 ? "text-success" : "text-danger")">
+                                            @growthPercent.ToString("F1")%
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr class="font-weight-bold">
+                                    <td>Total</td>
+                                    <td>@Model.CurrentYearTotal.ToString("C")</td>
+                                    <td>@Model.PreviousYearTotal.ToString("C")</td>
+                                    <td class="@(Model.CurrentYearTotal - Model.PreviousYearTotal >= 0 ? "text-success" : "text-danger")">
+                                        @((Model.CurrentYearTotal - Model.PreviousYearTotal).ToString("C"))
+                                    </td>
+                                    <td class="@(Model.GrowthRate >= 0 ? "text-success" : "text-danger")">
+                                        @Model.GrowthRate.ToString("F1")%
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Monthly Revenue Trend</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="yearlyComparisonChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function() {
+            var ctx = document.getElementById('yearlyComparisonChart').getContext('2d');
+            
+            var currentYearData = @Html.Raw(Json.Encode(Model.CurrentYearMonthlyData.Select(m => m.Revenue).ToArray()));
+            var previousYearData = @Html.Raw(Json.Encode(Model.PreviousYearMonthlyData.Select(m => m.Revenue).ToArray()));
+            var monthLabels = @Html.Raw(Json.Encode(Model.CurrentYearMonthlyData.Select(m => m.MonthName).ToArray()));
+            
+            var chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: monthLabels,
+                    datasets: [{
+                        label: '@Model.CurrentYear',
+                        data: currentYearData,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.1
+                    }, {
+                        label: '@Model.PreviousYear',
+                        data: previousYearData,
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}

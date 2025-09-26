@@ -1,0 +1,206 @@
+@model WebApplication1.ViewModels.SeasonalAnalysisViewModel
+
+@{
+    ViewBag.Title = "Seasonal Analysis";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>@ViewBag.Title</h2>
+            <p class="text-muted">Analyze revenue trends across different seasons</p>
+        </div>
+    </div>
+
+    <!-- Year Selection Form -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            @using (Html.BeginForm("SeasonalAnalysis", "Revenue", FormMethod.Get, new { @class = "form-inline" }))
+            {
+                <div class="form-group mr-2">
+                    @Html.LabelFor(m => m.SelectedYear, "Select Year:", new { @class = "mr-2" })
+                    @Html.DropDownListFor(m => m.SelectedYear, 
+                        Enumerable.Range(DateTime.Now.Year - 5, 6).Select(i => new SelectListItem 
+                        { 
+                            Text = i.ToString(), 
+                            Value = i.ToString(), 
+                            Selected = i == Model.SelectedYear 
+                        }), 
+                        new { @class = "form-control", onchange = "this.form.submit()" })
+                </div>
+                <button type="submit" class="btn btn-primary">Update</button>
+            }
+        </div>
+        <div class="col-md-6 text-right">
+            <a href="@Url.Action("Reports", "Revenue")" class="btn btn-secondary">Back to Reports</a>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Revenue (@Model.SelectedYear)</h5>
+                    <h3>@Model.TotalRevenue.ToString("C")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Previous Year</h5>
+                    <h3>@Model.PreviousYearTotal.ToString("C")</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card @(@Model.GrowthRate >= 0 ? "bg-success" : "bg-danger") text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Growth Rate</h5>
+                    <h3>@Model.GrowthRate.ToString("F1")%</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <h5 class="card-title">Best Season</h5>
+                    <h3>@(Model.BestPerformingSeason != null ? Model.BestPerformingSeason.Season : "N/A")</h3>
+                    <small>@(Model.BestPerformingSeason != null ? Model.BestPerformingSeason.Revenue.ToString("C") : "")</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seasonal Revenue Table -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Seasonal Revenue Breakdown</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Season</th>
+                                    <th>Months</th>
+                                    <th>Revenue (@Model.SelectedYear)</th>
+                                    <th>Previous Year</th>
+                                    <th>Growth Rate</th>
+                                    <th>Percentage of Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var season in Model.SeasonalData)
+                                {
+                                    var previousYearSeason = Model.PreviousYearData != null ? Model.PreviousYearData.FirstOrDefault(s => s.Season == season.Season) : null;
+                                    var growthRate = previousYearSeason != null && previousYearSeason.Revenue > 0 
+                                        ? ((season.Revenue - previousYearSeason.Revenue) / previousYearSeason.Revenue) * 100 
+                                        : 0;
+                                    var percentageOfTotal = Model.TotalRevenue > 0 ? (season.Revenue / Model.TotalRevenue) * 100 : 0;
+                                    
+                                    <tr>
+                                        <td><strong>@season.Season</strong></td>
+                                        <td>@season.Months</td>
+                                        <td>@season.Revenue.ToString("C")</td>
+                                        <td>@(previousYearSeason != null ? previousYearSeason.Revenue.ToString("C") : "N/A")</td>
+                                        <td class="@(@growthRate >= 0 ? "text-success" : "text-danger")">
+                                            @growthRate.ToString("F1")%
+                                        </td>
+                                        <td>@percentageOfTotal.ToString("F1")%</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-active">
+                                    <td><strong>Total</strong></td>
+                                    <td>-</td>
+                                    <td><strong>@Model.TotalRevenue.ToString("C")</strong></td>
+                                    <td><strong>@Model.PreviousYearTotal.ToString("C")</strong></td>
+                                    <td class="@(@Model.GrowthRate >= 0 ? "text-success" : "text-danger")">
+                                        <strong>@Model.GrowthRate.ToString("F1")%</strong>
+                                    </td>
+                                    <td><strong>100.0%</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Seasonal Revenue Comparison</h4>
+                </div>
+                <div class="card-body">
+                    <canvas id="seasonalChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Prepare data for the chart
+            var seasonalData = @Html.Raw(Json.Encode(Model.SeasonalData.Select(s => new { season = s.Season, revenue = s.Revenue })));
+            var previousYearData = @Html.Raw(Json.Encode(Model.PreviousYearData != null ? Model.PreviousYearData.Select(s => new { season = s.Season, revenue = s.Revenue }).ToArray() : new object[0]));
+            
+            var ctx = document.getElementById('seasonalChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: seasonalData.map(function(s) { return s.season; }),
+                    datasets: [
+                        {
+                            label: '@Model.SelectedYear Revenue',
+                            data: seasonalData.map(function(s) { return s.revenue; }),
+                            backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '@(Model.SelectedYear - 1) Revenue',
+                            data: previousYearData.map(function(s) { return s.revenue; }),
+                            backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}

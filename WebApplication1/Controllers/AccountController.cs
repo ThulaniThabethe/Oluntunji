@@ -46,11 +46,11 @@ namespace WebApplication1.Controllers
                     switch (user.Role)
                     {
                         case "Admin":
-                            return RedirectToAction("Dashboard", "Admin");
+                            return RedirectToAction("AdminDashboard", "Profile");
                         case "Seller":
-                            return RedirectToAction("Dashboard", "Seller");
+                            return RedirectToAction("SellerDashboard", "Profile");
                         case "Employee":
-                            return RedirectToAction("Dashboard", "Employee");
+                            return RedirectToAction("EmployeeDashboard", "Profile");
                         default:
                             return RedirectToLocal(returnUrl);
                     }

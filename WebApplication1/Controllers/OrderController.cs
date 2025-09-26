@@ -56,8 +56,9 @@ namespace WebApplication1.Controllers
             var lastOrderDate = orders.Any() ? orders.Max(o => o.OrderDate) : DateTime.MinValue;
             
             // Get most purchased category
+            var orderIds = orders.Select(o => o.OrderId).ToList();
             var mostPurchasedCategory = Db.OrderItems
-                .Where(oi => orders.Select(o => o.OrderId).Contains(oi.OrderId))
+                .Where(oi => orderIds.Contains(oi.OrderId))
                 .GroupBy(oi => oi.Book.Category)
                 .OrderByDescending(g => g.Sum(oi => oi.Quantity))
                 .Select(g => g.Key)
@@ -65,7 +66,7 @@ namespace WebApplication1.Controllers
 
             var model = new CustomerOrderHistoryViewModel
             {
-                Orders = orders.Select(o => new CustomerOrderViewModel
+                Orders = orders.Select(o => new OrderListViewModel
                 {
                     OrderId = o.OrderId,
                     OrderNumber = o.OrderNumber,
@@ -78,12 +79,7 @@ namespace WebApplication1.Controllers
                 TotalOrders = totalOrders,
                 TotalSpent = totalSpent,
                 LastOrderDate = lastOrderDate,
-                MostPurchasedCategory = mostPurchasedCategory,
-                OrderNumber = orderNumber,
-                StartDate = startDate,
-                EndDate = endDate,
-                OrderStatus = orderStatus,
-                PaymentStatus = paymentStatus
+                MostPurchasedCategory = mostPurchasedCategory
             };
 
             return View(model);
@@ -147,7 +143,6 @@ namespace WebApplication1.Controllers
                 // Update order status
                 order.OrderStatus = "Cancelled";
                 order.PaymentStatus = "Refunded";
-                order.LastUpdatedDate = DateTime.Now;
 
                 Db.SaveChanges();
 

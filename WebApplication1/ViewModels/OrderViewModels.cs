@@ -11,8 +11,8 @@ namespace WebApplication1.ViewModels
         public string OrderNumber { get; set; }
         public DateTime OrderDate { get; set; }
         public decimal TotalAmount { get; set; }
-        public OrderStatus OrderStatus { get; set; }
-        public PaymentStatus PaymentStatus { get; set; }
+        public string OrderStatus { get; set; }
+        public string PaymentStatus { get; set; }
         public string CustomerName { get; set; }
         public int ItemCount { get; set; }
     }
@@ -65,10 +65,10 @@ namespace WebApplication1.ViewModels
         public DateTime? EndDate { get; set; }
 
         [Display(Name = "Order Status")]
-        public OrderStatus OrderStatus { get; set; }
+        public string OrderStatus { get; set; }
 
         [Display(Name = "Payment Status")]
-        public PaymentStatus PaymentStatus { get; set; }
+        public string PaymentStatus { get; set; }
 
         [Display(Name = "Customer Name")]
         public string CustomerName { get; set; }
@@ -163,6 +163,9 @@ namespace WebApplication1.ViewModels
         public string OrderNumber { get; set; }
         public string CustomerName { get; set; }
         public string ShippingAddress { get; set; }
+        public string ShippingCity { get; set; }
+        public string ShippingProvince { get; set; }
+        public string ShippingPostalCode { get; set; }
         public string OrderStatus { get; set; }
         public string TrackingNumber { get; set; }
         public DateTime OrderDate { get; set; }

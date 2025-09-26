@@ -165,4 +165,51 @@ namespace WebApplication1.ViewModels
         public decimal ThisMonthGrowth { get; set; }
         public decimal ThisYearGrowth { get; set; }
     }
+
+    public class YearlyComparisonViewModel
+    {
+        public int CurrentYear { get; set; }
+        public int PreviousYear { get; set; }
+        public decimal CurrentYearTotal { get; set; }
+        public decimal PreviousYearTotal { get; set; }
+        public decimal GrowthRate { get; set; }
+        public List<MonthlyRevenueData> CurrentYearMonthlyData { get; set; }
+        public List<MonthlyRevenueData> PreviousYearMonthlyData { get; set; }
+    }
+
+    public class MonthlyRevenueData
+    {
+        public int Month { get; set; }
+        public string MonthName { get; set; }
+        public decimal Revenue { get; set; }
+        public int Orders { get; set; }
+        public int BooksSold { get; set; }
+    }
+
+    public class SeasonalRevenueData
+    {
+        public string Season { get; set; }
+        public string Months { get; set; }
+        public decimal Revenue { get; set; }
+        public int StartMonth { get; set; }
+        public int EndMonth { get; set; }
+        public decimal PercentageOfTotal { get; set; }
+        public decimal GrowthRate { get; set; }
+    }
+
+    public class SeasonalAnalysisViewModel
+    {
+        public int SelectedYear { get; set; }
+        public List<SeasonalRevenueData> SeasonalData { get; set; }
+        public List<SeasonalRevenueData> PreviousYearData { get; set; }
+        public decimal TotalRevenue { get; set; }
+        public decimal PreviousYearTotal { get; set; }
+        public decimal GrowthRate { get; set; }
+        public SeasonalRevenueData BestPerformingSeason { get; set; }
+        public SeasonalRevenueData WorstPerformingSeason { get; set; }
+        public string BestSeasonName { get; set; }
+        public string WorstSeasonName { get; set; }
+        public decimal BestSeasonRevenue { get; set; }
+        public decimal WorstSeasonRevenue { get; set; }
+    }
 }

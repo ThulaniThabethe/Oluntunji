@@ -177,6 +177,8 @@ namespace WebApplication1.Controllers
         [AdminOnly]
         public ActionResult AdminDashboard()
         {
+            var oneMonthAgo = DateTime.Now.AddMonths(-1);
+            
             var model = new AdminDashboardViewModel
             {
                 TotalUsers = Db.Users.Count(),
@@ -184,7 +186,7 @@ namespace WebApplication1.Controllers
                 TotalOrders = Db.Orders.Count(),
                 TotalRevenue = Db.Orders.Where(o => o.OrderStatus == OrderStatus.Delivered.ToString()).Sum(o => (decimal?)o.TotalAmount) ?? 0,
                 PendingOrders = Db.Orders.Count(o => o.OrderStatus == OrderStatus.Pending.ToString()),
-                RegisteredUsersThisMonth = Db.Users.Count(u => u.CreatedDate >= DateTime.Now.AddMonths(-1)),
+                RegisteredUsersThisMonth = Db.Users.Count(u => u.CreatedDate >= oneMonthAgo),
                 RecentUsers = Db.Users.OrderByDescending(u => u.CreatedDate).Take(10).ToList(),
                 RecentOrders = Db.Orders.Include("Customer").OrderByDescending(o => o.OrderDate).Take(10).ToList(),
                 TopSellingBooks = Db.OrderItems
@@ -203,12 +205,14 @@ namespace WebApplication1.Controllers
         [EmployeeOnly]
         public ActionResult EmployeeDashboard()
         {
+            var oneMonthAgo = DateTime.Now.AddMonths(-1);
+            
             var model = new EmployeeDashboardViewModel
             {
                 PendingOrders = Db.Orders.Count(o => o.OrderStatus == OrderStatus.Pending.ToString()),
                 ShippedOrders = Db.Orders.Count(o => o.OrderStatus == OrderStatus.Shipped.ToString()),
                 TotalRevenueThisMonth = Db.Orders
-                    .Where(o => o.OrderDate >= DateTime.Now.AddMonths(-1) && o.OrderStatus == OrderStatus.Delivered.ToString())
+                    .Where(o => o.OrderDate >= oneMonthAgo && o.OrderStatus == OrderStatus.Delivered.ToString())
                     .Sum(o => (decimal?)o.TotalAmount) ?? 0,
                 RecentOrders = Db.Orders
                     .Include("Customer")
@@ -227,15 +231,83 @@ namespace WebApplication1.Controllers
 
         // GET: Profile/MyBooks
         [SellerOnly]
-        public ActionResult MyBooks()
+        public ActionResult MyBooks(string search = "", string status = "", string sort = "title", int page = 1)
         {
             var currentUser = CurrentUser;
-            var books = Db.Books
-                .Where(b => b.SellerId == currentUser.UserId)
-                .OrderByDescending(b => b.CreatedDate)
-                .ToList();
+            var query = Db.Books.Where(b => b.SellerId == currentUser.UserId);
 
-            return View(books);
+            // Apply search filter
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(b => b.Title.Contains(search) || b.Author.Contains(search));
+            }
+
+            // Apply status filter
+            if (!string.IsNullOrEmpty(status))
+            {
+                switch (status)
+                {
+                    case "instock":
+                        query = query.Where(b => b.StockQuantity > 10);
+                        break;
+                    case "lowstock":
+                        query = query.Where(b => b.StockQuantity > 0 && b.StockQuantity <= 10);
+                        break;
+                    case "outofstock":
+                        query = query.Where(b => b.StockQuantity <= 0);
+                        break;
+                }
+            }
+
+            // Apply sorting
+            switch (sort)
+            {
+                case "author":
+                    query = query.OrderBy(b => b.Author);
+                    break;
+                case "stock":
+                    query = query.OrderBy(b => b.StockQuantity);
+                    break;
+                case "price":
+                    query = query.OrderBy(b => b.Price);
+                    break;
+                case "date":
+                    query = query.OrderByDescending(b => b.CreatedDate);
+                    break;
+                default: // title
+                    query = query.OrderBy(b => b.Title);
+                    break;
+            }
+
+            var books = query.ToList();
+
+            // Calculate statistics
+            var totalBooks = books.Count;
+            var booksInStock = books.Count(b => b.StockQuantity > 10);
+            var lowStockBooks = books.Count(b => b.StockQuantity > 0 && b.StockQuantity <= 10);
+            var outOfStockBooks = books.Count(b => b.StockQuantity <= 0);
+
+            // Pagination
+            int pageSize = 10;
+            int totalPages = (int)Math.Ceiling((double)books.Count / pageSize);
+            page = Math.Max(1, Math.Min(page, totalPages));
+            var pagedBooks = books.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            var viewModel = new MyBooksViewModel
+            {
+                Books = pagedBooks,
+                TotalBooks = totalBooks,
+                BooksInStock = booksInStock,
+                LowStockBooks = lowStockBooks,
+                OutOfStockBooks = outOfStockBooks,
+                SearchTerm = search,
+                StatusFilter = status,
+                SortBy = sort,
+                CurrentPage = page,
+                TotalPages = totalPages
+            };
+
+            return View(viewModel);
         }
 
         // GET: Profile/EditBook/5
@@ -395,16 +467,24 @@ namespace WebApplication1.Controllers
             return Json(new { success = true, message = "User status updated successfully." });
         }
 
-        // GET: Profile/Notifications
-        public ActionResult Notifications()
+        // GET: Profile/Dashboard
+        public ActionResult Dashboard()
         {
             var currentUser = CurrentUser;
-            var notifications = Db.Notifications
-                .Where(n => n.UserId == currentUser.UserId)
-                .OrderByDescending(n => n.CreatedDate)
-                .ToList();
-
-            return View(notifications);
+            
+            // Redirect to role-specific dashboard
+            switch (currentUser.Role)
+            {
+                case "Admin":
+                    return RedirectToAction("AdminDashboard");
+                case "Seller":
+                    return RedirectToAction("SellerDashboard");
+                case "Employee":
+                    return RedirectToAction("EmployeeDashboard");
+                default:
+                    // For regular users, redirect to profile index
+                    return RedirectToAction("Index");
+            }
         }
     }
 }

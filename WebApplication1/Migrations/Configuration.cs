@@ -18,6 +18,9 @@ namespace WebApplication1.Migrations
 
         protected override void Seed(WebApplication1.Models.BookstoreDbContext context)
         {
+            // Update database schema to add notification columns
+            UpdateNotificationColumns(context);
+            
             // Seed Users
             SeedUsers(context);
             
@@ -283,6 +286,40 @@ namespace WebApplication1.Migrations
                          context.OrderItems.Add(orderItem);
                      }
                 }
+            }
+        }
+
+        private void UpdateNotificationColumns(BookstoreDbContext context)
+        {
+            try
+            {
+                // Check if the columns exist and add them if they don't
+                context.Database.ExecuteSqlCommand(@"
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'OrderUpdates')
+                        ALTER TABLE [dbo].[Users] ADD [OrderUpdates] BIT NOT NULL DEFAULT 1
+                    
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'BookAlerts')
+                        ALTER TABLE [dbo].[Users] ADD [BookAlerts] BIT NOT NULL DEFAULT 1
+                    
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'AccountUpdates')
+                        ALTER TABLE [dbo].[Users] ADD [AccountUpdates] BIT NOT NULL DEFAULT 1
+                    
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'MarketingEmails')
+                        ALTER TABLE [dbo].[Users] ADD [MarketingEmails] BIT NOT NULL DEFAULT 0
+                    
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'LowStockAlerts')
+                        ALTER TABLE [dbo].[Users] ADD [LowStockAlerts] BIT NOT NULL DEFAULT 1
+                    
+                    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'PriceDropAlerts')
+                        ALTER TABLE [dbo].[Users] ADD [PriceDropAlerts] BIT NOT NULL DEFAULT 1
+                ");
+                
+                System.Diagnostics.Debug.WriteLine("Notification columns added successfully to Users table.");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating notification columns: {ex.Message}");
+                // Continue with seeding even if column update fails
             }
         }
     }

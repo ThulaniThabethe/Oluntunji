@@ -19,7 +19,7 @@
                     {
                         @Html.AntiForgeryToken()
 
-                        @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+                        if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
                         {
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 <strong><i class="fas fa-exclamation-triangle me-2"></i>Please correct the following errors:</strong>

@@ -1,0 +1,61 @@
+@model dynamic
+
+@{
+    ViewBag.Title = "Write Review";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Write a Review</h2>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["Error"]
+                        </div>
+                    }
+
+                    <h4>Review for: @ViewBag.BookTitle</h4>
+                    <hr />
+
+                    @using (Html.BeginForm("WriteReview", "Book", new { id = ViewBag.BookId }, FormMethod.Post, new { @class = "form-horizontal" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-group mb-3">
+                            <label for="Rating" class="form-label">Rating</label>
+                            <select class="form-control" id="Rating" name="Rating" required>
+                                <option value="">Select a rating</option>
+                                <option value="5">5 - Excellent</option>
+                                <option value="4">4 - Very Good</option>
+                                <option value="3">3 - Good</option>
+                                <option value="2">2 - Fair</option>
+                                <option value="1">1 - Poor</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="ReviewText" class="form-label">Review</label>
+                            <textarea class="form-control" id="ReviewText" name="ReviewText" rows="5" 
+                                      placeholder="Share your thoughts about this book..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Submit Review</button>
+                            <a href="@Url.Action("Details", "Book", new { id = ViewBag.BookId })" class="btn btn-secondary ms-2">Cancel</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

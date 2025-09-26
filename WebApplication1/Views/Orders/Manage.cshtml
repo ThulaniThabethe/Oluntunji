@@ -42,7 +42,7 @@
                                         @if (order.Customer != null)
                                         {
                                             <div>
-                                                <strong>@order.Customer.Name</strong>
+                                                <strong>@order.Customer.FullName</strong>
                                                 <br /><small class="text-muted">@order.Customer.Email</small>
                                             </div>
                                         }
@@ -59,28 +59,52 @@
                                     </td>
                                     <td>
                                         @{
-                                            var statusClass = order.OrderStatus switch
+                                            var statusClass = "";
+                                            switch (order.OrderStatus)
                                             {
-                                                "Pending" => "badge bg-warning text-dark",
-                                                "Confirmed" => "badge bg-info",
-                                                "Shipped" => "badge bg-primary",
-                                                "Delivered" => "badge bg-success",
-                                                "Cancelled" => "badge bg-danger",
-                                                _ => "badge bg-secondary"
-                                            };
+                                                case "Pending":
+                                                    statusClass = "badge bg-warning text-dark";
+                                                    break;
+                                                case "Confirmed":
+                                                    statusClass = "badge bg-info";
+                                                    break;
+                                                case "Shipped":
+                                                    statusClass = "badge bg-primary";
+                                                    break;
+                                                case "Delivered":
+                                                    statusClass = "badge bg-success";
+                                                    break;
+                                                case "Cancelled":
+                                                    statusClass = "badge bg-danger";
+                                                    break;
+                                                default:
+                                                    statusClass = "badge bg-secondary";
+                                                    break;
+                                            }
                                         }
                                         <span class="@statusClass">@order.OrderStatus</span>
                                     </td>
                                     <td>
                                         @{
-                                            var paymentStatusClass = order.PaymentStatus switch
+                                            var paymentStatusClass = "";
+                                            switch (order.PaymentStatus)
                                             {
-                                                "Pending" => "badge bg-warning text-dark",
-                                                "Paid" => "badge bg-success",
-                                                "Failed" => "badge bg-danger",
-                                                "Refunded" => "badge bg-secondary",
-                                                _ => "badge bg-secondary"
-                                            };
+                                                case "Pending":
+                                                    paymentStatusClass = "badge bg-warning text-dark";
+                                                    break;
+                                                case "Paid":
+                                                    paymentStatusClass = "badge bg-success";
+                                                    break;
+                                                case "Failed":
+                                                    paymentStatusClass = "badge bg-danger";
+                                                    break;
+                                                case "Refunded":
+                                                    paymentStatusClass = "badge bg-secondary";
+                                                    break;
+                                                default:
+                                                    paymentStatusClass = "badge bg-secondary";
+                                                    break;
+                                            }
                                         }
                                         <span class="@paymentStatusClass">@order.PaymentStatus</span>
                                     </td>

@@ -1,4 +1,4 @@
-@model WebApplication1.Models.RevenueDashboardViewModel
+@model WebApplication1.ViewModels.RevenueDashboardViewModel
 @{
     ViewBag.Title = "Revenue Dashboard";
 }
@@ -12,36 +12,36 @@
                 <div class="col-md-3">
                     <div class="card text-white bg-primary">
                         <div class="card-body">
-                            <h6 class="card-title">Today's Revenue</h6>
-                            <h3>@Model.TodayRevenue.ToString("C")</h3>
-                            <small class="text-light">@Model.TodayOrders orders</small>
+                            <h6 class="card-title">Total Revenue</h6>
+                            <h3>@Model.TotalRevenue.ToString("C")</h3>
+                            <small class="text-light">@Model.OrderStatistics.TotalOrders orders</small>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card text-white bg-success">
                         <div class="card-body">
-                            <h6 class="card-title">This Week</h6>
-                            <h3>@Model.WeekRevenue.ToString("C")</h3>
-                            <small class="text-light">@Model.WeekOrders orders</small>
+                            <h6 class="card-title">Monthly Growth</h6>
+                            <h3>@Model.MonthlyGrowth.ToString("P")</h3>
+                            <small class="text-light">vs last month</small>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card text-white bg-info">
                         <div class="card-body">
-                            <h6 class="card-title">This Month</h6>
-                            <h3>@Model.MonthRevenue.ToString("C")</h3>
-                            <small class="text-light">@Model.MonthOrders orders</small>
+                            <h6 class="card-title">Daily Growth</h6>
+                            <h3>@Model.DailyGrowth.ToString("P")</h3>
+                            <small class="text-light">vs yesterday</small>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card text-white bg-dark">
                         <div class="card-body">
-                            <h6 class="card-title">This Year</h6>
-                            <h3>@Model.YearRevenue.ToString("C")</h3>
-                            <small class="text-light">@Model.YearOrders orders</small>
+                            <h6 class="card-title">Completed Orders</h6>
+                            <h3>@Model.OrderStatistics.CompletedOrders</h3>
+                            <small class="text-light">of @Model.OrderStatistics.TotalOrders total</small>
                         </div>
                     </div>
                 </div>
@@ -77,39 +77,52 @@
                             <h5 class="mb-0">Recent Orders</h5>
                         </div>
                         <div class="card-body">
-                            @if (Model.RecentOrders != null && Model.RecentOrders.Any())
+                            @if (Model.OrderStatistics != null)
                             {
                                 <div class="table-responsive">
                                     <table class="table table-sm">
                                         <thead>
                                             <tr>
-                                                <th>Order #</th>
-                                                <th>Date</th>
-                                                <th>Amount</th>
-                                                <th>Status</th>
+                                                <th>Metric</th>
+                                                <th>Value</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach (var order in Model.RecentOrders.Take(10))
-                                            {
-                                                <tr>
-                                                    <td>@order.OrderNumber</td>
-                                                    <td>@order.OrderDate.ToString("MM/dd")</td>
-                                                    <td>@order.TotalAmount.ToString("C")</td>
-                                                    <td>
-                                                        <span class="badge bg-@(order.Status == "Completed" ? "success" : order.Status == "Pending" ? "warning" : "secondary")">
-                                                            @order.Status
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            }
+                                            <tr>
+                                                <td>Total Orders</td>
+                                                <td><strong>@Model.OrderStatistics.TotalOrders</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Pending Orders</td>
+                                                <td><span class="badge bg-warning">@Model.OrderStatistics.PendingOrders</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Shipped Orders</td>
+                                                <td><span class="badge bg-info">@Model.OrderStatistics.ShippedOrders</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Completed Orders</td>
+                                                <td><span class="badge bg-success">@Model.OrderStatistics.CompletedOrders</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Cancelled Orders</td>
+                                                <td><span class="badge bg-danger">@Model.OrderStatistics.CancelledOrders</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Average Order Value</td>
+                                                <td><strong>@Model.OrderStatistics.AverageOrderValue.ToString("C")</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Total Books Sold</td>
+                                                <td><strong>@Model.OrderStatistics.TotalBooksSold</strong></td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             }
                             else
                             {
-                                <p class="text-muted">No recent orders found.</p>
+                                <p class="text-muted">No order statistics available.</p>
                             }
                         </div>
                     </div>
@@ -144,10 +157,10 @@
             var revenueChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: @Html.Raw(Json.Encode(Model.DailyRevenueData?.Select(d => d.Date.ToString("MM/dd")))),
+                    labels: @Html.Raw(Json.Encode(Model.DailyRevenue != null ? Model.DailyRevenue.Take(7).Select(d => d.Date.ToString("MM/dd")).ToList() : new List<string>())),
                     datasets: [{
                         label: 'Daily Revenue',
-                        data: @Html.Raw(Json.Encode(Model.DailyRevenueData?.Select(d => d.Revenue))),
+                        data: @Html.Raw(Json.Encode(Model.DailyRevenue != null ? Model.DailyRevenue.Take(7).Select(d => d.TotalRevenue).ToList() : new List<decimal>())),
                         borderColor: 'rgb(75, 192, 192)',
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         tension: 0.1
@@ -174,9 +187,9 @@
             var categoryChart = new Chart(ctx2, {
                 type: 'doughnut',
                 data: {
-                    labels: @Html.Raw(Json.Encode(Model.TopCategories?.Select(c => c.Category))),
+                    labels: @Html.Raw(Json.Encode(Model.CategoryRevenue != null ? Model.CategoryRevenue.Select(c => c.Category).ToList() : new List<string>())),
                     datasets: [{
-                        data: @Html.Raw(Json.Encode(Model.TopCategories?.Select(c => c.Revenue))),
+                        data: @Html.Raw(Json.Encode(Model.CategoryRevenue != null ? Model.CategoryRevenue.Select(c => c.TotalRevenue).ToList() : new List<decimal>())),
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.8)',
                             'rgba(54, 162, 235, 0.8)',

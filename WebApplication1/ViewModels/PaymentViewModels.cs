@@ -89,11 +89,19 @@ namespace WebApplication1.ViewModels
         [Range(2024, 2050, ErrorMessage = "Please select a valid year")]
         public int ExpiryYear { get; set; }
 
+        [Display(Name = "Card Type")]
+        public string CardType { get; set; }
+
+        [Display(Name = "Is Default")]
+        public bool IsDefault { get; set; }
+
         [Display(Name = "Set as Default")]
         public bool SetAsDefault { get; set; }
 
         [Display(Name = "Is Active")]
         public bool IsActive { get; set; }
+
+        public List<CardTypeViewModel> AvailableCardTypes { get; set; }
     }
 
     public class CardTypeViewModel
@@ -106,6 +114,8 @@ namespace WebApplication1.ViewModels
     public class NotificationViewModel
     {
         public int NotificationId { get; set; }
+
+        public int UserId { get; set; }
 
         [Display(Name = "Title")]
         public string Title { get; set; }
@@ -207,5 +217,54 @@ namespace WebApplication1.ViewModels
 
         [Display(Name = "Subscribe to Newsletter")]
         public bool Newsletter { get; set; }
+    }
+
+    public class AdminSavedCardViewModel
+    {
+        public int CardId { get; set; }
+        public string CardHolderName { get; set; }
+        public string CardNumber { get; set; }
+        public int ExpiryMonth { get; set; }
+        public int ExpiryYear { get; set; }
+        public string CardType { get; set; }
+        public bool IsDefault { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public int UserId { get; set; }
+        public string UserName { get; set; }
+        public string UserEmail { get; set; }
+
+        [Display(Name = "Masked Card Number")]
+        public string MaskedCardNumber
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(CardNumber))
+                    return "****";
+                
+                // Show only last 4 digits
+                var cleanNumber = CardNumber.Replace(" ", "").Replace("-", "");
+                if (cleanNumber.Length >= 4)
+                    return $"**** **** **** {cleanNumber.Substring(cleanNumber.Length - 4)}";
+                
+                return "****";
+            }
+        }
+
+        [Display(Name = "Is Expired")]
+        public bool IsExpired
+        {
+            get
+            {
+                var currentDate = DateTime.Now;
+                var cardYear = 2000 + ExpiryYear; // Assuming 2-digit year format
+                return cardYear < currentDate.Year || (cardYear == currentDate.Year && ExpiryMonth < currentDate.Month);
+            }
+        }
+    }
+
+    public class AdminSavedCardsListViewModel
+    {
+        public List<AdminSavedCardViewModel> SavedCards { get; set; }
+        public int TotalCards { get; set; }
     }
 }

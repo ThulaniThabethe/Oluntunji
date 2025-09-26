@@ -1,4 +1,4 @@
-@model WebApplication1.Models.DailyReportViewModel
+@model WebApplication1.ViewModels.DailyRevenueReportViewModel
 @{
     ViewBag.Title = "Daily Revenue Report";
 }
@@ -16,7 +16,7 @@
             </div>
 
             <div class="row mb-4">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card text-white bg-success">
                         <div class="card-body">
                             <h6 class="card-title">Total Revenue</h6>
@@ -25,7 +25,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card text-white bg-info">
                         <div class="card-body">
                             <h6 class="card-title">Average Order Value</h6>
@@ -34,7 +34,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card text-white bg-warning">
                         <div class="card-body">
                             <h6 class="card-title">Books Sold</h6>
@@ -43,18 +43,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card text-white bg-dark">
-                        <div class="card-body">
-                            <h6 class="card-title">Peak Hour</h6>
-                            <h4>@Model.PeakHour</h4>
-                            <small class="text-light">@Model.PeakHourOrders orders</small>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <div class="row">
+            <!-- Charts removed - HourlyData and CategoryData properties not available in DailyRevenueReportViewModel -->
+            <!-- <div class="row">
                 <div class="col-md-8">
                     <div class="card mb-4">
                         <div class="card-header">
@@ -75,33 +67,37 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-12">
                     <div class="card mb-4">
                         <div class="card-header">
-                            <h5 class="mb-0">Top Selling Books</h5>
+                            <h5 class="mb-0">Revenue Data Summary</h5>
                         </div>
                         <div class="card-body">
-                            @if (Model.TopBooks != null && Model.TopBooks.Any())
+                            @if (Model.RevenueData != null && Model.RevenueData.Any())
                             {
                                 <div class="table-responsive">
-                                    <table class="table table-sm">
+                                    <table class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th>Book Title</th>
-                                                <th>Quantity</th>
-                                                <th>Revenue</th>
+                                                <th>Date</th>
+                                                <th>Total Revenue</th>
+                                                <th>Number of Orders</th>
+                                                <th>Books Sold</th>
+                                                <th>Avg Order Value</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach (var book in Model.TopBooks.Take(10))
+                                            @foreach (var revenue in Model.RevenueData)
                                             {
                                                 <tr>
-                                                    <td>@book.BookTitle</td>
-                                                    <td>@book.QuantitySold</td>
-                                                    <td>@book.Revenue.ToString("C")</td>
+                                                    <td>@revenue.Date.ToString("yyyy-MM-dd")</td>
+                                                    <td>@revenue.TotalRevenue.ToString("C")</td>
+                                                    <td>@revenue.NumberOfOrders</td>
+                                                    <td>@revenue.NumberOfBooksSold</td>
+                                                    <td>@revenue.AverageOrderValue.ToString("C")</td>
                                                 </tr>
                                             }
                                         </tbody>
@@ -110,44 +106,7 @@
                             }
                             else
                             {
-                                <p class="text-muted">No book sales data available.</p>
-                            }
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5 class="mb-0">Top Customers</h5>
-                        </div>
-                        <div class="card-body">
-                            @if (Model.TopCustomers != null && Model.TopCustomers.Any())
-                            {
-                                <div class="table-responsive">
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>Customer</th>
-                                                <th>Orders</th>
-                                                <th>Spent</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var customer in Model.TopCustomers.Take(10))
-                                            {
-                                                <tr>
-                                                    <td>@customer.CustomerName</td>
-                                                    <td>@customer.OrderCount</td>
-                                                    <td>@customer.TotalSpent.ToString("C")</td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            }
-                            else
-                            {
-                                <p class="text-muted">No customer data available.</p>
+                                <p class="text-muted">No revenue data available for this date.</p>
                             }
                         </div>
                     </div>
@@ -156,48 +115,28 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">All Orders for @Model.ReportDate.ToString("yyyy-MM-dd")</h5>
+                    <h5 class="mb-0">Revenue Details for @Model.ReportDate.ToString("yyyy-MM-dd")</h5>
                 </div>
                 <div class="card-body">
-                    @if (Model.Orders != null && Model.Orders.Any())
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Order #</th>
-                                        <th>Time</th>
-                                        <th>Customer</th>
-                                        <th>Amount</th>
-                                        <th>Status</th>
-                                        <th>Payment</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var order in Model.Orders)
-                                    {
-                                        <tr>
-                                            <td>@order.OrderNumber</td>
-                                            <td>@order.OrderDate.ToString("HH:mm")</td>
-                                            <td>@order.CustomerName</td>
-                                            <td>@order.TotalAmount.ToString("C")</td>
-                                            <td>
-                                                <span class="badge bg-@(order.Status == "Completed" ? "success" : order.Status == "Pending" ? "warning" : "secondary")">
-                                                    @order.Status
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-@(order.PaymentStatus == "Paid" ? "success" : "warning")">
-                                                    @order.PaymentStatus
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Summary Statistics</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Report Date:</strong> @Model.ReportDate.ToString("yyyy-MM-dd")</li>
+                                <li><strong>Total Revenue:</strong> @Model.TotalRevenue.ToString("C")</li>
+                                <li><strong>Total Orders:</strong> @Model.TotalOrders</li>
+                                <li><strong>Total Books Sold:</strong> @Model.TotalBooksSold</li>
+                                <li><strong>Average Order Value:</strong> @Model.AverageOrderValue.ToString("C")</li>
+                            </ul>
                         </div>
-                    }
-                    else
+                        <div class="col-md-6">
+                            <h6>Data Records</h6>
+                            <p>Found @(Model.RevenueData != null ? Model.RevenueData.Count : 0) revenue records for this date.</p>
+                            <p class="text-muted">
+                                Revenue data is automatically calculated from order information and stored in daily summaries.
+                            </p>
+                        </div>
+                    </div>
                     {
                         <p class="text-muted">No orders found for this date.</p>
                     }
@@ -208,62 +147,5 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Hourly Revenue Chart
-            var ctx = document.getElementById('hourlyChart').getContext('2d');
-            var hourlyChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: @Html.Raw(Json.Encode(Model.HourlyData?.Select(h => h.Hour + ":00"))),
-                    datasets: [{
-                        label: 'Revenue',
-                        data: @Html.Raw(Json.Encode(Model.HourlyData?.Select(h => h.Revenue))),
-                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return '$' + value.toLocaleString();
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Category Breakdown Chart
-            var ctx2 = document.getElementById('categoryChart').getContext('2d');
-            var categoryChart = new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    labels: @Html.Raw(Json.Encode(Model.CategoryData?.Select(c => c.Category))),
-                    datasets: [{
-                        data: @Html.Raw(Json.Encode(Model.CategoryData?.Select(c => c.Revenue))),
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.8)',
-                            'rgba(54, 162, 235, 0.8)',
-                            'rgba(255, 205, 86, 0.8)',
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(153, 102, 255, 0.8)',
-                            'rgba(255, 159, 64, 0.8)'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        });
-    </script>
+    <!-- Chart scripts removed - HourlyData and CategoryData properties not available in DailyRevenueReportViewModel -->
 }

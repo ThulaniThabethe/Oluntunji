@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web.Mvc;
 using WebApplication1.Models;
 using WebApplication1.ViewModels;
+using System.Web.Script.Serialization;
 
 namespace WebApplication1.Controllers
 {
@@ -73,6 +74,7 @@ namespace WebApplication1.Controllers
         }
 
         // GET: Books/Details/5
+        [AllowAnonymous]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -341,6 +343,37 @@ namespace WebApplication1.Controllers
                 Db.SaveChanges();
             }
             return RedirectToAction("Index");
+        }
+
+        // POST: Books/DeleteBook/5 (Alias for MyBooks page)
+        [HttpPost]
+        [Authorize]
+        [AdminOrSeller]
+        public ActionResult DeleteBook(int id)
+        {
+            try
+            {
+                Book book = Db.Books.Find(id);
+                if (book != null)
+                {
+                    // Check if user has permission to delete this book
+                    var currentUser = CurrentUser;
+                    if (currentUser.Role != "Admin" && book.SellerId != currentUser.UserId)
+                    {
+                        return Json(new { success = false, message = "You don't have permission to delete this book." });
+                    }
+
+                    Db.Books.Remove(book);
+                    Db.SaveChanges();
+                    
+                    return Json(new { success = true, message = "Book deleted successfully." });
+                }
+                return Json(new { success = false, message = "Book not found." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error deleting book: " + ex.Message });
+            }
         }
 
         // GET: Books/Manage

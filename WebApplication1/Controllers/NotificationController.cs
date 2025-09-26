@@ -50,11 +50,19 @@ namespace WebApplication1.Controllers
             {
                 EmailNotifications = currentUser.EmailNotifications,
                 SmsNotifications = currentUser.SmsNotifications,
-                PushNotifications = currentUser.PushNotifications
+                PushNotifications = currentUser.PushNotifications,
+                OrderUpdates = currentUser.OrderUpdates,
+                BookAlerts = currentUser.BookAlerts,
+                AccountUpdates = currentUser.AccountUpdates,
+                MarketingEmails = currentUser.MarketingEmails,
+                LowStockAlerts = currentUser.LowStockAlerts,
+                PriceDropAlerts = currentUser.PriceDropAlerts
             };
 
             return View(model);
         }
+
+
 
         // POST: Notification/NotificationSettings
         [HttpPost]
@@ -70,6 +78,12 @@ namespace WebApplication1.Controllers
             currentUser.EmailNotifications = model.EmailNotifications;
             currentUser.SmsNotifications = model.SmsNotifications;
             currentUser.PushNotifications = model.PushNotifications;
+            currentUser.OrderUpdates = model.OrderUpdates;
+            currentUser.BookAlerts = model.BookAlerts;
+            currentUser.AccountUpdates = model.AccountUpdates;
+            currentUser.MarketingEmails = model.MarketingEmails;
+            currentUser.LowStockAlerts = model.LowStockAlerts;
+            currentUser.PriceDropAlerts = model.PriceDropAlerts;
 
             Db.SaveChanges();
 

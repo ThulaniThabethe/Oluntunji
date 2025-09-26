@@ -74,6 +74,24 @@ namespace WebApplication1.Models
         [Display(Name = "Push Notifications")]
         public bool PushNotifications { get; set; } = true;
 
+        [Display(Name = "Order Updates")]
+        public bool OrderUpdates { get; set; } = true;
+
+        [Display(Name = "Book Alerts")]
+        public bool BookAlerts { get; set; } = true;
+
+        [Display(Name = "Account Updates")]
+        public bool AccountUpdates { get; set; } = true;
+
+        [Display(Name = "Marketing Emails")]
+        public bool MarketingEmails { get; set; } = false;
+
+        [Display(Name = "Low Stock Alerts")]
+        public bool LowStockAlerts { get; set; } = true;
+
+        [Display(Name = "Price Drop Alerts")]
+        public bool PriceDropAlerts { get; set; } = true;
+
         // Navigation properties
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Book> Books { get; set; } // For sellers

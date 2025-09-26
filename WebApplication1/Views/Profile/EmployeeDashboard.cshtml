@@ -230,7 +230,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        @if (Model.LowStockBooks.Count > 5)
+                        if (Model.LowStockBooks.Count > 5)
                         {
                             <div class="text-center">
                                 <a href="@Url.Action("Index", "Books")" class="btn btn-sm btn-outline-warning">

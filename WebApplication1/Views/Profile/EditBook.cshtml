@@ -1,0 +1,82 @@
+@model WebApplication1.Models.Book
+
+@{
+    ViewBag.Title = "Edit Book";
+}
+
+<div class="container mt-4">
+    <h2>Edit Book</h2>
+    
+    <form action="/Profile/EditBook" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.BookId)
+        @Html.HiddenFor(model => model.SellerId)
+        @Html.HiddenFor(model => model.CreatedDate)
+        @Html.HiddenFor(model => model.CoverImageUrl)
+
+        <div class="mb-3">
+            @Html.LabelFor(model => model.Title)
+            @Html.TextBoxFor(model => model.Title, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Title)
+        </div>
+
+        <div class="mb-3">
+            @Html.LabelFor(model => model.Author)
+            @Html.TextBoxFor(model => model.Author, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Author)
+        </div>
+
+        <div class="mb-3">
+            @Html.LabelFor(model => model.ISBN)
+            @Html.TextBoxFor(model => model.ISBN, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.ISBN)
+        </div>
+
+        <div class="mb-3">
+            @Html.LabelFor(model => model.Price)
+            @Html.TextBoxFor(model => model.Price, new { @class = "form-control", type = "number", step = "0.01" })
+            @Html.ValidationMessageFor(model => model.Price)
+        </div>
+
+        <div class="mb-3">
+            @Html.LabelFor(model => model.StockQuantity)
+            @Html.TextBoxFor(model => model.StockQuantity, new { @class = "form-control", type = "number" })
+            @Html.ValidationMessageFor(model => model.StockQuantity)
+        </div>
+
+        <div class="mb-3">
+            @Html.LabelFor(model => model.Category)
+            @Html.TextBoxFor(model => model.Category, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Category)
+        </div>
+
+        <div class="mb-3">
+            @Html.LabelFor(model => model.Genre)
+            @Html.TextBoxFor(model => model.Genre, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Genre)
+        </div>
+
+        <div class="mb-3">
+            @Html.LabelFor(model => model.Description)
+            @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "4" })
+            @Html.ValidationMessageFor(model => model.Description)
+        </div>
+
+        <div class="mb-3">
+            <label>Cover Image</label>
+            <input type="file" name="coverImageFile" class="form-control" accept="image/*" />
+        </div>
+
+        <div class="mb-3">
+            <div class="form-check">
+                @Html.CheckBoxFor(model => model.IsAvailable, new { @class = "form-check-input" })
+                @Html.LabelFor(model => model.IsAvailable, new { @class = "form-check-label" })
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Save</button>
+            @Html.ActionLink("Cancel", "MyBooks", null, new { @class = "btn btn-secondary" })
+        </div>
+    </form>
+</div>

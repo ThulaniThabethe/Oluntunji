@@ -1,0 +1,223 @@
+@model WebApplication1.ViewModels.NotificationSettingsViewModel
+@{
+    ViewBag.Title = "Notification Settings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">
+                        <i class="fas fa-bell me-2"></i>Notification Settings
+                    </h3>
+                    <p class="text-muted mb-0">Manage your notification preferences for @User.Identity.Name</p>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <!-- User Summary -->
+                    <div class="alert alert-info mb-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong><i class="fas fa-user me-2"></i>User:</strong> @User.Identity.Name
+                            </div>
+                            <div class="col-md-6">
+                                <strong><i class="fas fa-envelope me-2"></i>Email:</strong> @User.Identity.Name
+                            </div>
+                        </div>
+                    </div>
+
+                    @using (Html.BeginForm("NotificationSettings", "Notification", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+                        <!-- Master Toggle and Summary -->
+                        <div class="mb-4 p-3 bg-light rounded">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="masterToggle">
+                                        <label class="form-check-label fw-bold" for="masterToggle">
+                                            <i class="fas fa-toggle-on me-2"></i>Enable All Notifications
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    <small class="text-muted" id="notificationSummary">Loading...</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5>Email Notifications</h5>
+                            <div class="form-check form-switch mb-2">
+                                @Html.CheckBoxFor(m => m.EmailNotifications, new { @class = "form-check-input" })
+                                @Html.LabelFor(m => m.EmailNotifications, "Receive email notifications", new { @class = "form-check-label" })
+                            </div>
+                            <small class="text-muted">Get notified via email for important updates and activities.</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5>SMS Notifications</h5>
+                            <div class="form-check form-switch mb-2">
+                                @Html.CheckBoxFor(m => m.SmsNotifications, new { @class = "form-check-input" })
+                                @Html.LabelFor(m => m.SmsNotifications, "Receive SMS notifications", new { @class = "form-check-label" })
+                            </div>
+                            <small class="text-muted">Get notified via SMS for urgent updates (standard messaging rates may apply).</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5>Push Notifications</h5>
+                            <div class="form-check form-switch mb-2">
+                                @Html.CheckBoxFor(m => m.PushNotifications, new { @class = "form-check-input" })
+                                @Html.LabelFor(m => m.PushNotifications, "Receive push notifications", new { @class = "form-check-label" })
+                            </div>
+                            <small class="text-muted">Get browser push notifications when you're active on the site.</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5>Order Updates</h5>
+                            <div class="form-check form-switch mb-2">
+                                @Html.CheckBoxFor(m => m.OrderUpdates, new { @class = "form-check-input" })
+                                @Html.LabelFor(m => m.OrderUpdates, "Order status updates", new { @class = "form-check-label" })
+                            </div>
+                            <small class="text-muted">Get notified about order status changes, shipping updates, and delivery confirmations.</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5>Book Alerts</h5>
+                            <div class="form-check form-switch mb-2">
+                                @Html.CheckBoxFor(m => m.BookAlerts, new { @class = "form-check-input" })
+                                @Html.LabelFor(m => m.BookAlerts, "Book availability alerts", new { @class = "form-check-label" })
+                            </div>
+                            <small class="text-muted">Get notified when books you're interested in become available.</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5>Account Updates</h5>
+                            <div class="form-check form-switch mb-2">
+                                @Html.CheckBoxFor(m => m.AccountUpdates, new { @class = "form-check-input" })
+                                @Html.LabelFor(m => m.AccountUpdates, "Account security updates", new { @class = "form-check-label" })
+                            </div>
+                            <small class="text-muted">Get notified about important account security updates and changes.</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5>Marketing Communications</h5>
+                            <div class="form-check form-switch mb-2">
+                                @Html.CheckBoxFor(m => m.MarketingEmails, new { @class = "form-check-input" })
+                                @Html.LabelFor(m => m.MarketingEmails, "Marketing emails", new { @class = "form-check-label" })
+                            </div>
+                            <small class="text-muted">Receive promotional emails about new products, sales, and special offers.</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5>Stock Alerts</h5>
+                            <div class="form-check form-switch mb-2">
+                                @Html.CheckBoxFor(m => m.LowStockAlerts, new { @class = "form-check-input" })
+                                @Html.LabelFor(m => m.LowStockAlerts, "Low stock alerts", new { @class = "form-check-label" })
+                            </div>
+                            <small class="text-muted">Get notified when items you're watching are running low in stock.</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5>Price Alerts</h5>
+                            <div class="form-check form-switch mb-2">
+                                @Html.CheckBoxFor(m => m.PriceDropAlerts, new { @class = "form-check-input" })
+                                @Html.LabelFor(m => m.PriceDropAlerts, "Price drop alerts", new { @class = "form-check-label" })
+                            </div>
+                            <small class="text-muted">Get notified when items you're watching drop in price.</small>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="@Url.Action("Notifications", "Notification")" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Notifications
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Settings
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Add visual feedback for toggle switches
+            $('.form-check-input').change(function() {
+                $(this).closest('.form-check').toggleClass('text-primary', $(this).is(':checked'));
+            });
+
+            // Add save confirmation
+            $('form').submit(function(e) {
+                var submitBtn = $(this).find('button[type="submit"]');
+                var originalText = submitBtn.html();
+                
+                submitBtn.html('<i class="fas fa-spinner fa-spin me-2"></i>Saving...').prop('disabled', true);
+                
+                // Re-enable button after form submission
+                setTimeout(function() {
+                    submitBtn.html(originalText).prop('disabled', false);
+                }, 2000);
+            });
+
+            // Add master toggle functionality
+            $('#masterToggle').change(function() {
+                var isChecked = $(this).is(':checked');
+                $('.form-check-input:not(#masterToggle)').prop('checked', isChecked).trigger('change');
+            });
+
+            // Show/hide notification count based on settings
+            $('.form-check-input').change(function() {
+                updateNotificationSummary();
+            });
+
+            function updateNotificationSummary() {
+                var enabledCount = $('.form-check-input:checked:not(#masterToggle)').length;
+                var totalCount = $('.form-check-input:not(#masterToggle)').length;
+                
+                $('#notificationSummary').text(enabledCount + ' of ' + totalCount + ' notification types enabled');
+            }
+
+            // Initialize summary
+            updateNotificationSummary();
+        });
+    </script>
+}
+
+<style>
+    .form-switch .form-check-input:checked {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    
+    .form-switch .form-check-input:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        border-radius: 0.5rem;
+    }
+    
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        border-radius: 0.5rem 0.5rem 0 0 !important;
+    }
+</style>

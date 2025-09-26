@@ -1,4 +1,4 @@
-@model WebApplication1.Models.RevenueReportsViewModel
+@model WebApplication1.ViewModels.RevenueReportViewModel
 @{
     ViewBag.Title = "Revenue Reports";
 }
@@ -79,42 +79,49 @@
                 </div>
             </div>
 
-            @if (Model != null && Model.RecentReports != null && Model.RecentReports.Any())
+            @if (Model != null && Model.IsGenerated && Model.ReportData != null && Model.ReportData.Any())
             {
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Recent Reports</h5>
+                        <h5 class="mb-0">Generated Report</h5>
                     </div>
                     <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <strong>Period:</strong> @Model.StartDate.ToString("yyyy-MM-dd") to @Model.EndDate.ToString("yyyy-MM-dd")
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Total Revenue:</strong> @Model.TotalRevenue.ToString("C")
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Total Orders:</strong> @Model.TotalOrders
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Total Books Sold:</strong> @Model.TotalBooksSold
+                            </div>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Generated Date</th>
-                                        <th>Report Type</th>
-                                        <th>Period</th>
-                                        <th>Total Revenue</th>
+                                        <th>Date</th>
+                                        <th>Period Type</th>
+                                        <th>Revenue</th>
                                         <th>Orders</th>
-                                        <th>Actions</th>
+                                        <th>Books Sold</th>
+                                        <th>Avg Order Value</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var report in Model.RecentReports)
+                                    @foreach (var item in Model.ReportData)
                                     {
                                         <tr>
-                                            <td>@report.GeneratedDate.ToString("yyyy-MM-dd HH:mm")</td>
-                                            <td>
-                                                <span class="badge bg-primary">@report.ReportType</span>
-                                            </td>
-                                            <td>@report.PeriodStart.ToString("yyyy-MM-dd") to @report.PeriodEnd.ToString("yyyy-MM-dd")</td>
-                                            <td>@report.TotalRevenue.ToString("C")</td>
-                                            <td>@report.NumberOfOrders</td>
-                                            <td>
-                                                <div class="btn-group btn-group-sm">
-                                                    @Html.ActionLink("View", "ViewReport", new { id = report.Id }, new { @class = "btn btn-outline-primary btn-sm" })
-                                                    @Html.ActionLink("Download", "DownloadReport", new { id = report.Id }, new { @class = "btn btn-outline-success btn-sm" })
-                                                </div>
-                                            </td>
+                                            <td>@item.Date.ToString("yyyy-MM-dd")</td>
+                                            <td>@item.PeriodType</td>
+                                            <td>@item.TotalRevenue.ToString("C")</td>
+                                            <td>@item.NumberOfOrders</td>
+                                            <td>@item.NumberOfBooksSold</td>
+                                            <td>@item.AverageOrderValue.ToString("C")</td>
                                         </tr>
                                     }
                                 </tbody>

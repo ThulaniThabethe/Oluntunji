@@ -374,9 +374,15 @@ namespace WebApplication1.Services
             double avgDeliveryTime = 0;
             if (deliveredOrders.Any())
             {
-                avgDeliveryTime = deliveredOrders
+                var validDeliveryOrders = deliveredOrders
                     .Where(o => o.ShippedDate.HasValue && o.DeliveredDate.HasValue)
-                    .Average(o => (o.DeliveredDate.Value - o.ShippedDate.Value).TotalDays);
+                    .ToList();
+                
+                if (validDeliveryOrders.Any())
+                {
+                    avgDeliveryTime = validDeliveryOrders
+                        .Average(o => (o.DeliveredDate.Value - o.ShippedDate.Value).TotalDays);
+                }
             }
 
             return new DeliveryStatisticsViewModel
@@ -386,7 +392,7 @@ namespace WebApplication1.Services
                 InTransit = shippedOrders.Count,
                 Delivered = deliveredOrders.Count,
                 FailedDeliveries = 0, // Could be implemented later
-                TotalDeliveryRevenue = deliveredOrders.Sum(o => o.TotalAmount),
+                TotalDeliveryRevenue = deliveredOrders.Any() ? deliveredOrders.Sum(o => o.TotalAmount) : 0,
                 AverageDeliveryTime = avgDeliveryTime
             };
         }

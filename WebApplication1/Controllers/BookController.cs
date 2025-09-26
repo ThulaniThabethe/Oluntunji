@@ -193,6 +193,78 @@ namespace WebApplication1.Controllers
             return View(book);
         }
 
+        // GET: Book/WriteReview/5
+        [Authorize]
+        public ActionResult WriteReview(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
+            }
+
+            var book = Db.Books.Find(id);
+            if (book == null)
+            {
+                return HttpNotFound();
+            }
+
+            // Check if user has already reviewed this book
+            var currentUserId = GetCurrentUserId();
+            var existingReview = Db.Reviews.FirstOrDefault(r => r.BookId == id && r.CustomerId == currentUserId);
+            
+            if (existingReview != null)
+            {
+                TempData["Error"] = "You have already reviewed this book.";
+                return RedirectToAction("Details", new { id = id });
+            }
+
+            ViewBag.BookId = id;
+            ViewBag.BookTitle = book.Title;
+            return View();
+        }
+
+        // POST: Book/WriteReview/5
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult WriteReview(int id, FormCollection form)
+        {
+            try
+            {
+                int rating = int.Parse(form["Rating"]);
+                string reviewText = form["ReviewText"];
+
+                var review = new Review
+                {
+                    BookId = id,
+                    CustomerId = GetCurrentUserId(),
+                    Rating = rating,
+                    ReviewText = reviewText,
+                    ReviewDate = DateTime.Now,
+                    IsApproved = false // Reviews need approval by default
+                };
+
+                Db.Reviews.Add(review);
+                Db.SaveChanges();
+
+                TempData["Success"] = "Your review has been submitted and will be reviewed by the seller.";
+                return RedirectToAction("Details", new { id = id });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error submitting review: " + ex.Message;
+                return RedirectToAction("Details", new { id = id });
+            }
+        }
+
+        private int GetCurrentUserId()
+        {
+            // Get the current user's ID from the authentication system
+            var username = User.Identity.Name;
+            var user = Db.Users.FirstOrDefault(u => u.Username == username);
+            return user?.UserId ?? 0;
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

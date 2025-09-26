@@ -1,0 +1,330 @@
+@model WebApplication1.Models.Order
+
+@{
+    ViewBag.Title = "Order Details - #" + Model.OrderNumber;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>@ViewBag.Title</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Profile")">Profile</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("OrderHistory", "Profile")">Order History</a></li>
+                    <li class="breadcrumb-item active">Order #@Model.OrderNumber</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Order Items -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Order Items (@Model.OrderItems.Count)</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                    <tr>
+                                        <td class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <img src="@(string.IsNullOrEmpty(item.Book.CoverImageUrl) ? "https://via.placeholder.com/60x80?text=Book" : item.Book.CoverImageUrl)" 
+                                                     alt="@item.Book.Title" class="img-thumbnail me-3" style="width: 60px; height: 80px; object-fit: cover;">
+                                                <div>
+                                                    <h6 class="mb-1">@item.Book.Title</h6>
+                                                    <small class="text-muted">by @item.Book.Author</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="fw-bold">R @item.UnitPrice.ToString("F2")</div>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <span class="badge bg-secondary">@item.Quantity</span>
+                                        </td>
+                                        <td class="align-middle text-end">
+                                            <div class="fw-bold">R @item.Subtotal.ToString("F2")</div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Notes -->
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Order Notes</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0">@Model.Notes</p>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Order Summary -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span class="fw-bold">R @Model.OrderItems.Sum(i => i.Subtotal).ToString("F2")</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Shipping:</span>
+                        <span class="text-success">Free</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tax (15% VAT):</span>
+                        <span class="fw-bold">R @((Model.TotalAmount * 0.15m / 1.15m).ToString("F2"))</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <h6 class="mb-0">Total Paid:</h6>
+                        <h6 class="mb-0 text-primary">R @Model.TotalAmount.ToString("F2")</h6>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Order Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Order Date:</strong>
+                        <div>@Model.OrderDate.ToString("MMM dd, yyyy HH:mm")</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Order Status:</strong>
+                        @{
+                            string statusClass = "";
+                            switch (Model.OrderStatus)
+                            {
+                                case "Pending":
+                                    statusClass = "bg-warning";
+                                    break;
+                                case "Processing":
+                                    statusClass = "bg-info";
+                                    break;
+                                case "Shipped":
+                                    statusClass = "bg-primary";
+                                    break;
+                                case "Delivered":
+                                    statusClass = "bg-success";
+                                    break;
+                                case "Cancelled":
+                                    statusClass = "bg-danger";
+                                    break;
+                                default:
+                                    statusClass = "bg-secondary";
+                                    break;
+                            }
+                        }
+                        <span class="badge @statusClass">@Model.OrderStatus</span>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.TrackingNumber))
+                    {
+                        <div class="mb-3">
+                            <strong>Tracking Number:</strong>
+                            <div>@Model.TrackingNumber</div>
+                        </div>
+                    }
+
+                    @if (Model.ShippedDate.HasValue)
+                    {
+                        <div class="mb-3">
+                            <strong>Shipped Date:</strong>
+                            <div>@Model.ShippedDate.Value.ToString("MMM dd, yyyy")</div>
+                        </div>
+                    }
+
+                    @if (Model.DeliveredDate.HasValue)
+                    {
+                        <div class="mb-3">
+                            <strong>Delivered Date:</strong>
+                            <div>@Model.DeliveredDate.Value.ToString("MMM dd, yyyy")</div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Payment Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Payment Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Payment Method:</strong>
+                        <div>@Model.PaymentMethod</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Payment Status:</strong>
+                        @{
+                            string paymentStatusClass = "";
+                            switch (Model.PaymentStatus)
+                            {
+                                case "Paid":
+                                    paymentStatusClass = "bg-success";
+                                    break;
+                                case "Pending":
+                                    paymentStatusClass = "bg-warning";
+                                    break;
+                                case "Failed":
+                                    paymentStatusClass = "bg-danger";
+                                    break;
+                                case "Refunded":
+                                    paymentStatusClass = "bg-info";
+                                    break;
+                                default:
+                                    paymentStatusClass = "bg-secondary";
+                                    break;
+                            }
+                        }
+                        <span class="badge @paymentStatusClass">@Model.PaymentStatus</span>
+                    </div>
+
+                    @if (Model.PaymentDate.HasValue)
+                    {
+                        <div class="mb-3">
+                            <strong>Payment Date:</strong>
+                            <div>@Model.PaymentDate.Value.ToString("MMM dd, yyyy HH:mm")</div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Shipping Address -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Shipping Address</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <strong>@Model.Customer.FirstName @Model.Customer.LastName</strong>
+                    </div>
+                    <div class="mb-2">@Model.ShippingAddress</div>
+                    <div class="mb-2">@Model.ShippingCity</div>
+                    <div class="mb-2">@Model.ShippingProvince @Model.ShippingPostalCode</div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="d-grid gap-2">
+                @if (Model.OrderStatus == "Pending")
+                {
+                    <button type="button" class="btn btn-danger" onclick="cancelOrder(@Model.OrderId)">
+                        <i class="fas fa-times me-2"></i>Cancel Order
+                    </button>
+                }
+                
+                <button type="button" class="btn btn-outline-primary" onclick="reorder(@Model.OrderId)">
+                    <i class="fas fa-redo me-2"></i>Reorder Items
+                </button>
+                
+                <a href="@Url.Action("OrderHistory", "Profile")" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Order History
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function cancelOrder(orderId) {
+            if (confirm('Are you sure you want to cancel this order?')) {
+                $.ajax({
+                    url: '@Url.Action("CancelOrder", "Order")',
+                    type: 'POST',
+                    data: { 
+                        orderId: orderId,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(result) {
+                        if (result.success) {
+                            alert(result.message);
+                            location.reload();
+                        } else {
+                            alert('Error: ' + result.message);
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while cancelling the order.');
+                    }
+                });
+            }
+        }
+
+        function reorder(orderId) {
+            if (confirm('Add all items from this order to your cart?')) {
+                $.ajax({
+                    url: '@Url.Action("Reorder", "Order")',
+                    type: 'POST',
+                    data: { 
+                        orderId: orderId,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(result) {
+                        if (result.success) {
+                            alert(result.message);
+                            if (result.redirectUrl) {
+                                window.location.href = result.redirectUrl;
+                            }
+                        } else {
+                            alert('Error: ' + result.message);
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while reordering items.');
+                    }
+                });
+            }
+        }
+    </script>
+}

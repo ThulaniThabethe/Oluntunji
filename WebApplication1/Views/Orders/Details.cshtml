@@ -1,0 +1,135 @@
+@model WebApplication1.Models.Order
+
+@{
+    ViewBag.Title = "Order Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>Order Details</h2>
+            <hr />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Order Information</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Order Number:</dt>
+                        <dd class="col-sm-8">@Model.OrderNumber</dd>
+                        
+                        <dt class="col-sm-4">Order Date:</dt>
+                        <dd class="col-sm-8">@Model.OrderDate.ToString("yyyy-MM-dd")</dd>
+                        
+                        <dt class="col-sm-4">Total Amount:</dt>
+                        <dd class="col-sm-8">R @Model.TotalAmount.ToString("F2")</dd>
+                        
+                        <dt class="col-sm-4">Order Status:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-primary">@Model.OrderStatus</span>
+                        </dd>
+                        
+                        <dt class="col-sm-4">Payment Status:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-success">@Model.PaymentStatus</span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Customer Information</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Customer != null)
+                    {
+                        <dl class="row">
+                            <dt class="col-sm-4">Name:</dt>
+                            <dd class="col-sm-8">@Model.Customer.FullName</dd>
+                            
+                            <dt class="col-sm-4">Email:</dt>
+                            <dd class="col-sm-8">@Model.Customer.Email</dd>
+                        </dl>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Customer information not available</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Order Items</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.OrderItems != null && Model.OrderItems.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Book Title</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.OrderItems)
+                                    {
+                                        <tr>
+                                            <td>@(item.Book != null ? item.Book.Title : "Unknown Book")</td>
+                                            <td>@item.Quantity</td>
+                                            <td>R @item.UnitPrice.ToString("F2")</td>
+                                            <td>R @item.Subtotal.ToString("F2")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th colspan="3" class="text-end">Total:</th>
+                                        <th>R @Model.TotalAmount.ToString("F2")</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No order items found</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="@Url.Action("Index", "Orders")" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Orders
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Add any client-side logic here if needed
+        });
+    </script>
+}

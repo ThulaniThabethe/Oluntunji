@@ -1,0 +1,134 @@
+@model WebApplication1.ViewModels.AdminSavedCardsListViewModel
+
+@{
+    ViewBag.Title = "All Saved Cards - Admin";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>@ViewBag.Title</h2>
+            <p class="text-muted">View all saved payment cards across all users</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Total Cards: <span class="badge badge-primary">@Model.TotalCards</span></h5>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <a href="@Url.Action("Index", "Payment")" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-arrow-left"></i> Back to Payment Options
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    @if (Model.SavedCards == null || !Model.SavedCards.Any())
+                    {
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> No saved cards found in the system.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Card ID</th>
+                                        <th>User</th>
+                                        <th>Card Holder</th>
+                                        <th>Card Number</th>
+                                        <th>Card Type</th>
+                                        <th>Expiry</th>
+                                        <th>Status</th>
+                                        <th>Created Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var card in Model.SavedCards)
+                                    {
+                                        <tr>
+                                            <td>@card.CardId</td>
+                                            <td>
+                                                <div>
+                                                    <strong>@card.UserName</strong>
+                                                    <br /><small class="text-muted">@card.UserEmail</small>
+                                                </div>
+                                            </td>
+                                            <td>@card.CardHolderName</td>
+                                            <td>
+                                                <span class="font-monospace">@card.MaskedCardNumber</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-secondary">@card.CardType</span>
+                                            </td>
+                                            <td>
+                                                <span class="@(card.IsExpired ? "text-danger" : "text-success")">
+                                                    @card.ExpiryMonth/@card.ExpiryYear.ToString("D2")
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if (card.IsExpired)
+                                                {
+                                                    <span class="badge badge-danger">Expired</span>
+                                                }
+                                                else if (card.IsDefault)
+                                                {
+                                                    <span class="badge badge-success">Default</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-light">Active</span>
+                                                }
+                                            </td>
+                                            <td>@card.CreatedDate.ToString("yyyy-MM-dd")</td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a href="@Url.Action("EditCard", "Payment", new { id = card.CardId })" class="btn btn-outline-primary" title="Edit Card">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-outline-danger" onclick="deleteCard(@card.CardId, '@card.MaskedCardNumber')" title="Delete Card">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function deleteCard(cardId, maskedNumber) {
+            if (confirm('Are you sure you want to delete the card ending in ' + maskedNumber.substring(maskedNumber.length - 4) + '?')) {
+                $.ajax({
+                    url: '@Url.Action("DeleteCard", "Payment")',
+                    type: 'POST',
+                    data: { id: cardId },
+                    success: function(result) {
+                        if (result.success) {
+                            alert('Card deleted successfully');
+                            location.reload();
+                        } else {
+                            alert('Error: ' + result.message);
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while deleting the card');
+                    }
+                });
+            }
+        }
+    </script>
+}

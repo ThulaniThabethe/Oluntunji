@@ -218,10 +218,10 @@ namespace WebApplication1.ViewModels
         public decimal TotalAmount { get; set; }
 
         [Display(Name = "Order Status")]
-        public OrderStatus OrderStatus { get; set; }
+        public string OrderStatus { get; set; }
 
         [Display(Name = "Payment Status")]
-        public PaymentStatus PaymentStatus { get; set; }
+        public string PaymentStatus { get; set; }
 
         [Display(Name = "Number of Items")]
         public int ItemCount { get; set; }

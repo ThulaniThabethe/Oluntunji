@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Books - Seller Dashboard Preview</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .btn-group-vertical .btn {
+            border-radius: 0.375rem !important;
+            margin-bottom: 0.25rem;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+            transition: background-color 0.2s ease;
+        }
+
+        .card.border-start {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card.border-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid mt-4">
+        <!-- Header Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="mb-1">
+                            <i class="fas fa-book-open text-primary"></i>
+                            My Book Listings
+                        </h2>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a href="#" class="text-decoration-none">Home</a></li>
+                                <li class="breadcrumb-item"><a href="#" class="text-decoration-none">Seller Dashboard</a></li>
+                                <li class="breadcrumb-item active">My Books</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div>
+                        <a href="#" class="btn btn-success btn-lg">
+                            <i class="fas fa-plus-circle"></i>
+                            Add New Book
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Dashboard -->
+        <div class="row mb-4">
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card border-start border-primary border-4 h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title text-muted mb-1">Total Books</h5>
+                                <h3 class="mb-0 text-primary">24</h3>
+                                <small class="text-muted">Active listings</small>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                                    <i class="fas fa-book fs-2 text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card border-start border-success border-4 h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title text-muted mb-1">In Stock</h5>
+                                <h3 class="mb-0 text-success">18</h3>
+                                <small class="text-muted">Ready to sell</small>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                                    <i class="fas fa-check-circle fs-2 text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card border-start border-warning border-4 h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title text-muted mb-1">Low Stock</h5>
+                                <h3 class="mb-0 text-warning">4</h3>
+                                <small class="text-muted">Need restocking</small>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                                    <i class="fas fa-exclamation-triangle fs-2 text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card border-start border-danger border-4 h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title text-muted mb-1">Out of Stock</h5>
+                                <h3 class="mb-0 text-danger">2</h3>
+                                <small class="text-muted">Unavailable</small>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <div class="bg-danger bg-opacity-10 rounded-3 p-3">
+                                    <i class="fas fa-times-circle fs-2 text-danger"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filter Controls -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <form class="row g-3">
+                            <div class="col-lg-4 col-md-6">
+                                <label for="search" class="form-label fw-semibold">Search Books</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                    <input type="text" class="form-control" id="search" placeholder="Search by title, author, or ISBN...">
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <label for="status" class="form-label fw-semibold">Stock Status</label>
+                                <select class="form-select" id="status">
+                                    <option value="">All Status</option>
+                                    <option value="instock">In Stock</option>
+                                    <option value="lowstock">Low Stock</option>
+                                    <option value="outofstock">Out of Stock</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <label for="sort" class="form-label fw-semibold">Sort By</label>
+                                <select class="form-select" id="sort">
+                                    <option value="title">Title (A-Z)</option>
+                                    <option value="author">Author</option>
+                                    <option value="stock">Stock Level</option>
+                                    <option value="price">Price</option>
+                                    <option value="date">Date Added</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-md-6 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-filter"></i> Apply Filters
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Books Management Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-list"></i>
+                                    Book Listings (3 books)
+                                </h5>
+                            </div>
+                            <div class="col-auto">
+                                <small class="text-muted">Page 1 of 1</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="booksTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th width="60">Cover</th>
+                                        <th>Book Details</th>
+                                        <th>Price</th>
+                                        <th>Stock</th>
+                                        <th>Status</th>
+                                        <th>Added</th>
+                                        <th width="150">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="bg-secondary bg-opacity-25 text-secondary d-flex align-items-center justify-content-center rounded" style="width: 50px; height: 70px;">
+                                                <i class="fas fa-book fs-4"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <strong class="mb-1">The Great Gatsby</strong>
+                                                <small class="text-muted mb-1">
+                                                    <i class="fas fa-user-edit"></i> F. Scott Fitzgerald
+                                                </small>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-barcode"></i> ISBN: 978-0-7432-7356-5
+                                                </small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <strong class="text-success fs-5">R 89.99</strong>
+                                                <small class="text-muted">Selling Price</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <span class="badge bg-success fs-6 mb-1">25</span>
+                                                <small class="text-muted">units</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-circle me-1"></i>
+                                                In Stock
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">
+                                                Jan 15, 2024
+                                            </small>
+                                            <br>
+                                            <small class="text-muted">
+                                                14:30
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group-vertical w-100" role="group">
+                                                <a href="#" class="btn btn-outline-primary btn-sm mb-1" title="View Book Details">
+                                                    <i class="fas fa-eye"></i>
+                                                    View
+                                                </a>
+                                                <a href="#" class="btn btn-outline-warning btn-sm mb-1" title="Edit Book">
+                                                    <i class="fas fa-edit"></i>
+                                                    Edit
+                                                </a>
+                                                <button type="button" class="btn btn-outline-danger btn-sm" title="Delete Book">
+                                                    <i class="fas fa-trash"></i>
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="bg-secondary bg-opacity-25 text-secondary d-flex align-items-center justify-content-center rounded" style="width: 50px; height: 70px;">
+                                                <i class="fas fa-book fs-4"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <strong class="mb-1">To Kill a Mockingbird</strong>
+                                                <small class="text-muted mb-1">
+                                                    <i class="fas fa-user-edit"></i> Harper Lee
+                                                </small>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-barcode"></i> ISBN: 978-0-06-112008-4
+                                                </small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <strong class="text-success fs-5">R 95.50</strong>
+                                                <small class="text-muted">Selling Price</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <span class="badge bg-warning fs-6 mb-1 pulse-animation">7</span>
+                                                <small class="text-muted">units</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-warning pulse-animation">
+                                                <i class="fas fa-circle me-1"></i>
+                                                Low Stock
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">
+                                                Feb 20, 2024
+                                            </small>
+                                            <br>
+                                            <small class="text-muted">
+                                                09:15
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group-vertical w-100" role="group">
+                                                <a href="#" class="btn btn-outline-primary btn-sm mb-1" title="View Book Details">
+                                                    <i class="fas fa-eye"></i>
+                                                    View
+                                                </a>
+                                                <a href="#" class="btn btn-outline-warning btn-sm mb-1" title="Edit Book">
+                                                    <i class="fas fa-edit"></i>
+                                                    Edit
+                                                </a>
+                                                <button type="button" class="btn btn-outline-danger btn-sm" title="Delete Book">
+                                                    <i class="fas fa-trash"></i>
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="bg-secondary bg-opacity-25 text-secondary d-flex align-items-center justify-content-center rounded" style="width: 50px; height: 70px;">
+                                                <i class="fas fa-book fs-4"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <strong class="mb-1">1984</strong>
+                                                <small class="text-muted mb-1">
+                                                    <i class="fas fa-user-edit"></i> George Orwell
+                                                </small>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-barcode"></i> ISBN: 978-0-452-28423-4
+                                                </small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <strong class="text-success fs-5">R 102.75</strong>
+                                                <small class="text-muted">Selling Price</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <span class="badge bg-danger fs-6 mb-1">0</span>
+                                                <small class="text-muted">units</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-circle me-1"></i>
+                                                Out of Stock
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">
+                                                Mar 10, 2024
+                                            </small>
+                                            <br>
+                                            <small class="text-muted">
+                                                16:45
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group-vertical w-100" role="group">
+                                                <a href="#" class="btn btn-outline-primary btn-sm mb-1" title="View Book Details">
+                                                    <i class="fas fa-eye"></i>
+                                                    View
+                                                </a>
+                                                <a href="#" class="btn btn-outline-warning btn-sm mb-1" title="Edit Book">
+                                                    <i class="fas fa-edit"></i>
+                                                    Edit
+                                                </a>
+                                                <button type="button" class="btn btn-outline-danger btn-sm" title="Delete Book">
+                                                    <i class="fas fa-trash"></i>
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add hover effects
+        $('.btn-group-vertical .btn').hover(
+            function() {
+                $(this).addClass('shadow-sm');
+            },
+            function() {
+                $(this).removeClass('shadow-sm');
+            }
+        );
+
+        // Add stock level indicator animation
+        function animateStockBadges() {
+            $('.badge').each(function() {
+                var badge = $(this);
+                if (badge.hasClass('bg-warning') || badge.hasClass('bg-danger')) {
+                    badge.addClass('pulse-animation');
+                }
+            });
+        }
+
+        // Call the animation after page load
+        setTimeout(animateStockBadges, 1000);
+    </script>
+</body>
+</html>

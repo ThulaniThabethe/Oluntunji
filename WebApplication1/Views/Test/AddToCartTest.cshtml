@@ -1,0 +1,59 @@
+@{
+    ViewBag.Title = "Add to Cart Test";
+}
+
+<h2>Add to Cart Test</h2>
+
+<div class="alert alert-info">
+    <p>This is a test page to verify the Add to Cart functionality.</p>
+    <p>Current authentication status: @(User.Identity.IsAuthenticated ? "Authenticated as " + User.Identity.Name : "Not authenticated")</p>
+</div>
+
+@if (!User.Identity.IsAuthenticated)
+{
+    <div class="alert alert-warning">
+        <p>You are not authenticated. The Add to Cart button should redirect you to the login page.</p>
+    </div>
+}
+
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">Test Book</h5>
+        <p class="card-text">Book ID: 2</p>
+        
+        @using (Html.BeginForm("AddToCart", "Cart", FormMethod.Post, new { @class = "d-inline" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("bookId", 2)
+            @Html.Hidden("quantity", 1)
+            
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-cart-plus me-2"></i>Add to Cart
+            </button>
+        }
+        
+        <a href="/Books/Details/2" class="btn btn-outline-secondary ms-2">
+            <i class="fas fa-info-circle me-2"></i>View Details
+        </a>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a href="/Books" class="btn btn-outline-primary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Books
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success mt-3">
+        <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger mt-3">
+        <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+    </div>
+}

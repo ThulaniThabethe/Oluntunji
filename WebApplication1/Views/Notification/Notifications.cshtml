@@ -106,7 +106,7 @@
             <div class="tab-content" id="notificationTabContent">
                 <!-- All Notifications -->
                 <div class="tab-pane fade show active" id="all" role="tabpanel">
-                    @if (Model.Notifications?.Any() == true)
+                    @if (Model.Notifications != null && Model.Notifications.Any())
                     {
                         <div class="list-group">
                             @foreach (var notification in Model.Notifications)
@@ -168,9 +168,9 @@
                 <!-- Unread Notifications -->
                 <div class="tab-pane fade" id="unread" role="tabpanel">
                     @{
-                        var unreadNotifications = Model.Notifications?.Where(n => !n.IsRead).ToList();
+                        var unreadNotifications = Model.Notifications != null ? Model.Notifications.Where(n => !n.IsRead).ToList() : new List<WebApplication1.ViewModels.NotificationViewModel>();
                     }
-                    @if (unreadNotifications?.Any() == true)
+                    @if (unreadNotifications != null && unreadNotifications.Any())
                     {
                         <div class="list-group">
                             @foreach (var notification in unreadNotifications)
@@ -229,9 +229,9 @@
                 <!-- High Priority Notifications -->
                 <div class="tab-pane fade" id="high-priority" role="tabpanel">
                     @{
-                        var highPriorityNotifications = Model.Notifications?.Where(n => !string.IsNullOrEmpty(n.Priority) && n.Priority.ToLower() == "high").ToList();
+                        var highPriorityNotifications = Model.Notifications != null ? Model.Notifications.Where(n => !string.IsNullOrEmpty(n.Priority) && n.Priority.ToLower() == "high").ToList() : new List<WebApplication1.ViewModels.NotificationViewModel>();
                     }
-                    @if (highPriorityNotifications?.Any() == true)
+                    @if (highPriorityNotifications != null && highPriorityNotifications.Any())
                     {
                         <div class="list-group">
                             @foreach (var notification in highPriorityNotifications)
@@ -294,18 +294,30 @@
 @functions {
     string GetNotificationIcon(string type)
     {
-        return type?.ToLower() switch
+        if (string.IsNullOrEmpty(type))
+            return "fa-bell";
+            
+        switch (type.ToLower())
         {
-            "order" => "fa-shopping-cart",
-            "account" => "fa-user",
-            "system" => "fa-cog",
-            "book" => "fa-book",
-            "payment" => "fa-credit-card",
-            "shipping" => "fa-shipping-fast",
-            "promotion" => "fa-tag",
-            "security" => "fa-shield-alt",
-            _ => "fa-bell"
-        };
+            case "order":
+                return "fa-shopping-cart";
+            case "account":
+                return "fa-user";
+            case "system":
+                return "fa-cog";
+            case "book":
+                return "fa-book";
+            case "payment":
+                return "fa-credit-card";
+            case "shipping":
+                return "fa-shipping-fast";
+            case "promotion":
+                return "fa-tag";
+            case "security":
+                return "fa-shield-alt";
+            default:
+                return "fa-bell";
+        }
     }
 
     string GetTimeAgo(DateTime date)
@@ -313,15 +325,15 @@
         var timeSpan = DateTime.Now - date;
         
         if (timeSpan.TotalDays > 30)
-            return $"{timeSpan.Days / 30} month{(timeSpan.Days / 30 > 1 ? "s" : "")} ago";
+            return string.Format("{0} month{1} ago", timeSpan.Days / 30, (timeSpan.Days / 30 > 1 ? "s" : ""));
         if (timeSpan.TotalDays > 7)
-            return $"{timeSpan.Days / 7} week{(timeSpan.Days / 7 > 1 ? "s" : "")} ago";
+            return string.Format("{0} week{1} ago", timeSpan.Days / 7, (timeSpan.Days / 7 > 1 ? "s" : ""));
         if (timeSpan.TotalDays > 1)
-            return $"{timeSpan.Days} day{(timeSpan.Days > 1 ? "s" : "")} ago";
+            return string.Format("{0} day{1} ago", timeSpan.Days, (timeSpan.Days > 1 ? "s" : ""));
         if (timeSpan.TotalHours > 1)
-            return $"{timeSpan.Hours} hour{(timeSpan.Hours > 1 ? "s" : "")} ago";
+            return string.Format("{0} hour{1} ago", timeSpan.Hours, (timeSpan.Hours > 1 ? "s" : ""));
         if (timeSpan.TotalMinutes > 1)
-            return $"{timeSpan.Minutes} minute{(timeSpan.Minutes > 1 ? "s" : "")} ago";
+            return string.Format("{0} minute{1} ago", timeSpan.Minutes, (timeSpan.Minutes > 1 ? "s" : ""));
         
         return "Just now";
     }
@@ -393,7 +405,7 @@
         animation: fadeIn 0.5s ease-in;
     }
 
-    @keyframes fadeIn {
+    @@keyframes fadeIn {
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
     }

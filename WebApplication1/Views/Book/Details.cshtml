@@ -44,19 +44,26 @@
                 <div class="col-md-6">
                     <p><strong>Publisher:</strong> @Model.Publisher</p>
                     <p><strong>ISBN:</strong> @Model.ISBN</p>
-                    <p><strong>Publication Year:</strong> @(Model.PublicationYear?.ToString() ?? "N/A")</p>
+                    <p><strong>Publication Year:</strong> @(Model.PublicationYear != null ? Model.PublicationYear.ToString() : "N/A")</p>
                 </div>
                 <div class="col-md-6">
                     <p><strong>Category:</strong> @(Model.Category ?? "N/A")</p>
                     <p><strong>Genre:</strong> @(Model.Genre ?? "N/A")</p>
-                    <p><strong>Seller:</strong> @(Model.Seller?.FullName ?? "Unknown")</p>
+                    <p><strong>Seller:</strong> @(Model.Seller != null ? Model.Seller.FullName : "Unknown")</p>
                 </div>
             </div>
 
             <div class="mb-3">
                 @if (Model.IsAvailable && Model.StockQuantity > 0)
                 {
-                    @Html.ActionLink("Add to Cart", "AddToCart", "Cart", new { id = Model.BookId }, new { @class = "btn btn-primary btn-lg" })
+                    <form action="/Cart/AddToCart" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="bookId" value="@Model.BookId" />
+                        <input type="hidden" name="quantity" value="1" />
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </form>
                 }
                 else
                 {
@@ -74,6 +81,8 @@
         </div>
     </div>
 </div>
+
+
 
 <!-- Reviews Section -->
 <div class="container mt-5">

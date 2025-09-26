@@ -56,7 +56,14 @@
             <div class="mb-3">
                 @if (Model.IsAvailable && Model.StockQuantity > 0)
                 {
-                    @Html.ActionLink("Add to Cart", "AddToCart", "Cart", new { id = Model.BookId }, new { @class = "btn btn-primary btn-lg" })
+                    <form action="/Cart/AddToCart" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="bookId" value="@Model.BookId" />
+                        <input type="hidden" name="quantity" value="1" />
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </form>
                 }
                 else
                 {

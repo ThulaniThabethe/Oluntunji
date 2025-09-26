@@ -1,4 +1,4 @@
-@model WebApplication1.Models.CategoryReportViewModel
+@model WebApplication1.ViewModels.CategoryReportViewModel
 @{
     ViewBag.Title = "Category Performance Report";
 }
@@ -88,40 +88,25 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var category in Model.CategoryData.OrderByDescending(c => c.Revenue))
+                                    @foreach (var category in Model.CategoryData.OrderByDescending(c => c.TotalRevenue))
                                     {
                                         <tr>
                                             <td>
-                                                <strong>@category.CategoryName</strong>
+                                                <strong>@category.Category</strong>
                                             </td>
-                                            <td>@category.Revenue.ToString("C")</td>
-                                            <td>@category.OrderCount</td>
-                                            <td>@category.BooksSold</td>
-                                            <td>@category.AverageOrderValue.ToString("C")</td>
+                                            <td>@category.TotalRevenue.ToString("C")</td>
+                                            <td>@category.NumberOfOrders</td>
+                                            <td>@category.NumberOfBooksSold</td>
+                                            <td>@((category.NumberOfOrders > 0 ? category.TotalRevenue / category.NumberOfOrders : 0).ToString("C"))</td>
                                             <td>
                                                 <div class="progress">
-                                                    <div class="progress-bar" role="progressbar" style="width: @(category.MarketShare)%">
-                                                        @category.MarketShare.ToString("F1")%
+                                                    <div class="progress-bar" role="progressbar" style="width: @(category.PercentageOfTotal)%">
+                                                        @category.PercentageOfTotal.ToString("F1")%
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
-                                                @if (category.GrowthRate > 0)
-                                                {
-                                                    <span class="text-success">
-                                                        <i class="fas fa-arrow-up"></i> @category.GrowthRate.ToString("F1")%
-                                                    </span>
-                                                }
-                                                else if (category.GrowthRate < 0)
-                                                {
-                                                    <span class="text-danger">
-                                                        <i class="fas fa-arrow-down"></i> @Math.Abs(category.GrowthRate).ToString("F1")%
-                                                    </span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">0%</span>
-                                                }
+                                                <span class="text-muted">N/A</span>
                                             </td>
                                         </tr>
                                     }
@@ -140,62 +125,52 @@
                 <div class="col-md-6">
                     <div class="card mb-4">
                         <div class="card-header">
-                            <h5 class="mb-0">Top Books by Category</h5>
+                            <h5 class="mb-0">Category Summary</h5>
                         </div>
                         <div class="card-body">
-                            @if (Model.TopBooksByCategory != null && Model.TopBooksByCategory.Any())
-                            {
-                                <div class="table-responsive">
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>Category</th>
-                                                <th>Book Title</th>
-                                                <th>Revenue</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var book in Model.TopBooksByCategory.Take(10))
-                                            {
-                                                <tr>
-                                                    <td>@book.Category</td>
-                                                    <td>@book.BookTitle</td>
-                                                    <td>@book.Revenue.ToString("C")</td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            }
-                            else
-                            {
-                                <p class="text-muted">No book data available.</p>
-                            }
+                            <div class="mb-3">
+                                <h6>Total Revenue</h6>
+                                <p class="text-success">
+                                    <strong>@Model.TotalRevenue.ToString("C")</strong>
+                                </p>
+                            </div>
+                            <div class="mb-3">
+                                <h6>Total Books Sold</h6>
+                                <p class="text-info">
+                                    <strong>@Model.TotalBooksSold</strong>
+                                </p>
+                            </div>
+                            <div class="mb-3">
+                                <h6>Top Category</h6>
+                                <p class="text-primary">
+                                    <strong>@Model.TopCategory</strong> - @Model.TopCategoryRevenue.ToString("C")
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="card mb-4">
                         <div class="card-header">
-                            <h5 class="mb-0">Category Insights</h5>
+                            <h5 class="mb-0">Report Period</h5>
                         </div>
                         <div class="card-body">
                             <div class="mb-3">
-                                <h6>Best Performing Category</h6>
-                                <p class="text-success">
-                                    <strong>@Model.BestPerformingCategory?.CategoryName</strong> - @Model.BestPerformingCategory?.Revenue.ToString("C")
-                                </p>
-                            </div>
-                            <div class="mb-3">
-                                <h6>Fastest Growing Category</h6>
+                                <h6>Start Date</h6>
                                 <p class="text-info">
-                                    <strong>@Model.FastestGrowingCategory?.CategoryName</strong> - @Model.FastestGrowingCategory?.GrowthRate.ToString("F1")% growth
+                                    <strong>@Model.StartDate.ToString("MM/dd/yyyy")</strong>
                                 </p>
                             </div>
                             <div class="mb-3">
-                                <h6>Most Popular Category</h6>
+                                <h6>End Date</h6>
+                                <p class="text-info">
+                                    <strong>@Model.EndDate.ToString("MM/dd/yyyy")</strong>
+                                </p>
+                            </div>
+                            <div class="mb-3">
+                                <h6>Number of Categories</h6>
                                 <p class="text-primary">
-                                    <strong>@Model.MostPopularCategory?.CategoryName</strong> - @Model.MostPopularCategory?.OrderCount orders
+                                    <strong>@(Model.CategoryData != null ? Model.CategoryData.Count : 0)</strong>
                                 </p>
                             </div>
                         </div>
@@ -215,9 +190,9 @@
             var categoryPieChart = new Chart(ctx, {
                 type: 'pie',
                 data: {
-                    labels: @Html.Raw(Json.Encode(Model.CategoryData?.Select(c => c.CategoryName))),
+                    labels: @Html.Raw(Json.Encode(Model.CategoryData != null ? Model.CategoryData.Select(c => c.Category) : new List<string>())),
                     datasets: [{
-                        data: @Html.Raw(Json.Encode(Model.CategoryData?.Select(c => c.Revenue))),
+                        data: @Html.Raw(Json.Encode(Model.CategoryData != null ? Model.CategoryData.Select(c => c.TotalRevenue) : new List<decimal>())),
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.8)',
                             'rgba(54, 162, 235, 0.8)',
@@ -241,21 +216,8 @@
             var categoryTrendChart = new Chart(ctx2, {
                 type: 'line',
                 data: {
-                    labels: @Html.Raw(Json.Encode(Model.TrendData?.Select(t => t.Date.ToString("MM/dd")))),
-                    datasets: [
-                        @foreach (var category in Model.CategoryData?.Take(3) ?? new List<WebApplication1.Models.CategoryData>())
-                        {
-                            <text>
-                            {
-                                label: '@category.CategoryName',
-                                data: @Html.Raw(Json.Encode(Model.TrendData?.Where(t => t.Category == category.CategoryName).Select(t => t.Revenue))),
-                                borderColor: 'rgba(@(new Random().Next(0,255)), @(new Random().Next(0,255)), @(new Random().Next(0,255)), 1)',
-                                backgroundColor: 'rgba(@(new Random().Next(0,255)), @(new Random().Next(0,255)), @(new Random().Next(0,255)), 0.2)',
-                                tension: 0.1
-                            },
-                            </text>
-                        }
-                    ]
+                    labels: [],
+                    datasets: []
                 },
                 options: {
                     responsive: true,

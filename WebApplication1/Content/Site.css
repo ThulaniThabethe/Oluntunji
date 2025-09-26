@@ -270,6 +270,55 @@ textarea {
     border-radius: 2px;
 }
 
+/* Category Card Styles */
+.category-card {
+    background: #ffffff;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: none;
+    text-decoration: none;
+    display: block;
+    height: 100%;
+}
+
+.category-card:hover {
+    text-decoration: none;
+    transform: none;
+    box-shadow: none;
+}
+
+.category-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.category-card a:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+.category-icon {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 0.75rem;
+}
+
+.category-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 0.25rem;
+}
+
+.category-count {
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+    margin: 0;
+}
+
 /* Animation Classes */
 .fade-in {
     animation: fadeIn 0.5s ease-in;

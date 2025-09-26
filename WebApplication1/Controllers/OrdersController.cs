@@ -26,15 +26,10 @@ namespace WebApplication1.Controllers
             else if (currentUser.Role == UserRole.Seller.ToString())
             {
                 // Sellers can see orders for their books
-                var sellerBookIds = Db.Books
-                    .Where(b => b.SellerId == currentUser.UserId)
-                    .Select(b => b.BookId)
-                    .ToList();
-
                 orders = Db.Orders
                     .Include("Customer")
                     .Include("OrderItems")
-                    .Where(o => o.OrderItems.Any(oi => sellerBookIds.Contains(oi.BookId)))
+                    .Where(o => o.OrderItems.Any(oi => oi.Book.SellerId == currentUser.UserId))
                     .OrderByDescending(o => o.OrderDate);
             }
             else
@@ -76,12 +71,7 @@ namespace WebApplication1.Controllers
 
             if (currentUser.Role == UserRole.Seller.ToString())
             {
-                var sellerBookIds = Db.Books
-                    .Where(b => b.SellerId == currentUser.UserId)
-                    .Select(b => b.BookId)
-                    .ToList();
-
-                if (!order.OrderItems.Any(oi => sellerBookIds.Contains(oi.BookId)))
+                if (!order.OrderItems.Any(oi => oi.Book.SellerId == currentUser.UserId))
                 {
                     return new HttpUnauthorizedResult();
                 }
@@ -258,15 +248,11 @@ namespace WebApplication1.Controllers
         public ActionResult SellerOrders()
         {
             var currentUser = CurrentUser;
-            var sellerBookIds = Db.Books
-                .Where(b => b.SellerId == currentUser.UserId)
-                .Select(b => b.BookId)
-                .ToList();
-
+            
             var orders = Db.Orders
                 .Include("Customer")
                 .Include("OrderItems")
-                .Where(o => o.OrderItems.Any(oi => sellerBookIds.Contains(oi.BookId)))
+                .Where(o => o.OrderItems.Any(oi => oi.Book.SellerId == currentUser.UserId))
                 .OrderByDescending(o => o.OrderDate)
                 .ToList();
 

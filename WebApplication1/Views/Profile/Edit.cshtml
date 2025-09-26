@@ -1,0 +1,115 @@
+@model WebApplication1.ViewModels.EditProfileViewModel
+
+@{
+    ViewBag.Title = "Edit Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Page Header -->
+            <div class="text-center mb-4">
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-user-edit me-2"></i>Edit Profile
+                </h1>
+                <p class="text-muted">Update your personal information</p>
+            </div>
+
+            @using (Html.BeginForm("Edit", "Profile", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger alert-dismissible fade show" })
+                @Html.HiddenFor(m => m.UserId)
+
+                <!-- Personal Information -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user"></i> Personal Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.FirstName, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = "Enter your first name" })
+                                @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.LastName, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", placeholder = "Enter your last name" })
+                                @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                                @Html.LabelFor(m => m.PhoneNumber, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "+27 11 123 4567" })
+                                @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address Information -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-map-marker-alt"></i> Address Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Address, new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.Address, new { @class = "form-control", placeholder = "Street address" })
+                            @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                @Html.LabelFor(m => m.City, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.City, new { @class = "form-control", placeholder = "City" })
+                                @Html.ValidationMessageFor(m => m.City, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                @Html.LabelFor(m => m.Province, new { @class = "form-label" })
+                                @Html.DropDownListFor(m => m.Province, new SelectList(new[] {
+                                    new { Value = "", Text = "Select Province" },
+                                    new { Value = "EC", Text = "Eastern Cape" },
+                                    new { Value = "FS", Text = "Free State" },
+                                    new { Value = "GP", Text = "Gauteng" },
+                                    new { Value = "KZN", Text = "KwaZulu-Natal" },
+                                    new { Value = "LP", Text = "Limpopo" },
+                                    new { Value = "MP", Text = "Mpumalanga" },
+                                    new { Value = "NC", Text = "Northern Cape" },
+                                    new { Value = "NW", Text = "North West" },
+                                    new { Value = "WC", Text = "Western Cape" }
+                                }, "Value", "Text", Model.Province), new { @class = "form-select" })
+                                @Html.ValidationMessageFor(m => m.Province, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                @Html.LabelFor(m => m.PostalCode, new { @class = "form-label" })
+                                @Html.TextBoxFor(m => m.PostalCode, new { @class = "form-control", placeholder = "0000" })
+                                @Html.ValidationMessageFor(m => m.PostalCode, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="@Url.Action("Index", "Profile")" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Save Changes
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

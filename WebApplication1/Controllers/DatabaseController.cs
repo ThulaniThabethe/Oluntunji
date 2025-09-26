@@ -83,19 +83,25 @@ namespace WebApplication1.Controllers
             {
                 using (var context = new BookstoreDbContext())
                 {
-                    // Check if database exists
-                    if (context.Database.Exists())
+                    // Check if database exists and has users
+                    bool databaseExists = context.Database.Exists();
+                    int userCount = context.Users.Count();
+                    
+                    if (databaseExists && userCount > 0)
                     {
                         return Json(new
                         {
                             success = true,
-                            message = "Database already exists",
-                            userCount = context.Users.Count()
+                            message = "Database already exists with users",
+                            userCount = userCount
                         });
                     }
 
-                    // Create the database
-                    context.Database.Create();
+                    // Create the database if it doesn't exist
+                    if (!databaseExists)
+                    {
+                        context.Database.Create();
+                    }
                     
                     // Initialize with seed data
                     try
@@ -180,11 +186,40 @@ namespace WebApplication1.Controllers
                         
                         context.SaveChanges();
                         
+                        // Add notification columns to Users table
+                        try
+                        {
+                            context.Database.ExecuteSqlCommand(@"
+                                IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'OrderUpdates')
+                                    ALTER TABLE [dbo].[Users] ADD [OrderUpdates] BIT NOT NULL DEFAULT 1
+                                
+                                IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'BookAlerts')
+                                    ALTER TABLE [dbo].[Users] ADD [BookAlerts] BIT NOT NULL DEFAULT 1
+                                
+                                IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'AccountUpdates')
+                                    ALTER TABLE [dbo].[Users] ADD [AccountUpdates] BIT NOT NULL DEFAULT 1
+                                
+                                IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'MarketingEmails')
+                                    ALTER TABLE [dbo].[Users] ADD [MarketingEmails] BIT NOT NULL DEFAULT 0
+                                
+                                IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'LowStockAlerts')
+                                    ALTER TABLE [dbo].[Users] ADD [LowStockAlerts] BIT NOT NULL DEFAULT 1
+                                
+                                IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'PriceDropAlerts')
+                                    ALTER TABLE [dbo].[Users] ADD [PriceDropAlerts] BIT NOT NULL DEFAULT 1
+                            ");
+                        }
+                        catch (Exception sqlEx)
+                        {
+                            // Log the error but don't fail the entire initialization
+                            System.Diagnostics.Debug.WriteLine($"Warning: Could not add notification columns: {sqlEx.Message}");
+                        }
+                        
                         return Json(new
                         {
                             success = true,
                             message = "Database initialized successfully with seed data",
-                            userCount = 4,
+                            userCount = context.Users.Count(),
                             usersCreated = new[] { "admin", "employee", "seller", "customer" }
                         });
                     }
@@ -217,6 +252,62 @@ namespace WebApplication1.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        public ActionResult CreateNotificationsTable()
+        {
+            try
+            {
+                using (var context = new BookstoreDbContext())
+                {
+                    // Check if the Notifications table already exists
+                    var tableExists = context.Database.SqlQuery<int>(@"
+                        SELECT COUNT(*) 
+                        FROM INFORMATION_SCHEMA.TABLES 
+                        WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'Notifications'").FirstOrDefault();
+
+                    if (tableExists > 0)
+                    {
+                        return Json(new
+                        {
+                            success = true,
+                            message = "Notifications table already exists",
+                            notificationCount = context.Notifications.Count()
+                        });
+                    }
+
+                    // Read and execute the SQL script
+                    var sqlScriptPath = Server.MapPath("~/CreateNotificationsTable.sql");
+                    if (!System.IO.File.Exists(sqlScriptPath))
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "SQL script file not found"
+                        });
+                    }
+
+                    var sqlScript = System.IO.File.ReadAllText(sqlScriptPath);
+                    context.Database.ExecuteSqlCommand(sqlScript);
+
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Notifications table created successfully"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Failed to create Notifications table",
+                    error = ex.Message,
+                    stackTrace = ex.StackTrace
+                });
+            }
+        }
         
         // GET: Database/Reset
         public ActionResult Reset()
@@ -244,6 +335,53 @@ namespace WebApplication1.Controllers
             }
             
             return View("Initialize");
+        }
+
+        [HttpPost]
+        public ActionResult UpdateNotificationColumns()
+        {
+            try
+            {
+                using (var context = new BookstoreDbContext())
+                {
+                    // Execute the SQL script to add notification columns
+                    context.Database.ExecuteSqlCommand(@"
+                        IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'OrderUpdates')
+                            ALTER TABLE [dbo].[Users] ADD [OrderUpdates] BIT NOT NULL DEFAULT 1
+                        
+                        IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'BookAlerts')
+                            ALTER TABLE [dbo].[Users] ADD [BookAlerts] BIT NOT NULL DEFAULT 1
+                        
+                        IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'AccountUpdates')
+                            ALTER TABLE [dbo].[Users] ADD [AccountUpdates] BIT NOT NULL DEFAULT 1
+                        
+                        IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'MarketingEmails')
+                            ALTER TABLE [dbo].[Users] ADD [MarketingEmails] BIT NOT NULL DEFAULT 0
+                        
+                        IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'LowStockAlerts')
+                            ALTER TABLE [dbo].[Users] ADD [LowStockAlerts] BIT NOT NULL DEFAULT 1
+                        
+                        IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = 'PriceDropAlerts')
+                            ALTER TABLE [dbo].[Users] ADD [PriceDropAlerts] BIT NOT NULL DEFAULT 1
+                    ");
+                    
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Notification columns added successfully to Users table"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Error updating notification columns",
+                    error = ex.Message,
+                    stackTrace = ex.StackTrace
+                });
+            }
         }
     }
 }

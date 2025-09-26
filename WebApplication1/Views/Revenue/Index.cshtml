@@ -43,7 +43,7 @@
                             <div class="card text-white bg-success">
                                 <div class="card-body">
                                     <h6 class="card-title">Daily Revenue</h6>
-                                    <h4>@ViewBag.DailyRevenue?.ToString("C")</h4>
+                                    <h4>@(ViewBag.DailyRevenue != null ? ((decimal)ViewBag.DailyRevenue).ToString("C") : "$0.00")</h4>
                                 </div>
                             </div>
                         </div>
@@ -51,7 +51,7 @@
                             <div class="card text-white bg-info">
                                 <div class="card-body">
                                     <h6 class="card-title">Monthly Revenue</h6>
-                                    <h4>@ViewBag.MonthlyRevenue?.ToString("C")</h4>
+                                    <h4>@(ViewBag.MonthlyRevenue != null ? ((decimal)ViewBag.MonthlyRevenue).ToString("C") : "$0.00")</h4>
                                 </div>
                             </div>
                         </div>
@@ -59,7 +59,7 @@
                             <div class="card text-white bg-warning">
                                 <div class="card-body">
                                     <h6 class="card-title">Yearly Revenue</h6>
-                                    <h4>@ViewBag.YearlyRevenue?.ToString("C")</h4>
+                                    <h4>@(ViewBag.YearlyRevenue != null ? ((decimal)ViewBag.YearlyRevenue).ToString("C") : "$0.00")</h4>
                                 </div>
                             </div>
                         </div>
