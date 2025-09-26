@@ -106,5 +106,47 @@ namespace WebApplication1.Controllers
             }
             return View(model);
         }
+
+        // GET: FAQ
+        public ActionResult FAQ()
+        {
+            ViewBag.Title = "Frequently Asked Questions";
+            return View();
+        }
+
+        // GET: ShippingInfo
+        public ActionResult ShippingInfo()
+        {
+            ViewBag.Title = "Shipping Information";
+            return View();
+        }
+
+        // GET: Returns
+        public ActionResult Returns()
+        {
+            ViewBag.Title = "Returns & Refunds";
+            return View();
+        }
+
+        // GET: Privacy
+        public ActionResult Privacy()
+        {
+            ViewBag.Title = "Privacy Policy";
+            return View();
+        }
+
+        // GET: Terms
+        public ActionResult Terms()
+        {
+            ViewBag.Title = "Terms of Service";
+            return View();
+        }
+
+        // GET: Cookies
+        public ActionResult Cookies()
+        {
+            ViewBag.Title = "Cookie Policy";
+            return View();
+        }
     }
 }
