@@ -88,8 +88,7 @@
                             @Html.DropDownListFor(m => m.Role, new SelectList(new[] 
                             { 
                                 new { Value = "Customer", Text = "Customer - Browse and purchase books" },
-                                new { Value = "Seller", Text = "Seller - Sell your books" },
-                                new { Value = "Employee", Text = "Employee - Manage bookstore operations" }
+                                new { Value = "Seller", Text = "Seller - Sell your books" }
                             }, "Value", "Text"), "Select your role", new { @class = "form-select form-select-lg", required = "required" })
                             @Html.ValidationMessageFor(m => m.Role, "", new { @class = "invalid-feedback d-block" })
                         </div>

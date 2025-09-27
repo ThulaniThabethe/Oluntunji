@@ -1,0 +1,134 @@
+@model WebApplication1.ViewModels.CreateUserViewModel
+
+@{
+    ViewBag.Title = "Create User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>Create New User
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                            @if (TempData["NewUserPassword"] != null)
+                            {
+                                <div class="mt-2">
+                                    <strong>Temporary Password:</strong> <code>@TempData["NewUserPassword"]</code>
+                                    <small class="text-muted d-block mt-1">
+                                        Please provide this password to the user. They should change it after first login.
+                                    </small>
+                                </div>
+                            }
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    @using (Html.BeginForm("CreateUser", "Profile", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.FirstName, new { @class = "form-label fw-semibold" })
+                                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = "Enter first name", required = "required" })
+                                @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "invalid-feedback" })
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.LastName, new { @class = "form-label fw-semibold" })
+                                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", placeholder = "Enter last name", required = "required" })
+                                @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "invalid-feedback" })
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.Email, new { @class = "form-label fw-semibold" })
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", placeholder = "Enter email address", required = "required" })
+                                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "invalid-feedback" })
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(m => m.Username, new { @class = "form-label fw-semibold" })
+                                @Html.TextBoxFor(m => m.Username, new { @class = "form-control", placeholder = "Enter username", required = "required" })
+                                @Html.ValidationMessageFor(m => m.Username, "", new { @class = "invalid-feedback" })
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Role, new { @class = "form-label fw-semibold" })
+                            @Html.DropDownListFor(m => m.Role, Model.AvailableRoles, "Select user role", new { @class = "form-select", required = "required" })
+                            @Html.ValidationMessageFor(m => m.Role, "", new { @class = "invalid-feedback" })
+                        </div>
+
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.PhoneNumber, new { @class = "form-label fw-semibold" })
+                            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "Enter phone number" })
+                            @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "invalid-feedback" })
+                        </div>
+
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Address, new { @class = "form-label fw-semibold" })
+                            @Html.TextBoxFor(m => m.Address, new { @class = "form-control", placeholder = "Enter street address" })
+                            @Html.ValidationMessageFor(m => m.Address, "", new { @class = "invalid-feedback" })
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                @Html.LabelFor(m => m.City, new { @class = "form-label fw-semibold" })
+                                @Html.TextBoxFor(m => m.City, new { @class = "form-control", placeholder = "Enter city" })
+                                @Html.ValidationMessageFor(m => m.City, "", new { @class = "invalid-feedback" })
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                @Html.LabelFor(m => m.Province, new { @class = "form-label fw-semibold" })
+                                @Html.TextBoxFor(m => m.Province, new { @class = "form-control", placeholder = "Enter province" })
+                                @Html.ValidationMessageFor(m => m.Province, "", new { @class = "invalid-feedback" })
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                @Html.LabelFor(m => m.PostalCode, new { @class = "form-label fw-semibold" })
+                                @Html.TextBoxFor(m => m.PostalCode, new { @class = "form-control", placeholder = "Enter postal code" })
+                                @Html.ValidationMessageFor(m => m.PostalCode, "", new { @class = "invalid-feedback" })
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>Create User
+                            </button>
+                            <a href="@Url.Action("ManageUsers", "Profile")" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to User Management
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            // Enable Bootstrap validation
+            $('.needs-validation').on('submit', function (event) {
+                if (!this.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                $(this).addClass('was-validated');
+            });
+        });
+    </script>
+}

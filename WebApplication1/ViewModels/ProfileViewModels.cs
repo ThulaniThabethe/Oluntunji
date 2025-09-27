@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 using WebApplication1.Models;
 
 namespace WebApplication1.ViewModels
@@ -243,5 +244,55 @@ namespace WebApplication1.ViewModels
 
         [Display(Name = "Helpful Votes")]
         public int HelpfulVotes { get; set; }
+    }
+
+    public class CreateUserViewModel
+    {
+        [Required(ErrorMessage = "First name is required")]
+        [StringLength(50, ErrorMessage = "First name cannot exceed 50 characters")]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Last name is required")]
+        [StringLength(50, ErrorMessage = "Last name cannot exceed 50 characters")]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
+        [Display(Name = "Email Address")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Username is required")]
+        [StringLength(20, ErrorMessage = "Username cannot exceed 20 characters")]
+        [Display(Name = "Username")]
+        public string Username { get; set; }
+
+        [Required(ErrorMessage = "Role is required")]
+        [Display(Name = "User Role")]
+        public string Role { get; set; }
+
+        [Phone(ErrorMessage = "Invalid phone number format")]
+        [StringLength(20, ErrorMessage = "Phone number cannot exceed 20 characters")]
+        [Display(Name = "Phone Number")]
+        public string PhoneNumber { get; set; }
+
+        [StringLength(200, ErrorMessage = "Address cannot exceed 200 characters")]
+        [Display(Name = "Street Address")]
+        public string Address { get; set; }
+
+        [StringLength(50, ErrorMessage = "City cannot exceed 50 characters")]
+        [Display(Name = "City")]
+        public string City { get; set; }
+
+        [StringLength(50, ErrorMessage = "Province cannot exceed 50 characters")]
+        [Display(Name = "Province")]
+        public string Province { get; set; }
+
+        [StringLength(10, ErrorMessage = "Postal code cannot exceed 10 characters")]
+        [Display(Name = "Postal Code")]
+        public string PostalCode { get; set; }
+
+        public List<SelectListItem> AvailableRoles { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -485,6 +486,87 @@ namespace WebApplication1.Controllers
                     // For regular users, redirect to profile index
                     return RedirectToAction("Index");
             }
+        }
+
+        // GET: Profile/CreateUser
+        [AdminOnly]
+        public ActionResult CreateUser()
+        {
+            var model = new CreateUserViewModel
+            {
+                AvailableRoles = new List<SelectListItem>
+                {
+                    new SelectListItem { Value = "Employee", Text = "Employee - Manage bookstore operations" },
+                    new SelectListItem { Value = "Admin", Text = "Admin - Full system access" }
+                }
+            };
+            return View(model);
+        }
+
+        // POST: Profile/CreateUser
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AdminOnly]
+        public ActionResult CreateUser(CreateUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Generate a temporary password
+                    var tempPassword = GenerateTemporaryPassword();
+                    
+                    // Create the user
+                    var user = new User
+                    {
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        Email = model.Email,
+                        Username = model.Username,
+                        PasswordHash = WebApplication1.Helpers.PasswordHelper.HashPassword(tempPassword),
+                        Role = model.Role,
+                        PhoneNumber = model.PhoneNumber,
+                        Address = model.Address,
+                        City = model.City,
+                        Province = model.Province,
+                        PostalCode = model.PostalCode,
+                        EmailConfirmed = true,
+                        IsActive = true,
+                        CreatedDate = DateTime.Now
+                    };
+
+                    Db.Users.Add(user);
+                    Db.SaveChanges();
+
+                    // In a real application, you would send an email with the temporary password
+                    // For now, we'll store it in TempData to display to the admin
+                    TempData["NewUserPassword"] = tempPassword;
+                    TempData["SuccessMessage"] = $"User {model.FirstName} {model.LastName} created successfully!";
+                    
+                    return RedirectToAction("ManageUsers");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Error creating user: " + ex.Message);
+                }
+            }
+
+            // If we got this far, something failed; redisplay form
+            model.AvailableRoles = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "Employee", Text = "Employee - Manage bookstore operations" },
+                new SelectListItem { Value = "Admin", Text = "Admin - Full system access" }
+            };
+            return View(model);
+        }
+
+        private string GenerateTemporaryPassword()
+        {
+            // Generate a random 12-character password
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, 12)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
         }
     }
 }

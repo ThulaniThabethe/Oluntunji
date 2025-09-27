@@ -200,6 +200,9 @@
                             <a href="@Url.Action("ManageUsers", "Profile")" class="btn btn-sm btn-outline-primary">
                                 Manage All Users
                             </a>
+                            <a href="@Url.Action("CreateUser", "Profile")" class="btn btn-sm btn-success">
+                                <i class="fas fa-plus"></i> Create User
+                            </a>
                         </div>
                     }
                 </div>
@@ -242,9 +245,9 @@
                                                 <strong>#@order.OrderId.ToString("D6")</strong>
                                             </td>
                                             <td>
-                                                <strong>@order.Customer?.FirstName @order.Customer?.LastName</strong>
+                                                <strong>@order.Customer.FirstName @order.Customer.LastName</strong>
                                                 <br />
-                                                <small class="text-muted">@order.Customer?.Email</small>
+                                                <small class="text-muted">@order.Customer.Email</small>
                                             </td>
                                             <td>
                                                 <strong>R @order.TotalAmount.ToString("F2")</strong>
@@ -326,7 +329,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <small>@book.Author</small>
+                                                @book.Author
                                             </td>
                                             <td>
                                                 <strong>R @book.Price.ToString("F2")</strong>
