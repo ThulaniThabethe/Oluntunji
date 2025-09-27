@@ -70,6 +70,13 @@ namespace WebApplication1.Models
         [Display(Name = "Notes")]
         public string Notes { get; set; }
 
+        [Required]
+        [Display(Name = "In-Store Pickup")]
+        public bool InStorePickup { get; set; }
+
+        [Display(Name = "Pickup Date")]
+        public DateTime? PickupDate { get; set; }
+
         // Foreign keys
         public int CustomerId { get; set; }
 

@@ -1,0 +1,103 @@
+@{
+    ViewBag.Title = "Upload PDF for Printing";
+}
+
+<style>
+    .upload-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e0e0e0;
+    }
+
+    .upload-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 1rem;
+    }
+
+    .upload-header h2 {
+        font-weight: 700;
+        color: #343a40;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .form-control-file {
+        border: 1px solid #ced4da;
+        padding: 0.5rem;
+        border-radius: 5px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 0.75rem 1.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="upload-container">
+    <div class="upload-header">
+        <h2>Upload PDF for Printing</h2>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    @using (Html.BeginForm("Upload", "Printing", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-group mb-4">
+            <label for="file">Select PDF File</label>
+            <input type="file" name="file" id="file" class="form-control-file" required />
+        </div>
+
+        <div class="form-group mb-4">
+            <label>Choose an Option</label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="option" id="delivery" value="Delivery" checked>
+                <label class="form-check-label" for="delivery">
+                    Delivery
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="option" id="pickup" value="Pickup">
+                <label class="form-check-label" for="pickup">
+                    In-Store Pickup
+                </label>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Upload and Submit</button>
+        </div>
+    }
+
+    <div class="mt-4 text-center">
+        @Html.ActionLink("View Print History", "History", "Printing", null, new { @class = "btn btn-secondary" })
+    </div>
+</div>

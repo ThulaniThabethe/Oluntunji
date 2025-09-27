@@ -19,6 +19,8 @@ namespace WebApplication1.Models
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Revenue> Revenues { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<PrintRequest> PrintRequests { get; set; }
+        public DbSet<Withdrawal> Withdrawals { get; set; }
         public DbSet<SavedCard> SavedCards { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

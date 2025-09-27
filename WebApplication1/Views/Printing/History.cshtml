@@ -1,0 +1,64 @@
+@model IEnumerable<WebApplication1.Models.PrintRequest>
+
+@{
+    ViewBag.Title = "Print Request History";
+}
+
+<style>
+    .history-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .history-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .history-header h2 {
+        font-weight: 700;
+        color: #343a40;
+    }
+</style>
+
+<div class="history-container">
+    <div class="history-header">
+        <h2>Print Request History</h2>
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Request ID</th>
+                <th>File Path</th>
+                <th>Page Count</th>
+                <th>Cost</th>
+                <th>Request Date</th>
+                <th>Status</th>
+                <th>Option</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.PrintRequestId</td>
+                    <td>@item.FilePath</td>
+                    <td>@item.PageCount</td>
+                    <td>@item.Cost.ToString("C")</td>
+                    <td>@item.RequestDate.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@item.Status</td>
+                    <td>@item.Option</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="mt-4 text-center">
+        @Html.ActionLink("Upload Another File", "Upload", "Printing", null, new { @class = "btn btn-primary" })
+    </div>
+</div>

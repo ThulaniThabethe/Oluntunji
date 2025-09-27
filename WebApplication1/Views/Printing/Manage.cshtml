@@ -1,0 +1,84 @@
+@model IEnumerable<WebApplication1.Models.PrintRequest>
+
+@{
+    ViewBag.Title = "Manage Print Requests";
+}
+
+<style>
+    .manage-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .manage-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .manage-header h2 {
+        font-weight: 700;
+        color: #343a40;
+    }
+</style>
+
+<div class="manage-container">
+    <div class="manage-header">
+        <h2>Manage Print Requests</h2>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th>Request ID</th>
+                <th>User ID</th>
+                <th>File Path</th>
+                <th>Cost</th>
+                <th>Request Date</th>
+                <th>Status</th>
+                <th>Option</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.PrintRequestId</td>
+                    <td>@item.UserId</td>
+                    <td>@item.FilePath</td>
+                    <td>@item.Cost.ToString("C")</td>
+                    <td>@item.RequestDate.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@item.Status</td>
+                    <td>@item.Option</td>
+                    <td>
+                        @using (Html.BeginForm("UpdateStatus", "Printing", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="printRequestId" value="@item.PrintRequestId" />
+                            <div class="input-group">
+                                @Html.EnumDropDownListFor(m => item.Status, new { @class = "form-control" })
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-sm btn-success">Update</button>
+                                </div>
+                            </div>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -39,6 +39,8 @@ namespace WebApplication1.ViewModels
 
         [Display(Name = "Order Notes")]
         public string Notes { get; set; }
+
+        public bool InStorePickup { get; set; }
     }
 
     public class CartSummaryViewModel

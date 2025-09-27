@@ -225,10 +225,11 @@ namespace WebApplication1.Controllers
                 TotalAmount = totalAmount,
                 OrderStatus = OrderStatus.Pending.ToString(),
                 PaymentStatus = PaymentStatus.Pending.ToString(),
-                ShippingAddress = model.ShippingAddress,
-                ShippingCity = model.ShippingCity,
-                ShippingProvince = model.ShippingProvince,
-                ShippingPostalCode = model.ShippingPostalCode,
+                InStorePickup = model.InStorePickup,
+                ShippingAddress = model.InStorePickup ? "In-Store Pickup" : model.ShippingAddress,
+                ShippingCity = model.InStorePickup ? "" : model.ShippingCity,
+                ShippingProvince = model.InStorePickup ? "" : model.ShippingProvince,
+                ShippingPostalCode = model.InStorePickup ? "" : model.ShippingPostalCode,
                 PaymentMethod = model.PaymentMethod,
                 Notes = model.Notes
             };

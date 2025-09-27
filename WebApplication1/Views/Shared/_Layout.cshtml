@@ -40,6 +40,20 @@
                             <i class="bi bi-books"></i> Browse Books
                         </a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="printingDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-printer"></i> Print Services
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="@Url.Action("Upload", "Printing")">Upload PDF</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("History", "Printing")">Print History</a></li>
+                            @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+                            {
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Manage", "Printing")">Manage Requests</a></li>
+                            }
+                        </ul>
+                    </li>
                     
                     @if (User.Identity.IsAuthenticated)
                     {
@@ -69,6 +83,7 @@
                                 <li><a class="dropdown-item" href="@Url.Action("Dashboard", "Profile")">Dashboard</a></li>
                                 <li><a class="dropdown-item" href="@Url.Action("ManageUsers", "Profile")">Manage Users</a></li>
                                 <li><a class="dropdown-item" href="@Url.Action("Index", "Revenue")">Revenue Reports</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Withdraw", "Finance")">Withdraw Funds</a></li>
                                 <li><a class="dropdown-item" href="@Url.Action("ManageReviews", "Review")">Manage Reviews</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="@Url.Action("Manage", "Books")">Manage Books</a></li>

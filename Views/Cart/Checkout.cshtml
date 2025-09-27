@@ -27,39 +27,47 @@
                 </div>
                 <div class="card-body">
                     <form id="checkoutForm" method="post">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="ShippingAddress" class="form-label"></label>
-                                <input asp-for="ShippingAddress" class="form-control" placeholder="Enter your street address" />
-                                <span asp-validation-for="ShippingAddress" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="ShippingCity" class="form-label"></label>
-                                <input asp-for="ShippingCity" class="form-control" placeholder="Enter your city" />
-                                <span asp-validation-for="ShippingCity" class="text-danger"></span>
-                            </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="inStorePickup" name="InStorePickup" value="true">
+                            <label class="form-check-label" for="inStorePickup">
+                                <i class="fas fa-store me-2"></i>In-Store Pickup
+                            </label>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="ShippingProvince" class="form-label"></label>
-                                <select asp-for="ShippingProvince" class="form-select">
-                                    <option value="">Select Province</option>
-                                    <option value="EC">Eastern Cape</option>
-                                    <option value="FS">Free State</option>
-                                    <option value="GP">Gauteng</option>
-                                    <option value="KZN">KwaZulu-Natal</option>
-                                    <option value="LP">Limpopo</option>
-                                    <option value="MP">Mpumalanga</option>
-                                    <option value="NC">Northern Cape</option>
-                                    <option value="NW">North West</option>
-                                    <option value="WC">Western Cape</option>
-                                </select>
-                                <span asp-validation-for="ShippingProvince" class="text-danger"></span>
+                        <div id="shipping-address-fields">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="ShippingAddress" class="form-label"></label>
+                                    <input asp-for="ShippingAddress" class="form-control" placeholder="Enter your street address" />
+                                    <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="ShippingCity" class="form-label"></label>
+                                    <input asp-for="ShippingCity" class="form-control" placeholder="Enter your city" />
+                                    <span asp-validation-for="ShippingCity" class="text-danger"></span>
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="ShippingPostalCode" class="form-label"></label>
-                                <input asp-for="ShippingPostalCode" class="form-control" placeholder="Enter postal code" />
-                                <span asp-validation-for="ShippingPostalCode" class="text-danger"></span>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="ShippingProvince" class="form-label"></label>
+                                    <select asp-for="ShippingProvince" class="form-select">
+                                        <option value="">Select Province</option>
+                                        <option value="EC">Eastern Cape</option>
+                                        <option value="FS">Free State</option>
+                                        <option value="GP">Gauteng</option>
+                                        <option value="KZN">KwaZulu-Natal</option>
+                                        <option value="LP">Limpopo</option>
+                                        <option value="MP">Mpumalanga</option>
+                                        <option value="NC">Northern Cape</option>
+                                        <option value="NW">North West</option>
+                                        <option value="WC">Western Cape</option>
+                                    </select>
+                                    <span asp-validation-for="ShippingProvince" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="ShippingPostalCode" class="form-label"></label>
+                                    <input asp-for="ShippingPostalCode" class="form-control" placeholder="Enter postal code" />
+                                    <span asp-validation-for="ShippingPostalCode" class="text-danger"></span>
+                                </div>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -362,6 +370,16 @@
                 }
 
                 updateOrderSummary(shippingCost);
+            });
+
+            $('#inStorePickup').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#shipping-address-fields').hide();
+                    updateOrderSummary(0);
+                } else {
+                    $('#shipping-address-fields').show();
+                    $('#ShippingProvince').trigger('change');
+                }
             });
 
             function updateOrderSummary(shippingCost) {

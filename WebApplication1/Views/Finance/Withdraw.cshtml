@@ -1,0 +1,27 @@
+@{
+    ViewBag.Title = "Withdraw Funds";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+@using (Html.BeginForm("Withdraw", "Finance", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label for="amount">Withdrawal Amount</label>
+        <input type="number" name="amount" id="amount" class="form-control" min="0.01" step="0.01" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Withdraw</button>
+}
