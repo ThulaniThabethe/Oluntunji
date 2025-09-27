@@ -162,12 +162,16 @@
     <Compile Include="Services\AuthService.cs" />
     <Compile Include="Services\CustomRoleProvider.cs" />
     <Compile Include="Services\EmailService.cs" />
+    <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Services\OrderService.cs" />
+    <Compile Include="Services\PaymentService.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="ViewModels\CartViewModels.cs" />
     <Compile Include="ViewModels\MyBooksViewModel.cs" />
+    <Compile Include="ViewModels\OnboardingViewModel.cs" />
     <Compile Include="ViewModels\OrderViewModels.cs" />
     <Compile Include="ViewModels\PaymentViewModels.cs" />
+    <Compile Include="ViewModels\PrintingViewModels.cs" />
     <Compile Include="ViewModels\ProfileViewModels.cs" />
     <Compile Include="ViewModels\RevenueViewModels.cs" />
   </ItemGroup>

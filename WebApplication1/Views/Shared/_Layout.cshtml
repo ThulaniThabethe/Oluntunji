@@ -114,6 +114,36 @@
                 <ul class="navbar-nav">
                     @if (User.Identity.IsAuthenticated)
                     {
+                        <!-- Notification Bell -->
+                        <li class="nav-item dropdown me-3">
+                            <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-bell fs-5"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationBadge" style="display: none;">
+                                    <span id="notificationCount">0</span>
+                                    <span class="visually-hidden">unread notifications</span>
+                                </span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown" style="width: 350px; max-height: 400px; overflow-y: auto;">
+                                <div class="dropdown-header d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0">Notifications</h6>
+                                    <a href="@Url.Action("Notifications", "Notification")" class="btn btn-sm btn-outline-primary">View All</a>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <div id="notificationList">
+                                    <div class="dropdown-item-text text-center text-muted py-3">
+                                        <i class="fas fa-bell-slash fa-2x mb-2"></i>
+                                        <div>No new notifications</div>
+                                    </div>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-footer text-center">
+                                    <button class="btn btn-sm btn-link text-decoration-none" id="markAllReadBtn" style="display: none;">
+                                        <i class="fas fa-check-double me-1"></i>Mark All Read
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+                        
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-person-circle"></i> @User.Identity.Name
@@ -310,6 +340,49 @@
     
     <!-- Custom JS -->
     <script src="@Url.Content("~/Scripts/site.js")"></script>
+    
+    <!-- Notification JavaScript removed to avoid AJAX calls -->
+    
+    <!-- Notification Styles -->
+    <style>
+        .notification-dropdown .notification-item {
+            border-bottom: 1px solid #f8f9fa;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .notification-dropdown .notification-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .notification-dropdown .notification-item.unread {
+            background-color: #e3f2fd;
+            border-left: 3px solid #2196f3;
+        }
+        
+        .notification-dropdown .notification-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e3f2fd;
+            color: #1976d2;
+            font-size: 12px;
+        }
+        
+        .notification-dropdown .dropdown-header {
+            padding: 10px 15px;
+            background-color: #f8f9fa;
+        }
+        
+        .notification-dropdown .dropdown-footer {
+            padding: 10px 15px;
+            background-color: #f8f9fa;
+        }
+    </style>
     
     @RenderSection("scripts", required: false)
 </body>

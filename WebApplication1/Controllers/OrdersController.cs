@@ -3,12 +3,19 @@ using System.Linq;
 using System.Web.Mvc;
 using WebApplication1.Models;
 using WebApplication1.ViewModels;
+using WebApplication1.Services;
 
 namespace WebApplication1.Controllers
 {
     [Authorize]
     public class OrdersController : BaseController
     {
+        private readonly NotificationService _notificationService;
+
+        public OrdersController()
+        {
+            _notificationService = new NotificationService(Db);
+        }
         // GET: Orders
         public ActionResult Index()
         {
@@ -114,6 +121,7 @@ namespace WebApplication1.Controllers
                 return Json(new { success = false, message = "Order not found." });
             }
 
+            var oldStatus = order.OrderStatus;
             order.OrderStatus = newStatus.ToString();
             
             // Update payment status if order is delivered
@@ -123,6 +131,23 @@ namespace WebApplication1.Controllers
             }
 
             Db.SaveChanges();
+
+            // Create notification for customer about order status update
+            try
+            {
+                _notificationService.CreateNotificationForUser(
+                    order.CustomerId,
+                    "Order Status Updated",
+                    $"Your order #{order.OrderNumber} status has been updated from {oldStatus} to {newStatus}.",
+                    NotificationType.Order,
+                    NotificationPriority.Normal
+                );
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't fail the order update
+                System.Diagnostics.Debug.WriteLine($"Failed to create notification: {ex.Message}");
+            }
 
             return Json(new { success = true, message = "Order status updated successfully." });
         }
@@ -139,8 +164,26 @@ namespace WebApplication1.Controllers
                 return Json(new { success = false, message = "Order not found." });
             }
 
+            var oldStatus = order.PaymentStatus;
             order.PaymentStatus = newStatus.ToString();
             Db.SaveChanges();
+
+            // Create notification for customer about payment status update
+            try
+            {
+                _notificationService.CreateNotificationForUser(
+                    order.CustomerId,
+                    "Payment Status Updated",
+                    $"Your payment for order #{order.OrderNumber} has been updated from {oldStatus} to {newStatus}.",
+                    NotificationType.Payment,
+                    NotificationPriority.High
+                );
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't fail the payment update
+                System.Diagnostics.Debug.WriteLine($"Failed to create notification: {ex.Message}");
+            }
 
             return Json(new { success = true, message = "Payment status updated successfully." });
         }

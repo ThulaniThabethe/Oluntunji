@@ -5,6 +5,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using WebApplication1.Models;
+using WebApplication1.Services;
+using WebApplication1.ViewModels;
 
 namespace WebApplication1.Controllers
 {
@@ -12,6 +14,13 @@ namespace WebApplication1.Controllers
     public class PrintingController : Controller
     {
         private readonly BookstoreDbContext _db = new BookstoreDbContext();
+        private readonly IEmailService _emailService = new EmailService();
+        private readonly NotificationService _notificationService;
+
+        public PrintingController()
+        {
+            _notificationService = new NotificationService(_db);
+        }
 
         // GET: Printing/Upload
         public ActionResult Upload()
@@ -48,24 +57,19 @@ namespace WebApplication1.Controllers
                         cost += 10.00m; // R10 for delivery
                     }
 
-                    var user = _db.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
+                    // Store checkout data in TempData for the checkout page
+                var checkoutData = new PrintingCheckoutViewModel
+                {
+                    FileName = fileName,
+                    FilePath = filePath,
+                    PageCount = pageCount,
+                    Cost = cost,
+                    Option = option
+                };
+                
+                TempData["CheckoutData"] = checkoutData;
 
-                    var printRequest = new PrintRequest
-                    {
-                        UserId = user.UserId,
-                        FilePath = filePath,
-                        PageCount = pageCount,
-                        Cost = cost,
-                        RequestDate = DateTime.Now,
-                        Status = PrintRequestStatus.Pending,
-                        Option = option
-                    };
-
-                    _db.PrintRequests.Add(printRequest);
-                    _db.SaveChanges();
-
-                    TempData["SuccessMessage"] = "File uploaded successfully. Your print request has been submitted.";
-                    return RedirectToAction("History");
+                    return RedirectToAction("Checkout");
                 }
                 catch (Exception ex)
                 {
@@ -78,6 +82,108 @@ namespace WebApplication1.Controllers
             }
 
             return View();
+        }
+
+        // GET: Printing/Checkout
+        public ActionResult Checkout()
+        {
+            var checkoutData = TempData["CheckoutData"] as PrintingCheckoutViewModel;
+            if (checkoutData == null)
+            {
+                return RedirectToAction("Upload");
+            }
+            
+            // Keep the data for the next request (in case user refreshes)
+            TempData.Keep("CheckoutData");
+            
+            return View(checkoutData);
+        }
+
+        // POST: Printing/ProcessPayment
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ProcessPayment(string PaymentMethod, string CardNumber, string CardholderName, string CVV, string ExpiryMonth, string ExpiryYear)
+        {
+            var checkoutData = TempData["CheckoutData"] as PrintingCheckoutViewModel;
+            if (checkoutData == null)
+            {
+                return RedirectToAction("Upload");
+            }
+
+            // Get the current user
+            var user = _db.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
+            if (user == null)
+            {
+                return RedirectToAction("Upload");
+            }
+
+            // Validate payment information (basic validation)
+            if (string.IsNullOrEmpty(PaymentMethod) || string.IsNullOrEmpty(CardNumber) || 
+                string.IsNullOrEmpty(CardholderName) || string.IsNullOrEmpty(CVV) || 
+                string.IsNullOrEmpty(ExpiryMonth) || string.IsNullOrEmpty(ExpiryYear))
+            {
+                TempData["ErrorMessage"] = "Please fill in all payment information.";
+                TempData["CheckoutData"] = checkoutData; // Keep checkout data
+                return RedirectToAction("Checkout");
+            }
+
+            // Simulate payment processing (in real app, integrate with payment gateway)
+            bool paymentSuccessful = true; // Mock successful payment
+
+            if (!paymentSuccessful)
+            {
+                TempData["ErrorMessage"] = "Payment processing failed. Please try again.";
+                TempData["CheckoutData"] = checkoutData; // Keep checkout data
+                return RedirectToAction("Checkout");
+            }
+
+            // Create the print request with payment information
+            var printRequest = new PrintRequest
+            {
+                UserId = user.UserId,
+                FilePath = checkoutData.FilePath,
+                PageCount = checkoutData.PageCount,
+                Cost = checkoutData.Cost,
+                Option = checkoutData.Option,
+                Status = PrintRequestStatus.Pending,
+                RequestDate = DateTime.Now
+            };
+
+            _db.PrintRequests.Add(printRequest);
+            _db.SaveChanges();
+
+            // Create notification for the user
+            _notificationService.CreateNotificationForUser(
+                user.UserId,
+                "Print Order Confirmed",
+                $"Your print order for {checkoutData.FileName} has been confirmed and payment processed. Order ID: {printRequest.PrintRequestId}",
+                NotificationType.Order,
+                NotificationPriority.Normal
+            );
+
+            return RedirectToAction("OrderConfirmation", new { id = printRequest.PrintRequestId });
+        }
+
+        // POST: Printing/ConfirmOrder (kept for backward compatibility but not used)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ConfirmOrder()
+        {
+            // Redirect to checkout to ensure payment is processed
+            return RedirectToAction("Checkout");
+        }
+
+        // GET: Printing/OrderConfirmation
+        public ActionResult OrderConfirmation(int id)
+        {
+            var printRequest = _db.PrintRequests.Include("User").FirstOrDefault(pr => pr.PrintRequestId == id);
+            if (printRequest == null)
+            {
+                TempData["ErrorMessage"] = "Order not found.";
+                return RedirectToAction("History");
+            }
+
+            return View(printRequest);
         }
 
         // GET: Printing/History
@@ -100,13 +206,26 @@ namespace WebApplication1.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin,Employee")]
         [ValidateAntiForgeryToken]
-        public ActionResult UpdateStatus(int printRequestId, PrintRequestStatus? status)
+        public async System.Threading.Tasks.Task<ActionResult> UpdateStatus(int printRequestId, PrintRequestStatus? status)
         {
-            var printRequest = _db.PrintRequests.Find(printRequestId);
+            var printRequest = _db.PrintRequests.Include("User").FirstOrDefault(pr => pr.PrintRequestId == printRequestId);
             if (printRequest != null && status.HasValue)
             {
+                var oldStatus = printRequest.Status;
                 printRequest.Status = status.Value;
                 _db.SaveChanges();
+                
+                // Send email notification for status update
+                try
+                {
+                    await _emailService.SendPrintingStatusUpdateAsync(printRequest);
+                }
+                catch (Exception ex)
+                {
+                    // Log the error but don't fail the status update
+                    System.Diagnostics.Debug.WriteLine($"Failed to send email notification: {ex.Message}");
+                }
+                
                 TempData["SuccessMessage"] = "Print request status updated successfully.";
             }
             else if (printRequest == null)

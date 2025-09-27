@@ -92,6 +92,13 @@ namespace WebApplication1.Models
         [Display(Name = "Price Drop Alerts")]
         public bool PriceDropAlerts { get; set; } = true;
 
+        // Password reset fields
+        [StringLength(256)]
+        public string PasswordResetToken { get; set; }
+
+        [Display(Name = "Password Reset Token Expiry")]
+        public DateTime? PasswordResetTokenExpiry { get; set; }
+
         // Navigation properties
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<Book> Books { get; set; } // For sellers

@@ -91,15 +91,55 @@ namespace WebApplication1.Controllers
             return RedirectToAction("Notifications");
         }
 
+        // GET: Notification/GetRecentNotifications (AJAX endpoint)
+        [HttpGet]
+        public ActionResult GetRecentNotifications()
+        {
+            try
+            {
+                var currentUser = CurrentUser;
+                var notifications = Db.Notifications
+                    .Where(n => n.UserId == currentUser.UserId)
+                    .OrderByDescending(n => n.CreatedDate)
+                    .Take(10)
+                    .Select(n => new
+                    {
+                        NotificationId = n.NotificationId,
+                        Title = n.Title,
+                        Message = n.Message,
+                        NotificationType = n.NotificationType,
+                        Priority = n.Priority,
+                        IsRead = n.IsRead,
+                        CreatedDate = n.CreatedDate,
+                        RelatedLink = n.RelatedLink
+                    })
+                    .ToList();
+
+                var unreadCount = Db.Notifications
+                    .Count(n => n.UserId == currentUser.UserId && !n.IsRead);
+
+                return Json(new 
+                { 
+                    success = true, 
+                    notifications = notifications, 
+                    unreadCount = unreadCount 
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error getting notifications: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         // POST: Notification/MarkAsRead
         [HttpPost]
-        public ActionResult MarkAsRead(int notificationId)
+        public ActionResult MarkAsRead(int id)
         {
             try
             {
                 var currentUser = CurrentUser;
                 var notification = Db.Notifications
-                    .FirstOrDefault(n => n.NotificationId == notificationId && n.UserId == currentUser.UserId);
+                    .FirstOrDefault(n => n.NotificationId == id && n.UserId == currentUser.UserId);
 
                 if (notification == null)
                 {
@@ -119,13 +159,13 @@ namespace WebApplication1.Controllers
 
         // POST: Notification/Delete
         [HttpPost]
-        public ActionResult Delete(int notificationId)
+        public ActionResult Delete(int id)
         {
             try
             {
                 var currentUser = CurrentUser;
                 var notification = Db.Notifications
-                    .FirstOrDefault(n => n.NotificationId == notificationId && n.UserId == currentUser.UserId);
+                    .FirstOrDefault(n => n.NotificationId == id && n.UserId == currentUser.UserId);
 
                 if (notification == null)
                 {

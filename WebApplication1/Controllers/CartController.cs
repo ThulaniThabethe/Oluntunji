@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Web.Mvc;
 using WebApplication1.Models;
 using WebApplication1.ViewModels;
+using WebApplication1.Services;
 using System.Collections.Generic;
 
 namespace WebApplication1.Controllers
@@ -11,6 +12,12 @@ namespace WebApplication1.Controllers
     [Authorize]
     public class CartController : BaseController
     {
+        private readonly NotificationService _notificationService;
+
+        public CartController()
+        {
+            _notificationService = new NotificationService(Db);
+        }
         // GET: Cart
         public ActionResult Index()
         {
@@ -266,6 +273,23 @@ namespace WebApplication1.Controllers
             // Remove cart items
             Db.CartItems.RemoveRange(cartItems);
             Db.SaveChanges();
+
+            // Create notification for customer about new order
+            try
+            {
+                _notificationService.CreateNotificationForUser(
+                    currentUser.UserId,
+                    "Order Created",
+                    $"Your order #{order.OrderNumber} has been successfully created with {cartItems.Count} item(s). Total: R{order.TotalAmount:F2}",
+                    NotificationType.Order,
+                    NotificationPriority.Normal
+                );
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't fail the order creation
+                System.Diagnostics.Debug.WriteLine($"Failed to create notification: {ex.Message}");
+            }
 
             // TODO: Send order confirmation email
 

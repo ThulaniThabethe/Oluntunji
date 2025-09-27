@@ -81,6 +81,15 @@ namespace WebApplication1.Models
         [Display(Name = "Pickup Date")]
         public DateTime? PickupDate { get; set; }
 
+        // Payment transaction fields
+        [StringLength(100)]
+        [Display(Name = "Transaction ID")]
+        public string TransactionId { get; set; }
+
+        [StringLength(100)]
+        [Display(Name = "Payment Reference")]
+        public string PaymentReference { get; set; }
+
         // Foreign keys
         public int CustomerId { get; set; }
 
