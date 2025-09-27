@@ -140,6 +140,8 @@
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\RevenueController.cs" />
     <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\FinanceController.cs" />
+    <Compile Include="Controllers\PrintingController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -154,6 +156,8 @@
     <Compile Include="Models\Review.cs" />
     <Compile Include="Models\SavedCard.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\PrintRequest.cs" />
+    <Compile Include="Models\Withdrawal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AuthService.cs" />
     <Compile Include="Services\CustomRoleProvider.cs" />

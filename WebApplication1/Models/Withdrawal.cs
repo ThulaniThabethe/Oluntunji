@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication1.Models
 {
@@ -9,7 +10,10 @@ namespace WebApplication1.Models
         public int WithdrawalId { get; set; }
 
         [Required]
-        public string UserId { get; set; }
+        public int UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; }
 
         [Required]
         [DataType(DataType.Currency)]

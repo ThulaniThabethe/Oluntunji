@@ -74,6 +74,10 @@ namespace WebApplication1.Models
         [Display(Name = "In-Store Pickup")]
         public bool InStorePickup { get; set; }
 
+        [Display(Name = "Delivery Fee (ZAR)")]
+        [Column(TypeName = "money")]
+        public decimal DeliveryFee { get; set; }
+
         [Display(Name = "Pickup Date")]
         public DateTime? PickupDate { get; set; }
 

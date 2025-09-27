@@ -216,13 +216,21 @@ namespace WebApplication1.Controllers
             // Calculate total amount from cart items
             var totalAmount = cartItems.Sum(ci => ci.Quantity * ci.Book.Price);
 
+            // Calculate delivery fee
+            decimal deliveryFee = 0;
+            if (!model.InStorePickup)
+            {
+                deliveryFee = cartItems.Sum(ci => ci.Quantity) * 50; // R50 per book
+            }
+
             // Create order
             var order = new Order
             {
                 OrderNumber = Helpers.PasswordHelper.GenerateOrderNumber(),
                 CustomerId = currentUser.UserId,
                 OrderDate = DateTime.Now,
-                TotalAmount = totalAmount,
+                TotalAmount = totalAmount + deliveryFee,
+                DeliveryFee = deliveryFee,
                 OrderStatus = OrderStatus.Pending.ToString(),
                 PaymentStatus = PaymentStatus.Pending.ToString(),
                 InStorePickup = model.InStorePickup,

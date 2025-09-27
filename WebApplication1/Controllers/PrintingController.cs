@@ -41,11 +41,18 @@ namespace WebApplication1.Controllers
 
                     // Mock page count and cost calculation
                     int pageCount = new Random().Next(10, 101); // Random page count between 10 and 100
-                    decimal cost = pageCount * 0.10m; // 10 cents per page
+                    decimal cost = pageCount * 3.00m; // R3 per page
+
+                    if (option == DeliveryOrPickup.Delivery)
+                    {
+                        cost += 10.00m; // R10 for delivery
+                    }
+
+                    var user = _db.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
 
                     var printRequest = new PrintRequest
                     {
-                        UserId = User.Identity.Name,
+                        UserId = user.UserId,
                         FilePath = filePath,
                         PageCount = pageCount,
                         Cost = cost,
@@ -76,8 +83,8 @@ namespace WebApplication1.Controllers
         // GET: Printing/History
         public ActionResult History()
         {
-            var userId = User.Identity.Name;
-            var printRequests = _db.PrintRequests.Where(pr => pr.UserId == userId).ToList();
+            var user = _db.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
+            var printRequests = _db.PrintRequests.Where(pr => pr.UserId == user.UserId).ToList();
             return View(printRequests);
         }
 

@@ -30,9 +30,11 @@ namespace WebApplication1.Controllers
             // For the purpose of this mock system, we'll just record the withdrawal.
             // In a real system, you would integrate with a payment gateway to process the withdrawal.
 
+            var user = _db.Users.FirstOrDefault(u => u.Username == User.Identity.Name);
+
             var withdrawal = new Withdrawal
             {
-                UserId = User.Identity.Name,
+                UserId = user.UserId,
                 Amount = amount,
                 WithdrawalDate = DateTime.Now,
                 Status = "Completed"

@@ -55,34 +55,46 @@
                     </div>
                     <div class="panel-body">
                         <div class="form-group">
-                            @Html.LabelFor(m => m.ShippingAddress, new { @class = "col-md-3 control-label" })
-                            <div class="col-md-9">
-                                @Html.TextAreaFor(m => m.ShippingAddress, new { @class = "form-control", rows = 3 })
-                                @Html.ValidationMessageFor(m => m.ShippingAddress, "", new { @class = "text-danger" })
+                            <div class="col-md-offset-3 col-md-9">
+                                <div class="checkbox">
+                                    <label>
+                                        @Html.CheckBoxFor(m => m.InStorePickup) In-Store Pickup
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            @Html.LabelFor(m => m.ShippingCity, new { @class = "col-md-3 control-label" })
-                            <div class="col-md-9">
-                                @Html.TextBoxFor(m => m.ShippingCity, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(m => m.ShippingCity, "", new { @class = "text-danger" })
+                        <div id="shipping-address-fields">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ShippingAddress, new { @class = "col-md-3 control-label" })
+                                <div class="col-md-9">
+                                    @Html.TextAreaFor(m => m.ShippingAddress, new { @class = "form-control", rows = 3 })
+                                    @Html.ValidationMessageFor(m => m.ShippingAddress, "", new { @class = "text-danger" })
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            @Html.LabelFor(m => m.ShippingProvince, new { @class = "col-md-3 control-label" })
-                            <div class="col-md-9">
-                                @Html.TextBoxFor(m => m.ShippingProvince, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(m => m.ShippingProvince, "", new { @class = "text-danger" })
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ShippingCity, new { @class = "col-md-3 control-label" })
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(m => m.ShippingCity, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.ShippingCity, "", new { @class = "text-danger" })
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            @Html.LabelFor(m => m.ShippingPostalCode, new { @class = "col-md-3 control-label" })
-                            <div class="col-md-9">
-                                @Html.TextBoxFor(m => m.ShippingPostalCode, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(m => m.ShippingPostalCode, "", new { @class = "text-danger" })
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ShippingProvince, new { @class = "col-md-3 control-label" })
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(m => m.ShippingProvince, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.ShippingProvince, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ShippingPostalCode, new { @class = "col-md-3 control-label" })
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(m => m.ShippingPostalCode, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.ShippingPostalCode, "", new { @class = "text-danger" })
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -150,4 +162,23 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            function toggleShippingFields() {
+                if ($('#InStorePickup').is(':checked')) {
+                    $('#shipping-address-fields').hide();
+                } else {
+                    $('#shipping-address-fields').show();
+                }
+            }
+
+            // Initial check
+            toggleShippingFields();
+
+            // Toggle when checkbox changes
+            $('#InStorePickup').change(function () {
+                toggleShippingFields();
+            });
+        });
+    </script>
 }
