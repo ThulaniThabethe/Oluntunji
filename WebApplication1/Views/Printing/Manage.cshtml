@@ -65,12 +65,15 @@
                     <td>@item.Status</td>
                     <td>@item.Option</td>
                     <td>
+                        @Html.ActionLink("Download", "Download", new { printRequestId = item.PrintRequestId }, new { @class = "btn btn-sm btn-info" })
+                    </td>
+                    <td>
                         @using (Html.BeginForm("UpdateStatus", "Printing", FormMethod.Post))
                         {
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="printRequestId" value="@item.PrintRequestId" />
                             <div class="input-group">
-                                @Html.EnumDropDownListFor(m => item.Status, new { @class = "form-control" })
+                                @Html.DropDownList("status", new SelectList(Enum.GetValues(typeof(WebApplication1.Models.PrintRequestStatus)), item.Status), new { @class = "form-control" })
                                 <div class="input-group-append">
                                     <button type="submit" class="btn btn-sm btn-success">Update</button>
                                 </div>

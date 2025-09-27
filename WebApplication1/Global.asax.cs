@@ -8,6 +8,7 @@ using System.Web.Routing;
 using System.Data.Entity;
 using WebApplication1.Models;
 using WebApplication1.Migrations;
+using System.Net;
 
 namespace WebApplication1
 {
@@ -15,6 +16,7 @@ namespace WebApplication1
     {
         protected void Application_Start()
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

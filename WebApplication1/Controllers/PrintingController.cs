@@ -100,20 +100,38 @@ namespace WebApplication1.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin,Employee")]
         [ValidateAntiForgeryToken]
-        public ActionResult UpdateStatus(int printRequestId, PrintRequestStatus status)
+        public ActionResult UpdateStatus(int printRequestId, PrintRequestStatus? status)
         {
             var printRequest = _db.PrintRequests.Find(printRequestId);
-            if (printRequest != null)
+            if (printRequest != null && status.HasValue)
             {
-                printRequest.Status = status;
+                printRequest.Status = status.Value;
                 _db.SaveChanges();
                 TempData["SuccessMessage"] = "Print request status updated successfully.";
             }
-            else
+            else if (printRequest == null)
             {
                 TempData["ErrorMessage"] = "Print request not found.";
             }
+            else
+            {
+                TempData["ErrorMessage"] = "Invalid status provided.";
+            }
 
+            return RedirectToAction("Manage");
+        }
+
+        // GET: Printing/Download
+        [Authorize(Roles = "Admin,Employee")]
+        public ActionResult Download(int printRequestId)
+        {
+            var printRequest = _db.PrintRequests.Find(printRequestId);
+            if (printRequest != null && System.IO.File.Exists(printRequest.FilePath))
+            {
+                return File(printRequest.FilePath, "application/octet-stream", Path.GetFileName(printRequest.FilePath));
+            }
+
+            TempData["ErrorMessage"] = "File not found.";
             return RedirectToAction("Manage");
         }
     }
